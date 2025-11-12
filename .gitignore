@@ -82,6 +82,15 @@ out
 .nuxt
 dist
 
+# expo
+.expo
+
+# Turbo
+.turbo
+
+# Claude local
+.claude
+
 # Gatsby files
 .cache/
 # Comment in the public line in if your project uses Gatsby and not Next.js
