@@ -11,11 +11,12 @@
     "devDependencies": {
         "@types/react": "^19",
         "eslint": "^9",
-        "typescript": "^5"
+        "typescript": "^5",
+        "typescript-config": "workspace:*"
     },
     "peerDependencies": {
         "@gluestack-ui/core": "^3.0.10",
-        "@gluestack-ui/utils": "^3.0.7",
+        "@gluestack-ui/utils": "^3.0.11",
         "expo": ">=54.0.0",
         "nativewind": ">=4.0.0",
         "react": "workspace:*",
@@ -25,7 +26,8 @@
         "react-native-svg": ">=15.12"
     },
     "dependencies": {
-        "@expo/html-elements": "^0.13.7",
+        "@expo/html-elements": "^0.12.5",
+        "@gorhom/bottom-sheet": "^5.2.6",
         "@legendapp/motion": "^2.4.0",
         "tailwind-merge": "^3.3.1",
         "tailwind-variants": "^3.1.0"

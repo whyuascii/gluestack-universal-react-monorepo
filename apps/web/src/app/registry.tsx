@@ -18,7 +18,9 @@ export default function StyledJsxRegistry({
   const isServerInserted = useRef(false);
 
   useServerInsertedHTML(() => {
+    // @ts-ignore - AppRegistry is a runtime value but types are incomplete
     AppRegistry.registerComponent("Main", () => "main");
+    // @ts-ignore - AppRegistry is a runtime value but types are incomplete
     const { getStyleElement } = AppRegistry.getApplication("Main");
     if (!isServerInserted.current) {
       isServerInserted.current = true;

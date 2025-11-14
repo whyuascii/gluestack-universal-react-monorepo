@@ -193,7 +193,7 @@ const ToastTitle = React.forwardRef<
       {...props}
       ref={ref}
       aria-live="assertive"
-      aria-atomic="true"
+      aria-atomic={true}
       role="alert"
       className={toastTitleStyle({
         size,

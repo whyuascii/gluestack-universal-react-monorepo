@@ -8,6 +8,9 @@
         "lint": "eslint",
         "check-types": "tsc --noEmit"
     },
+    "devDependencies": {
+        "typescript-config": "workspace:*"
+    },
     "peerDependencies": {
         "react": "^18",
         "react-native": "*",

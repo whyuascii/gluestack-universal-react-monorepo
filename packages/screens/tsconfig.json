@@ -1,11 +1,4 @@
 {
-  "extends": "expo/tsconfig.base.json",
-  "compilerOptions": {
-    "strict": true,
-    "noEmit": true
-  },
-  "include": [
-    "src/**/*",
-    "nativewind-env.d.ts"
-  ]
+  "extends": "typescript-config/expo.json",
+  "include": ["src/**/*", "nativewind-env.d.ts"]
 }
