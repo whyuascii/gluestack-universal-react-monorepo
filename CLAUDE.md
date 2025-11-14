@@ -24,6 +24,13 @@ pnpm check-types      # TypeScript type checking across all packages
 pnpm --filter web dev          # Next.js web app
 pnpm --filter mobile dev       # Expo mobile app
 pnpm --filter ui <command>     # UI component library
+pnpm --filter database <command> # Database package
+
+# Database-specific commands
+pnpm --filter database generate    # Generate migrations from schema
+pnpm --filter database db:migrate  # Apply migrations to database
+pnpm --filter database db:studio   # Open Drizzle Studio GUI
+pnpm --filter database db:seed     # Seed initial data
 
 # Mobile platform-specific (run from apps/mobile/)
 cd apps/mobile
@@ -67,6 +74,15 @@ When developing or testing specific components, you can:
 │   │   ├── src/home/         # Home screen implementations
 │   │   └── src/auth/         # Auth screen implementations
 │   │
+│   ├── database/             # Shared database package (Drizzle ORM + PostgreSQL)
+│   │   ├── src/
+│   │   │   ├── schema/       # Drizzle table schemas with Zod validators
+│   │   │   ├── db.ts         # Database connection singleton
+│   │   │   └── index.ts      # Package exports
+│   │   ├── drizzle/          # Generated migration files
+│   │   ├── scripts/          # Seed and migration scripts
+│   │   └── drizzle.config.ts # Drizzle Kit configuration
+│   │
 │   ├── tailwind-config/      # Shared Tailwind configuration
 │   │   ├── index.js          # Factory function for Tailwind config
 │   │   └── package.json      # Package definition
@@ -92,10 +108,110 @@ This monorepo achieves web/mobile code sharing through:
 
 1. **Shared UI Components (`packages/ui`)**: gluestack-v3 primitives that work on both web and native
 2. **Shared Screens (`packages/screens`)**: Business logic and screen layouts used by both apps
-3. **Shared Tailwind Config (`packages/tailwind-config`)**: Centralized theme configuration ensuring visual consistency
-4. **Shared TypeScript Config (`packages/typescript-config`)**: Platform-specific TypeScript configurations (Next.js vs Expo)
-5. **NativeWind**: Enables Tailwind CSS classes on React Native (both apps use identical theme)
-6. **React Native Web**: Transpiles React Native components to web (configured in `next.config.ts`)
+3. **Shared Database (`packages/database`)**: Database schemas, types, and connection shared across backend services
+4. **Shared Tailwind Config (`packages/tailwind-config`)**: Centralized theme configuration ensuring visual consistency
+5. **Shared TypeScript Config (`packages/typescript-config`)**: Platform-specific TypeScript configurations (Next.js vs Expo)
+6. **NativeWind**: Enables Tailwind CSS classes on React Native (both apps use identical theme)
+7. **React Native Web**: Transpiles React Native components to web (configured in `next.config.ts`)
+
+### Database Package (`packages/database`)
+
+**Architecture:**
+
+The database package uses **Drizzle ORM** with **PostgreSQL** and provides type-safe database schemas with automatic **Zod** validation. It's designed for multitenant SaaS applications using a shared tables approach (tenant_id column).
+
+**Key Features:**
+
+1. **Drizzle ORM**: Type-safe SQL query builder with excellent TypeScript inference
+2. **drizzle-zod**: Automatically generates Zod schemas from Drizzle table definitions
+3. **Single source of truth**: Database schema → Zod validators → TypeScript types
+4. **Multitenant ready**: All tables include `tenant_id` for data isolation
+5. **Shared package**: Used by API server, lambdas, scripts, and future backend services
+
+**Schema Organization:**
+
+Each table is defined in its own file under `src/schema/`:
+
+```typescript
+// Example: packages/database/src/schema/users.ts
+import { pgTable, uuid, varchar, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
+import { tenants } from "./tenants";
+
+export const users = pgTable("users", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  tenantId: uuid("tenant_id").notNull().references(() => tenants.id, { onDelete: "cascade" }),
+  email: varchar("email", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Auto-generated Zod schemas with custom validations
+export const insertUserSchema = createInsertSchema(users, {
+  email: z.string().email("Invalid email address").max(255),
+  name: z.string().min(1).max(255).optional(),
+  tenantId: z.string().uuid("Invalid tenant ID"),
+});
+
+export const selectUserSchema = createSelectSchema(users);
+export const updateUserSchema = insertUserSchema.partial().omit({
+  id: true,
+  tenantId: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// TypeScript types derived from Zod schemas
+export type InsertUser = z.infer<typeof insertUserSchema>;
+export type User = z.infer<typeof selectUserSchema>;
+export type UpdateUser = z.infer<typeof updateUserSchema>;
+```
+
+**What the package exports:**
+
+```typescript
+// Import in your API server or lambdas
+import {
+  db,                    // Database connection instance
+  users,                 // Table schema
+  tenants,               // Table schema
+  insertUserSchema,      // Zod validator for inserts
+  selectUserSchema,      // Zod validator for selects
+  updateUserSchema,      // Zod validator for updates
+  type User,             // TypeScript type
+  type InsertUser,       // TypeScript type
+  eq, and, or, sql       // Drizzle query utilities
+} from "database";
+
+// Validate input with Zod
+const result = insertUserSchema.safeParse(input);
+if (!result.success) {
+  // Handle validation errors
+}
+
+// Query with type-safe Drizzle
+const allUsers = await db.select().from(users).where(eq(users.tenantId, tenantId));
+```
+
+**Environment Variables:**
+
+The database package requires a `DATABASE_URL` environment variable:
+
+```bash
+# .env (at package or app level)
+DATABASE_URL="postgresql://user:password@localhost:5432/dbname"
+```
+
+**Intended Usage:**
+
+- **API Server** (`apps/api`): Main consumer, handles all database operations
+- **Lambdas/Serverless Functions**: Import for event-driven database operations
+- **Scripts**: Migration, seeding, data maintenance scripts
+- **Future Services**: Any backend service needing database access
+
+Frontend apps (web/mobile) should **NEVER** import the database package directly - they call the API instead.
 
 ### Package Dependencies
 
@@ -210,6 +326,83 @@ For web, an additional `StyledJsxRegistry` wraps everything for Next.js 15 compa
 3. Import in app-specific routing:
    - Web: `apps/web/src/app/` (Next.js App Router)
    - Mobile: `apps/mobile/src/app/` (Expo Router)
+
+### Working with the Database Package
+
+**Adding new tables:**
+
+1. Create a new schema file in `packages/database/src/schema/<table-name>.ts`
+2. Define the Drizzle table with all columns
+3. Create Zod schemas using `createInsertSchema` and `createSelectSchema`
+4. Add custom Zod validations in the second parameter
+5. Export insert, select, and update schemas
+6. Export TypeScript types using `z.infer<typeof schema>`
+7. Export from `packages/database/src/schema/index.ts`
+
+**Example workflow:**
+
+```typescript
+// 1. Create packages/database/src/schema/posts.ts
+import { pgTable, uuid, varchar, text, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
+import { tenants } from "./tenants";
+import { users } from "./users";
+
+export const posts = pgTable("posts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  tenantId: uuid("tenant_id").notNull().references(() => tenants.id, { onDelete: "cascade" }),
+  authorId: uuid("author_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 255 }).notNull(),
+  content: text("content"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const insertPostSchema = createInsertSchema(posts, {
+  title: z.string().min(1).max(255),
+  content: z.string().optional(),
+});
+
+export const selectPostSchema = createSelectSchema(posts);
+export const updatePostSchema = insertPostSchema.partial().omit({
+  id: true,
+  tenantId: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertPost = z.infer<typeof insertPostSchema>;
+export type Post = z.infer<typeof selectPostSchema>;
+export type UpdatePost = z.infer<typeof updatePostSchema>;
+
+// 2. Export from packages/database/src/schema/index.ts
+export * from "./posts";
+
+// 3. Generate migration
+// pnpm --filter database generate
+
+// 4. Apply migration
+// pnpm --filter database db:migrate
+```
+
+**Generating and applying migrations:**
+
+```bash
+# After adding/modifying schemas
+pnpm --filter database generate    # Generates SQL migration files in drizzle/
+pnpm --filter database db:migrate  # Applies pending migrations to database
+
+# Open Drizzle Studio to browse data
+pnpm --filter database db:studio   # Opens GUI at https://local.drizzle.studio
+```
+
+**Database connection:**
+
+The `db` instance is a singleton exported from `packages/database/src/db.ts`. It automatically:
+- Loads `DATABASE_URL` from environment variables via `dotenv`
+- Configures SSL based on `NODE_ENV` (enabled in production)
+- Includes all schemas for type inference and relations
 
 ### Modifying the Theme
 
@@ -373,17 +566,30 @@ The monorepo uses a Turborepo-style TypeScript configuration with platform-speci
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts"]
 }
 
-// packages/ui/tsconfig.json & packages/screens/tsconfig.json
+// packages/ui/tsconfig.json & packages/screens/tsconfig.json (React packages)
 {
   "extends": "typescript-config/expo.json",
   "include": ["src/**/*"]
 }
+
+// packages/database/tsconfig.json (Node.js backend package)
+{
+  "extends": "typescript-config/base.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2020"
+  },
+  "include": ["src/**/*", "drizzle.config.ts"],
+  "exclude": ["node_modules", "dist", "drizzle"]
+}
 ```
 
 **Benefits:**
-- Platform-specific configs (Next.js vs Expo) clearly defined
+- Platform-specific configs (Next.js vs Expo vs Node.js) clearly defined
 - Compiler options centralized - update once, applies everywhere
 - Apps/packages reduced to minimal configs (just paths and includes)
+- Backend packages (like database) extend base.json with Node.js-specific settings
 - Follows Turborepo best practices for monorepo TypeScript configs
 
 ### Build Caching
@@ -445,14 +651,42 @@ If TypeScript is not recognizing the shared config:
 2. Run `pnpm install` from root to ensure workspace linking
 3. Check that `tsconfig.json` extends the correct config:
    - Web app should extend `typescript-config/nextjs.json`
-   - Mobile app and packages should extend `typescript-config/expo.json`
+   - Mobile app and React packages (ui, screens) should extend `typescript-config/expo.json`
+   - Backend packages (database) should extend `typescript-config/base.json` with Node.js settings
 4. Restart your TypeScript server (VS Code: Cmd+Shift+P → "TypeScript: Restart TS Server")
 
 If you need to modify compiler options:
 - **DO NOT** add compiler options directly to app/package `tsconfig.json` files
 - **DO** update the shared config in `packages/typescript-config/`
 - Only add app-specific settings like `paths`, `baseUrl`, or `include` to individual configs
+- Backend packages can add Node.js-specific options (`module: "NodeNext"`, `moduleResolution: "NodeNext"`, etc.)
 
 ### Platform-Specific Bugs
 
 Use `pnpm --filter mobile dev` to test all three platforms (iOS/Android/web) before assuming mobile-only issues.
+
+### Database Package Issues
+
+**Connection errors:**
+1. Verify `DATABASE_URL` is set in environment variables (`.env` file or system env)
+2. Check database is running and accessible at the connection string
+3. For production, ensure SSL is enabled (automatically enabled when `NODE_ENV=production`)
+4. Test connection with: `pnpm --filter database db:studio`
+
+**Migration errors:**
+1. Ensure `drizzle.config.ts` points to correct schema path (`./src/schema/index.ts`)
+2. Run `pnpm --filter database generate` after schema changes
+3. Apply migrations with `pnpm --filter database db:migrate`
+4. Check `drizzle/` directory for generated SQL files
+
+**Type errors with Drizzle/Zod:**
+1. Ensure `drizzle-orm`, `drizzle-zod`, and `zod` versions are compatible
+2. Run `pnpm install` from root to ensure workspace dependencies are linked
+3. Verify schema files export both Zod schemas and TypeScript types
+4. Check that `createInsertSchema` and `createSelectSchema` are imported from `drizzle-zod`
+
+**Import errors in API/lambdas:**
+1. Verify the consuming app has `"database": "workspace:*"` in dependencies
+2. Run `pnpm install` from root to link workspace packages
+3. Check import path is `from "database"` (not `from "@/database"` or relative paths)
+4. Ensure `packages/database/package.json` has correct `main` and `types` fields pointing to `./src/index.ts`
