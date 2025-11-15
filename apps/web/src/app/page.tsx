@@ -1,4 +1,4 @@
-import { HomeScreen } from "screens";
+import { HomeScreen } from "ui";
 
 export default function Home() {
     return <HomeScreen />;

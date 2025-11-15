@@ -16,7 +16,7 @@ import {
   ButtonIcon,
   ButtonText,
   Heading,
-} from "ui";
+} from "components";
 import { AlertCircleIcon, PlusCircleIcon } from "lucide-react-native";
 import { useState } from "react";
 

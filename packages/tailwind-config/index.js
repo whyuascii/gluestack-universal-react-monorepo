@@ -14,8 +14,8 @@ module.exports = function createTailwindConfig(options = {}) {
     darkMode: process.env.DARK_MODE ? process.env.DARK_MODE : "class",
     content: [
       // Shared package paths (always included)
+      "../../packages/components/src/**/*.{js,jsx,ts,tsx}",
       "../../packages/ui/src/**/*.{js,jsx,ts,tsx}",
-      "../../packages/screens/src/**/*.{js,jsx,ts,tsx}",
       // App-specific content paths
       ...content,
     ],

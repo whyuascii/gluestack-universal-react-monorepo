@@ -21,10 +21,11 @@ pnpm check-types      # TypeScript type checking across all packages
 ### Working with Specific Packages
 ```bash
 # Run commands in specific packages
-pnpm --filter web dev          # Next.js web app
-pnpm --filter mobile dev       # Expo mobile app
-pnpm --filter ui <command>     # UI component library
-pnpm --filter database <command> # Database package
+pnpm --filter web dev              # Next.js web app
+pnpm --filter mobile dev           # Expo mobile app
+pnpm --filter components <command> # Component library (gluestack primitives)
+pnpm --filter ui <command>         # UI package (screens, hooks, state, utils)
+pnpm --filter database <command>   # Database package
 
 # Database-specific commands
 pnpm --filter database generate    # Generate migrations from schema
@@ -66,13 +67,18 @@ When developing or testing specific components, you can:
 │       └── tailwind.config.js
 │
 ├── packages/
-│   ├── ui/                   # Shared UI component library (gluestack-v3)
+│   ├── components/           # Shared component library (gluestack-v3 + custom)
 │   │   ├── src/              # 50+ cross-platform components
 │   │   └── index.ts          # Component exports
 │   │
-│   ├── screens/              # Shared screen components
-│   │   ├── src/home/         # Home screen implementations
-│   │   └── src/auth/         # Auth screen implementations
+│   ├── ui/                   # Shared UI logic package
+│   │   ├── src/
+│   │   │   ├── home/         # Screen implementations
+│   │   │   ├── auth/         # Auth screens
+│   │   │   ├── hooks/        # Shared React hooks
+│   │   │   ├── store/        # State management (Zustand/etc)
+│   │   │   └── utils/        # Utility functions
+│   │   └── index.ts          # Package exports
 │   │
 │   ├── database/             # Shared database package (Drizzle ORM + PostgreSQL)
 │   │   ├── src/
@@ -106,8 +112,8 @@ When developing or testing specific components, you can:
 
 This monorepo achieves web/mobile code sharing through:
 
-1. **Shared UI Components (`packages/ui`)**: gluestack-v3 primitives that work on both web and native
-2. **Shared Screens (`packages/screens`)**: Business logic and screen layouts used by both apps
+1. **Shared Components (`packages/components`)**: gluestack-v3 primitives + custom components that work on both web and native
+2. **Shared UI Logic (`packages/ui`)**: Screens, hooks, state management, and utilities used by both apps
 3. **Shared Database (`packages/database`)**: Database schemas, types, and connection shared across backend services
 4. **Shared Tailwind Config (`packages/tailwind-config`)**: Centralized theme configuration ensuring visual consistency
 5. **Shared TypeScript Config (`packages/typescript-config`)**: Platform-specific TypeScript configurations (Next.js vs Expo)
@@ -223,7 +229,8 @@ Frontend apps (web/mobile) should **NEVER** import the database package directly
   - NativeWind 4.2.1
 
 - **Workspace dependencies**: Packages reference each other via `workspace:*` protocol
-  - Both apps depend on `ui` and `screens` packages
+  - Both apps depend on `components` and `ui` packages
+  - `ui` package depends on `components` package
 
 ### Next.js Configuration
 
@@ -258,8 +265,8 @@ module.exports = function createTailwindConfig(options = {}) {
   return {
     // Shared package paths automatically included
     content: [
+      "../../packages/components/src/**/*.{js,jsx,ts,tsx}",
       "../../packages/ui/src/**/*.{js,jsx,ts,tsx}",
-      "../../packages/screens/src/**/*.{js,jsx,ts,tsx}",
       ...content, // App-specific paths
     ],
     // Full theme configuration...
@@ -313,19 +320,35 @@ For web, an additional `StyledJsxRegistry` wraps everything for Next.js 15 compa
 
 ## Development Workflow
 
-### Adding New Components to UI Package
+### Adding New Components to Components Package
 
-1. Create component directory in `packages/ui/src/<component-name>/`
+1. Create component directory in `packages/components/src/<component-name>/`
+2. Export from `packages/components/src/index.ts`
+3. Component will be automatically available in both apps via `import { Component } from "components"`
+
+### Creating Shared Screens and UI Logic
+
+**For screens:**
+1. Add screen to `packages/ui/src/<feature>/`
 2. Export from `packages/ui/src/index.ts`
-3. Component will be automatically available in both apps via `import { Component } from "ui"`
-
-### Creating Shared Screens
-
-1. Add screen to `packages/screens/src/<feature>/`
-2. Export from `packages/screens/src/index.ts`
 3. Import in app-specific routing:
    - Web: `apps/web/src/app/` (Next.js App Router)
    - Mobile: `apps/mobile/src/app/` (Expo Router)
+
+**For hooks:**
+1. Add hook to `packages/ui/src/hooks/<hook-name>.ts`
+2. Export from `packages/ui/src/index.ts`
+3. Import via `import { useHookName } from "ui"`
+
+**For state management:**
+1. Add stores to `packages/ui/src/store/<store-name>.ts`
+2. Export from `packages/ui/src/index.ts`
+3. Import via `import { useStore } from "ui"`
+
+**For utilities:**
+1. Add utilities to `packages/ui/src/utils/<util-name>.ts`
+2. Export from `packages/ui/src/index.ts`
+3. Import via `import { utilityFunction } from "ui"`
 
 ### Working with the Database Package
 
@@ -566,7 +589,7 @@ The monorepo uses a Turborepo-style TypeScript configuration with platform-speci
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts"]
 }
 
-// packages/ui/tsconfig.json & packages/screens/tsconfig.json (React packages)
+// packages/components/tsconfig.json & packages/ui/tsconfig.json (React packages)
 {
   "extends": "typescript-config/expo.json",
   "include": ["src/**/*"]
@@ -608,7 +631,7 @@ Always respect the pnpm overrides in root `package.json`. These versions are loc
 
 ### gluestack Component Conditionals
 
-Some components are commented out in `packages/ui/src/index.ts`:
+Some components are commented out in `packages/components/src/index.ts`:
 - `accordion`, `actionsheet`: Not yet implemented
 - `bottomsheet`, `input-accessory-view`: Expo-only (no web support)
 - `select`, `table`: Currently disabled
@@ -625,7 +648,7 @@ This is intentional for faster builds during development. Remove when stabilizin
 
 ### React Native Web Limitations
 
-Not all React Native components work on web. The UI package selectively exports components known to work cross-platform. When adding new components, test on both platforms.
+Not all React Native components work on web. The components package selectively exports components known to work cross-platform. When adding new components, test on both platforms.
 
 ## Common Issues
 
@@ -639,7 +662,7 @@ If imports fail:
 ### Tailwind Classes Not Working
 
 1. Check if the file is in an app-specific location that needs to be added to the app's `tailwind.config.js` content array
-2. The shared packages (`ui` and `screens`) are automatically included via `packages/tailwind-config/index.js`
+2. The shared packages (`components` and `ui`) are automatically included via `packages/tailwind-config/index.js`
 3. Ensure `global.css` (mobile) or `globals.css` (web) imports Tailwind directives
 4. If you modified `packages/tailwind-config/index.js`, restart the dev server to pick up changes
 5. Verify both apps have `tailwind-config: "workspace:*"` in their `devDependencies`
@@ -651,7 +674,7 @@ If TypeScript is not recognizing the shared config:
 2. Run `pnpm install` from root to ensure workspace linking
 3. Check that `tsconfig.json` extends the correct config:
    - Web app should extend `typescript-config/nextjs.json`
-   - Mobile app and React packages (ui, screens) should extend `typescript-config/expo.json`
+   - Mobile app and React packages (components, ui) should extend `typescript-config/expo.json`
    - Backend packages (database) should extend `typescript-config/base.json` with Node.js settings
 4. Restart your TypeScript server (VS Code: Cmd+Shift+P → "TypeScript: Restart TS Server")
 

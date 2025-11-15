@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import "../../global.css";
-import { GluestackUIProvider } from "ui";
+import { GluestackUIProvider } from "components";
 
 export default function RootLayout() {
   return (
