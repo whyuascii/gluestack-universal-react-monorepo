@@ -18,7 +18,6 @@ This directory contains CI/CD workflows for the monorepo.
 - **build** - Builds all apps and packages
 - **test** - Runs unit tests for all packages (matrix strategy)
 - **test-integration** - Runs integration tests with PostgreSQL
-- **ci-success** - Summary job that ensures all checks passed
 
 **Features:**
 - ✅ Runs jobs in parallel after setup
@@ -90,6 +89,11 @@ This directory contains CI/CD workflows for the monorepo.
 
 ### Caching Strategy
 
+### Environment
+
+- **Node.js**: v20 (LTS)
+- **pnpm**: Auto-detected from package.json (v10.15.0)
+
 All workflows use multi-level caching:
 
 1. **pnpm Store Cache**
@@ -118,7 +122,7 @@ setup (runs first)
   ↓
 lint ─────┐
 typecheck ─┤
-build ─────┼─→ ci-success
+build ─────┤─→ All complete
 test ──────┤
 integration┘
 ```
@@ -152,9 +156,11 @@ The workflows need these permissions:
 Recommended branch protection rules for `main`:
 
 - ✅ Require status checks to pass:
-  - `CI Success`
-  - `Quick Validation`
-  - `Quick Check`
+  - `Lint`
+  - `Type Check`
+  - `Build`
+  - `Test`
+  - `Integration Tests`
 - ✅ Require branches to be up to date
 - ✅ Require linear history
 - ✅ Require conversation resolution

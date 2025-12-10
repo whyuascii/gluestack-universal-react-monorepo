@@ -173,8 +173,8 @@ Every package serves a specific purpose:
 
 ### Prerequisites
 
-- **Node.js** >= 18.0.0
-- **pnpm** >= 9.0.0
+- **Node.js** >= 20.0.0 (LTS recommended)
+- **pnpm** >= 10.0.0
 - **PostgreSQL** >= 14 (for database development)
 - **Docker** (optional, for local PostgreSQL)
 
