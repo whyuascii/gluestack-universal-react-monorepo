@@ -1,0 +1,60 @@
+title: "[Architecture]: "
+labels: ["architecture", "discussion", "needs-adr"]
+body: |
+  ## 🏗️ Architectural Topic
+  <!-- What architectural decision or design needs discussion? -->
+
+  ## Current State
+  <!-- Describe the current architecture or approach -->
+
+  ## Proposed Change
+  <!-- Describe the proposed architectural change -->
+
+  ## Context
+  <!-- Why is this change being considered? What are the drivers? -->
+
+  ## Alternatives
+  <!-- What other approaches have been considered? -->
+
+  ### Option 1:
+  **Pros:**
+  -
+  -
+
+  **Cons:**
+  -
+  -
+
+  ### Option 2:
+  **Pros:**
+  -
+  -
+
+  **Cons:**
+  -
+  -
+
+  ## Impact Analysis
+  <!-- How would this affect the project? -->
+
+  - **Performance**:
+  - **Maintainability**:
+  - **Developer Experience**:
+  - **Breaking Changes**:
+  - **Migration Effort**:
+
+  ## Questions for Discussion
+  <!-- What needs to be decided? -->
+
+  1.
+  2.
+  3.
+
+  ## References
+  <!-- Related issues, ADRs, discussions, or external resources -->
+
+  -
+  -
+
+  ---
+  **Note**: If this discussion results in a decision, an ADR should be created using the [ADR template](../docs/adr/template.md).

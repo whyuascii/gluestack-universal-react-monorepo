@@ -1,14 +1,33 @@
 {
   "name": "mobile",
-  "main": "expo-router/entry",
   "version": "1.0.0",
+  "description": "Expo React Native mobile app with NativeWind and gluestack components",
+  "keywords": [
+    "mobile",
+    "expo",
+    "react-native",
+    "nativewind",
+    "gluestack"
+  ],
+  "author": "whyuascii <eddy@whyuascii.com>",
+  "license": "ISC",
+  "private": true,
+  "main": "expo-router/entry",
+  "files": [
+    "src",
+    ".expo"
+  ],
+  "sideEffects": false,
   "scripts": {
     "dev": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "build": "expo export",
     "lint": "expo lint",
-    "check-types": "tsc --noEmit"
+    "test": "echo \"No tests yet\"",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf .expo"
   },
   "dependencies": {
     "@expo/metro-runtime": "^6.1.2",
@@ -30,30 +49,33 @@
     "expo-system-ui": "~6.0.7",
     "expo-web-browser": "~15.0.7",
     "lucide-react-native": "^0.545.0",
-    "nativewind": "4.2.1",
+    "nativewind": "^4.2.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.4",
     "react-native-gesture-handler": "~2.28.0",
     "react-native-reanimated": "~4.1.2",
-    "react-native-safe-area-context": "5.6.1",
+    "react-native-safe-area-context": "~5.6.1",
     "react-native-screens": "~4.16.0",
-    "react-native-svg": "15.12.0",
-    "react-native-webview": "13.15.0",
+    "react-native-svg": "~15.12.0",
+    "react-native-webview": "~13.15.0",
     "react-native-worklets": "^0.5.1",
     "components": "workspace:*",
     "ui": "workspace:*"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
-    "@types/react": "^19",
-    "eslint": "^9.25.0",
+    "@types/react": "^19.1.0",
+    "eslint": "^9.18.0",
     "eslint-config-expo": "~10.0.0",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "tailwind-config": "workspace:*",
-    "tailwindcss": "^3.4.17",
-    "typescript": "~5.9.2",
+    "tailwindcss": "^4.1.17",
+    "typescript": "^5.9.3",
     "typescript-config": "workspace:*"
   },
-  "private": true
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  }
 }

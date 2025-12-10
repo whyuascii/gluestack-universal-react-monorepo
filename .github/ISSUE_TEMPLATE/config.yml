@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 💬 Discussions
+    url: https://github.com/YOUR_USERNAME/YOUR_REPO/discussions
+    about: Ask questions, share ideas, and discuss with the community
+  - name: 📚 Documentation
+    url: https://github.com/YOUR_USERNAME/YOUR_REPO/tree/main/docs
+    about: Browse our comprehensive documentation
+  - name: 🆘 Support
+    url: https://github.com/YOUR_USERNAME/YOUR_REPO/discussions/categories/q-a
+    about: Get help from the community

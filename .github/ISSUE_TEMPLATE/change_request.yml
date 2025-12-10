@@ -1,0 +1,204 @@
+name: 🔄 Change Request
+description: Propose a change to existing functionality
+title: "[Change]: "
+labels: ["change-request", "needs-discussion"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing a change! This template is for suggesting modifications to existing features or architecture.
+
+  - type: textarea
+    id: current-state
+    attributes:
+      label: Current State
+      description: Describe the current behavior or implementation
+      placeholder: Currently, the system...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-change
+    attributes:
+      label: Proposed Change
+      description: Describe what you want to change and why
+      placeholder: |
+        I propose we change...
+        This would improve...
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why is this change necessary? What problem does it solve?
+      placeholder: |
+        This change is needed because...
+        It will solve...
+        It will improve...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: change-type
+    attributes:
+      label: Type of Change
+      description: What kind of change is this?
+      options:
+        - API Change
+        - Database Schema Change
+        - Architecture Change
+        - Component API Change
+        - Configuration Change
+        - Package Structure Change
+        - Build/Infrastructure Change
+        - Breaking Change
+        - Non-breaking Enhancement
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: affected-areas
+    attributes:
+      label: Affected Areas
+      description: Which parts of the codebase would be affected?
+      multiple: true
+      options:
+        - apps/web
+        - apps/mobile
+        - apps/api
+        - packages/components
+        - packages/ui
+        - packages/database
+        - packages/errors
+        - packages/service-contracts
+        - packages/utils
+        - packages/tailwind-config
+        - packages/typescript-config
+        - Build System
+        - Documentation
+        - All/Multiple Areas
+    validations:
+      required: true
+
+  - type: dropdown
+    id: breaking-change
+    attributes:
+      label: Is this a breaking change?
+      description: Would this change break existing code?
+      options:
+        - "No - Backward compatible"
+        - "Yes - Breaking change"
+        - "Maybe - Needs discussion"
+    validations:
+      required: true
+
+  - type: textarea
+    id: migration-path
+    attributes:
+      label: Migration Path
+      description: If breaking, how would existing code be migrated?
+      placeholder: |
+        Step 1: ...
+        Step 2: ...
+        Automated migration: ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: impact-analysis
+    attributes:
+      label: Impact Analysis
+      description: What would be the impact of this change?
+      placeholder: |
+        Performance: ...
+        Bundle size: ...
+        Developer experience: ...
+        Existing users: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What other approaches did you consider?
+      placeholder: |
+        Alternative 1: ...
+        Pros: ...
+        Cons: ...
+
+        Alternative 2: ...
+        Pros: ...
+        Cons: ...
+
+  - type: textarea
+    id: implementation-plan
+    attributes:
+      label: Implementation Plan
+      description: Outline how this change could be implemented
+      placeholder: |
+        Phase 1: ...
+        Phase 2: ...
+        Phase 3: ...
+
+  - type: textarea
+    id: testing-strategy
+    attributes:
+      label: Testing Strategy
+      description: How should this change be tested?
+      placeholder: |
+        Unit tests: ...
+        Integration tests: ...
+        Migration tests: ...
+        Manual testing: ...
+
+  - type: dropdown
+    id: adr-needed
+    attributes:
+      label: ADR Required?
+      description: Does this change require an Architecture Decision Record?
+      options:
+        - "Yes - Significant architectural decision"
+        - "No - Minor change"
+        - "Unsure - Needs discussion"
+    validations:
+      required: true
+
+  - type: textarea
+    id: related-issues
+    attributes:
+      label: Related Issues/PRs
+      description: Link to related issues, PRs, or discussions
+      placeholder: |
+        Related to #123
+        Builds on #456
+        Supersedes #789
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other information, benchmarks, or references
+      placeholder: |
+        Benchmarks: ...
+        References: ...
+        Prior art: ...
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I have considered the impact on existing users
+          required: true
+        - label: I have outlined a migration path (if breaking)
+          required: false
+        - label: I am willing to create an ADR for this change
+          required: false
+        - label: I am willing to implement this change
+          required: false

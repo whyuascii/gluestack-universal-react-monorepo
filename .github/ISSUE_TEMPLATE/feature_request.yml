@@ -1,0 +1,145 @@
+name: ✨ Feature Request
+description: Suggest a new feature or enhancement
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! Please describe your idea in detail below.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: Is your feature request related to a problem? Please describe.
+      placeholder: |
+        I'm frustrated when...
+        It would be helpful if...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like
+      placeholder: A clear and concise description of what you want to happen...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Describe any alternative solutions or features you've considered
+      placeholder: |
+        Alternative 1: ...
+        Alternative 2: ...
+
+  - type: dropdown
+    id: affected-areas
+    attributes:
+      label: Affected Areas
+      description: Which parts of the monorepo would this feature affect?
+      multiple: true
+      options:
+        - apps/web (Next.js)
+        - apps/mobile (Expo)
+        - apps/api (Fastify)
+        - packages/components
+        - packages/ui
+        - packages/database
+        - packages/errors
+        - packages/service-contracts
+        - packages/utils
+        - Documentation
+        - Infrastructure/Build
+        - Other (specify below)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature-type
+    attributes:
+      label: Feature Type
+      description: What type of feature is this?
+      options:
+        - New Component
+        - UI/UX Enhancement
+        - API Endpoint
+        - Database Schema
+        - Developer Experience
+        - Performance Improvement
+        - Accessibility
+        - Testing
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Use Cases
+      description: Describe specific use cases for this feature
+      placeholder: |
+        1. As a user, I want to...
+        2. When using X, I need to...
+        3. This would help with...
+    validations:
+      required: true
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups/Examples
+      description: If applicable, add mockups, wireframes, or examples
+      placeholder: Drag and drop images or provide links...
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Low - Nice to have
+        - Medium - Would improve workflow
+        - High - Blocking current work
+        - Critical - Essential for project
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-considerations
+    attributes:
+      label: Technical Considerations
+      description: Any technical details, dependencies, or constraints to consider?
+      placeholder: |
+        - Requires new dependency: ...
+        - May impact performance: ...
+        - Breaking change: ...
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context, links, or references
+      placeholder: |
+        Related issues: #123
+        Similar features in other projects: ...
+        References: ...
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I have provided enough detail for this feature to be understood
+          required: true
+        - label: I am willing to help implement this feature
+          required: false
+        - label: I am willing to create an ADR if this requires architectural decisions
+          required: false

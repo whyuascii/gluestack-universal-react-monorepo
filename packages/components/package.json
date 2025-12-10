@@ -1,35 +1,55 @@
 {
-    "name": "components",
-    "version": "0.0.0",
-    "private": true,
-    "main": "./src/index.ts",
-    "types": "./src/index.ts",
-    "scripts": {
-        "lint": "eslint",
-        "check-types": "tsc --noEmit"
-    },
-    "devDependencies": {
-        "@types/react": "^19",
-        "eslint": "^9",
-        "typescript": "^5",
-        "typescript-config": "workspace:*"
-    },
-    "peerDependencies": {
-        "@gluestack-ui/core": "^3.0.10",
-        "@gluestack-ui/utils": "^3.0.11",
-        "expo": ">=54.0.0",
-        "nativewind": ">=4.0.0",
-        "react": "workspace:*",
-        "react-dom": "workspace:*",
-        "react-native": "^*",
-        "react-native-reanimated": ">=4",
-        "react-native-svg": ">=15.12"
-    },
-    "dependencies": {
-        "@expo/html-elements": "^0.12.5",
-        "@gorhom/bottom-sheet": "^5.2.6",
-        "@legendapp/motion": "^2.4.0",
-        "tailwind-merge": "^3.3.1",
-        "tailwind-variants": "^3.1.0"
-    }
+  "name": "components",
+  "version": "0.0.0",
+  "description": "Cross-platform UI components built with gluestack-v3 and NativeWind",
+  "keywords": [
+    "react",
+    "react-native",
+    "components",
+    "ui",
+    "gluestack",
+    "nativewind"
+  ],
+  "author": "whyuascii <eddy@whyuascii.com>",
+  "license": "ISC",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "files": [
+    "src"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@expo/html-elements": "^0.12.5",
+    "@gorhom/bottom-sheet": "^5.2.6",
+    "@legendapp/motion": "^2.4.0",
+    "tailwind-merge": "^3.3.1",
+    "tailwind-variants": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.0",
+    "eslint": "^9.18.0",
+    "typescript": "^5.9.3",
+    "typescript-config": "workspace:*"
+  },
+  "peerDependencies": {
+    "@gluestack-ui/core": "^3.0.10",
+    "@gluestack-ui/utils": "^3.0.11",
+    "expo": ">=54.0.0",
+    "nativewind": ">=4.0.0",
+    "react": "workspace:*",
+    "react-dom": "workspace:*",
+    "react-native": "^*",
+    "react-native-reanimated": ">=4",
+    "react-native-svg": ">=15.12"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  }
 }

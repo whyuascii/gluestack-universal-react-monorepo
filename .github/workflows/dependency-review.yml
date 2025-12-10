@@ -1,0 +1,60 @@
+name: Dependency Review
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: moderate
+          comment-summary-in-pr: always
+
+  audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
+      - name: Run pnpm audit
+        run: pnpm audit --audit-level moderate
+        continue-on-error: true
+
+      - name: Check for outdated dependencies
+        run: |
+          echo "## Outdated Dependencies" >> $GITHUB_STEP_SUMMARY
+          pnpm outdated --format json > outdated.json || true
+
+          if [ -s outdated.json ]; then
+            echo "Found outdated dependencies. Consider updating them." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo '```json' >> $GITHUB_STEP_SUMMARY
+            cat outdated.json >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "All dependencies are up to date! ✅" >> $GITHUB_STEP_SUMMARY
+          fi

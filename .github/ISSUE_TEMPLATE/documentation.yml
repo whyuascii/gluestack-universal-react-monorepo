@@ -1,0 +1,115 @@
+name: 📚 Documentation
+description: Report missing, unclear, or incorrect documentation
+title: "[Docs]: "
+labels: ["documentation", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve our documentation! Please describe what needs to be updated.
+
+  - type: dropdown
+    id: doc-type
+    attributes:
+      label: Documentation Type
+      description: What kind of documentation needs attention?
+      options:
+        - README.md
+        - Getting Started Guide
+        - API Documentation
+        - Package Documentation
+        - Architecture Docs
+        - ADR (Architecture Decision Record)
+        - Code Comments
+        - TypeScript Types/JSDoc
+        - Examples/Tutorials
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: location
+    attributes:
+      label: Documentation Location
+      description: Where is the documentation that needs updating?
+      placeholder: |
+        File: docs/api/README.md
+        Section: "Error Handling"
+        Line: 45-60
+    validations:
+      required: true
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue Type
+      description: What's wrong with the documentation?
+      multiple: true
+      options:
+        - Missing documentation
+        - Incorrect information
+        - Outdated information
+        - Unclear/confusing
+        - Incomplete examples
+        - Broken links
+        - Typos/grammar
+        - Missing code examples
+        - Poor formatting
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-docs
+    attributes:
+      label: Current Documentation
+      description: What does the current documentation say? (quote or describe)
+      placeholder: |
+        Currently, the docs say...
+        Or: There is no documentation for...
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggested-improvement
+    attributes:
+      label: Suggested Improvement
+      description: How should the documentation be improved?
+      placeholder: |
+        The documentation should instead...
+        It should include...
+        A better explanation would be...
+    validations:
+      required: true
+
+  - type: textarea
+    id: code-examples
+    attributes:
+      label: Suggested Code Examples
+      description: If applicable, provide code examples that should be included
+      placeholder: |
+        ```typescript
+        // Example code here
+        ```
+      render: typescript
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other information that would help improve the docs
+      placeholder: |
+        Related to feature: ...
+        Affects beginners/advanced users: ...
+        Common confusion point: ...
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I have checked the current documentation
+          required: true
+        - label: I am willing to submit a PR to fix this documentation
+          required: false

@@ -1,0 +1,37 @@
+{
+  "name": "errors",
+  "version": "1.0.0",
+  "description": "Application-specific error classes for consistent error handling",
+  "keywords": [
+    "errors",
+    "error-handling",
+    "exceptions"
+  ],
+  "author": "whyuascii <eddy@whyuascii.com>",
+  "license": "ISC",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "swc src -d dist --strip-leading-paths",
+    "dev": "npm run build -- --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@swc/cli": "^0.6.0",
+    "@swc/core": "^1.10.6",
+    "service-contracts": "workspace:*",
+    "typescript": "^5.9.3",
+    "typescript-config": "workspace:*"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

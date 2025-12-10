@@ -1,10 +1,27 @@
 {
   "name": "tailwind-config",
   "version": "0.0.0",
+  "description": "Shared Tailwind CSS configuration for web and mobile platforms",
+  "keywords": [
+    "tailwind",
+    "tailwindcss",
+    "config",
+    "nativewind"
+  ],
+  "author": "whyuascii <eddy@whyuascii.com>",
+  "license": "ISC",
   "private": true,
   "main": "./index.js",
+  "files": [
+    "index.js"
+  ],
+  "sideEffects": false,
   "peerDependencies": {
     "nativewind": ">=4.0.0",
     "tailwindcss": ">=3.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
   }
 }

@@ -1,0 +1,228 @@
+name: PR Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+# Cancel previous runs for the same PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 18
+  PNPM_VERSION: 9
+
+jobs:
+  # Quick validation job
+  validate:
+    name: Quick Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PR title follows conventional commits
+        uses: amannn/action-semantic-pull-request@v5
+        if: github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            test
+            chore
+            perf
+            ci
+            build
+          requireScope: false
+
+      - name: Check for merge conflicts
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          if git merge-tree $(git merge-base HEAD origin/${{ github.base_ref }}) HEAD origin/${{ github.base_ref }} | grep -q '<<<<<<<'; then
+            echo "Merge conflicts detected!"
+            exit 1
+          fi
+
+  # Changed files detection for smart CI
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.filter.outputs.api }}
+      web: ${{ steps.filter.outputs.web }}
+      mobile: ${{ steps.filter.outputs.mobile }}
+      packages: ${{ steps.filter.outputs.packages }}
+      docs: ${{ steps.filter.outputs.docs }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check changed files
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            api:
+              - 'apps/api/**'
+              - 'packages/database/**'
+              - 'packages/errors/**'
+            web:
+              - 'apps/web/**'
+              - 'packages/components/**'
+              - 'packages/ui/**'
+            mobile:
+              - 'apps/mobile/**'
+              - 'packages/components/**'
+              - 'packages/ui/**'
+            packages:
+              - 'packages/**'
+            docs:
+              - 'docs/**'
+              - '*.md'
+
+  # Fast check that runs in parallel
+  quick-check:
+    name: Quick Check
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.packages == 'true' || needs.changes.outputs.api == 'true' || needs.changes.outputs.web == 'true' || needs.changes.outputs.mobile == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run quick lint
+        run: pnpm lint
+
+      - name: Run type check
+        run: pnpm typecheck
+
+  # Size check for bundle impact
+  size-check:
+    name: Bundle Size Check
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.web == 'true' || needs.changes.outputs.mobile == 'true' || needs.changes.outputs.packages == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web app
+        if: needs.changes.outputs.web == 'true'
+        run: pnpm --filter web build
+
+      - name: Build mobile app
+        if: needs.changes.outputs.mobile == 'true'
+        run: pnpm --filter mobile build
+
+      - name: Analyze bundle size
+        run: |
+          if [ -d "apps/web/.next" ]; then
+            echo "### Web Bundle Size" >> $GITHUB_STEP_SUMMARY
+            du -sh apps/web/.next | awk '{print "Total: " $1}' >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ -d "apps/mobile/.expo" ]; then
+            echo "### Mobile Bundle Size" >> $GITHUB_STEP_SUMMARY
+            du -sh apps/mobile/.expo | awk '{print "Total: " $1}' >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # Comment on PR with results
+  pr-comment:
+    name: PR Comment
+    runs-on: ubuntu-latest
+    needs: [validate, quick-check, size-check]
+    if: always()
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Create PR comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const results = {
+              validate: '${{ needs.validate.result }}',
+              quickCheck: '${{ needs.quick-check.result }}',
+              sizeCheck: '${{ needs.size-check.result }}'
+            };
+
+            const emoji = (result) => {
+              if (result === 'success') return '✅';
+              if (result === 'failure') return '❌';
+              if (result === 'skipped') return '⏭️';
+              return '⚠️';
+            };
+
+            const body = `## PR Check Results
+
+            ${emoji(results.validate)} **Validation**: ${results.validate}
+            ${emoji(results.quickCheck)} **Quick Check**: ${results.quickCheck}
+            ${emoji(results.sizeCheck)} **Size Check**: ${results.sizeCheck}
+
+            Full CI results available in the [CI workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            `;
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('PR Check Results')
+            );
+
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }

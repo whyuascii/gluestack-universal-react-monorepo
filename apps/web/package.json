@@ -1,41 +1,63 @@
 {
-    "name": "web",
-    "version": "0.1.0",
-    "private": true,
-    "scripts": {
-        "dev": "next dev",
-        "build": "next build",
-        "start": "next start",
-        "lint": "eslint",
-        "check-types": "tsc --noEmit"
-    },
-    "dependencies": {
-        "@gluestack/ui-next-adapter": "^3.0.3",
-        "dom-helpers": "^6.0.1",
-        "lucide-react-native": "^0.545.0",
-        "nativewind": "4.2.1",
-        "next": "15.5.0",
-        "react": "^19",
-        "react-aria": "^3.44.0",
-        "react-dom": "^19",
-        "react-native-svg": "15.12.0",
-        "react-native-web": "0.21.1",
-        "components": "workspace:*",
-        "ui": "workspace:*"
-    },
-    "devDependencies": {
-        "@eslint/eslintrc": "^3",
-        "@types/node": "^20",
-        "@types/react": "^19",
-        "@types/react-dom": "^19",
-        "@types/react-native-web": "^0.19.2",
-        "autoprefixer": "^10.4.21",
-        "eslint": "^9",
-        "eslint-config-next": "15.5.0",
-        "postcss": "^8.5.6",
-        "tailwind-config": "workspace:*",
-        "tailwindcss": "^3.4.17",
-        "typescript": "^5",
-        "typescript-config": "workspace:*"
-    }
+  "name": "web",
+  "version": "1.0.0",
+  "description": "Next.js web app with React Native Web, NativeWind, and gluestack components",
+  "keywords": [
+    "web",
+    "nextjs",
+    "react",
+    "react-native-web",
+    "nativewind",
+    "gluestack"
+  ],
+  "author": "whyuascii <eddy@whyuascii.com>",
+  "license": "ISC",
+  "private": true,
+  "files": [
+    "src",
+    ".next"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "test": "echo \"No tests yet\"",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf .next"
+  },
+  "dependencies": {
+    "@gluestack/ui-next-adapter": "^3.0.3",
+    "dom-helpers": "^6.0.1",
+    "lucide-react-native": "^0.545.0",
+    "nativewind": "^4.2.1",
+    "next": "^15.5.0",
+    "react": "^19.1.0",
+    "react-aria": "^3.44.0",
+    "react-dom": "^19.1.0",
+    "react-native-svg": "~15.12.0",
+    "react-native-web": "^0.21.1",
+    "components": "workspace:*",
+    "ui": "workspace:*"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^24.10.2",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@types/react-native-web": "^0.19.2",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.18.0",
+    "eslint-config-next": "^15.5.0",
+    "postcss": "^8.5.6",
+    "tailwind-config": "workspace:*",
+    "tailwindcss": "^4.1.17",
+    "typescript": "^5.9.3",
+    "typescript-config": "workspace:*"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  }
 }

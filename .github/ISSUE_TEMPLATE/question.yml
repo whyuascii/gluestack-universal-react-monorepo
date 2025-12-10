@@ -1,0 +1,93 @@
+name: ❓ Question
+description: Ask a question about the project
+title: "[Question]: "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question? We're here to help! Please provide as much context as possible.
+
+        **Note:** For general discussions, consider using [GitHub Discussions](https://github.com/YOUR_USERNAME/YOUR_REPO/discussions) instead.
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Question Category
+      description: What is your question about?
+      options:
+        - Getting Started
+        - Architecture
+        - API Usage
+        - Component Usage
+        - Database/Drizzle
+        - Testing
+        - Build/Deployment
+        - Configuration
+        - Best Practices
+        - Monorepo Workflow
+        - Cross-Platform Development
+        - Performance
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What would you like to know?
+      placeholder: I'm trying to understand...
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What are you trying to achieve? What have you tried?
+      placeholder: |
+        I'm working on...
+        I've tried...
+        I've read...
+    validations:
+      required: true
+
+  - type: textarea
+    id: code-sample
+    attributes:
+      label: Code Sample (if applicable)
+      description: Share any relevant code
+      placeholder: |
+        ```typescript
+        // Your code here
+        ```
+      render: typescript
+
+  - type: textarea
+    id: related-docs
+    attributes:
+      label: Related Documentation
+      description: Have you checked the documentation? Link to relevant docs
+      placeholder: |
+        I've read: docs/api/README.md
+        But I'm still unclear about...
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional Information
+      description: Any other details that might help us answer your question
+      placeholder: Environment, versions, error messages, etc.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues and discussions
+          required: true
+        - label: I have checked the documentation
+          required: true
+        - label: This is not a bug report (use Bug Report template instead)
+          required: true
