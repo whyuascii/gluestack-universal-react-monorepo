@@ -208,7 +208,7 @@ For significant architectural changes:
 
 Before submitting, ensure your PR:
 
-- [ ] Follows the [PR template](.github/pull_request_template.md)
+- [ ] Follows the [PR template](pull_request_template.md)
 - [ ] Has a clear, descriptive title
 - [ ] References related issues
 - [ ] Includes tests for new functionality

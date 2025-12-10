@@ -1,6 +1,9 @@
-# GitHub Templates
+# GitHub Templates Guide
 
-This directory contains templates and guidelines for contributing to the project.
+> **Note**: This document describes the GitHub templates in the `.github/` directory.
+> For project overview and getting started, see the [main README](../README.md).
+
+This guide documents all the GitHub templates and their usage for contributing to the project.
 
 ## 📋 Available Templates
 
