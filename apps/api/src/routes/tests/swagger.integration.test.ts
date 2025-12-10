@@ -1,5 +1,5 @@
-import type { FastifyBaseLogger, FastifyInstance, FastifyTypeProviderDefault, RawServerDefault } from "fastify";
 import type { IncomingMessage, ServerResponse } from "node:http";
+import type { FastifyBaseLogger, FastifyInstance, FastifyTypeProviderDefault, RawServerDefault } from "fastify";
 import { beforeEach, describe, expect, it } from "vitest";
 
 // Assuming build is a function to create your Fastify app

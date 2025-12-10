@@ -1,21 +1,20 @@
 'use client';
-import React from 'react';
 import { createAlertDialog } from '@gluestack-ui/core/alert-dialog/creator';
 import { tva } from '@gluestack-ui/utils/nativewind-utils';
 import {
   withStyleContext,
   useStyleContext,
 } from '@gluestack-ui/utils/nativewind-utils';
-
-import { cssInterop } from 'nativewind';
 import type { VariantProps } from '@gluestack-ui/utils/nativewind-utils';
 import {
   Motion,
   AnimatePresence,
   createMotionAnimatedComponent,
-  MotionComponentProps,
+  type MotionComponentProps,
 } from '@legendapp/motion';
-import { View, Pressable, ScrollView, ViewStyle } from 'react-native';
+import { cssInterop } from 'nativewind';
+import React from 'react';
+import { View, Pressable, ScrollView, type ViewStyle } from 'react-native';
 
 const SCOPE = 'ALERT_DIALOG';
 

@@ -1,15 +1,12 @@
 import HttpError from "@fastify/sensible";
-import {
-    AppCustomError,
-    InternalDocumentParseError,
-} from "errors";
+import { AppCustomError, InternalDocumentParseError } from "errors";
 import type { FastifyError, FastifyInstance, FastifyRequest } from "fastify";
 import {
     hasZodFastifySchemaValidationErrors,
     isResponseSerializationError,
     type ZodFastifySchemaValidationError,
 } from "fastify-type-provider-zod";
-import { UserErrorResponse } from "service-contracts";
+import { type UserErrorResponse } from "service-contracts";
 import { transformValidationErrorMessages } from "utils";
 import type { z } from "zod";
 
@@ -29,8 +26,9 @@ export const globalErrorHandler = (
         if (hasZodFastifySchemaValidationErrors(error)) {
             // With fastify v5 we need to parse out the issues from the error
             const transformed = transformValidationErrorMessages(
-                error.validation.map((v: ZodFastifySchemaValidationError) =>
-                    (v.params as { issue: z.ZodIssue }).issue
+                error.validation.map(
+                    (v: ZodFastifySchemaValidationError) =>
+                        (v.params as { issue: z.ZodIssue }).issue
                 )
             );
 

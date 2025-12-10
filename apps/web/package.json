@@ -22,7 +22,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test": "echo \"No tests yet\"",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf .next"
@@ -43,14 +44,13 @@
     "ui": "workspace:*"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
     "@types/node": "^24.10.2",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "@types/react-native-web": "^0.19.2",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.18.0",
-    "eslint-config-next": "^15.5.0",
+    "eslint-config": "workspace:*",
     "postcss": "^8.5.6",
     "tailwind-config": "workspace:*",
     "typescript": "^5.9.3",

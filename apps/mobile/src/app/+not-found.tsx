@@ -1,5 +1,5 @@
-import { View, Text, Pressable } from 'react-native';
 import { Link } from 'expo-router';
+import { View, Text, Pressable } from 'react-native';
 
 
 export default function NotFoundScreen() {

@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-
 import { isArray, isBoolean, isDate, isRecord, isString, isValidISODate, isValidJSONString,  } from "./type-guards";
 
 
@@ -14,13 +13,13 @@ describe.concurrent("isString", () => {
         expect(isString(true)).toBe(false);
         expect(isString(null)).toBe(false);
         expect(isString(undefined)).toBe(false);
-        expect(isString({})).toBe(false);  
+        expect(isString({})).toBe(false);
 
         expect(isString([])).toBe(false);
     });
 });
 
-describe.concurrent("isBoolean",  
+describe.concurrent("isBoolean",
  () => {
     it("returns true for a boolean", () => {
         expect(isBoolean(true)).toBe(true);
@@ -33,7 +32,7 @@ describe.concurrent("isBoolean",  
         expect(isBoolean(null)).toBe(false);
         expect(isBoolean(undefined)).toBe(false);
         expect(isBoolean({})).toBe(false);
-        expect(isBoolean([])).toBe(false);  
+        expect(isBoolean([])).toBe(false);
 
     });
 });
@@ -50,7 +49,7 @@ describe.concurrent("isArray", () => {
         expect(isArray(true)).toBe(false);
         expect(isArray(null)).toBe(false);
         expect(isArray(undefined)).toBe(false);
-        expect(isArray({})).toBe(false);  
+        expect(isArray({})).toBe(false);
 
     });
 });
@@ -67,7 +66,7 @@ describe.concurrent("isDate", () => {
         expect(isDate(null)).toBe(false);
         expect(isDate(undefined)).toBe(false);
         expect(isDate({})).toBe(false);
-        expect(isDate([])).toBe(false);  
+        expect(isDate([])).toBe(false);
 
     });
 });

@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
-const createTailwindConfig = require("tailwind-config");
+import createTailwindConfig from "tailwind-config";
 
-module.exports = createTailwindConfig({
+export default createTailwindConfig({
   content: [
     "./app/**/*.{html,js,jsx,ts,tsx,mdx}",
     "./components/**/*.{html,js,jsx,ts,tsx,mdx}",

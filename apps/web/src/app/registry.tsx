@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useRef, useState } from "react";
-import { useServerInsertedHTML } from "next/navigation";
-import { StyleRegistry, createStyleRegistry } from "styled-jsx";
-import { AppRegistry } from "react-native-web";
 import { flush } from "@gluestack-ui/utils/nativewind-utils";
+import { useServerInsertedHTML } from "next/navigation";
+import React, { useRef, useState } from "react";
+import { AppRegistry } from "react-native-web";
+import { StyleRegistry, createStyleRegistry } from "styled-jsx";
 
 export default function StyledJsxRegistry({
   children,
@@ -18,9 +18,9 @@ export default function StyledJsxRegistry({
   const isServerInserted = useRef(false);
 
   useServerInsertedHTML(() => {
-    // @ts-ignore - AppRegistry is a runtime value but types are incomplete
+    // @ts-expect-error - AppRegistry is a runtime value but types are incomplete
     AppRegistry.registerComponent("Main", () => "main");
-    // @ts-ignore - AppRegistry is a runtime value but types are incomplete
+    // @ts-expect-error - AppRegistry is a runtime value but types are incomplete
     const { getStyleElement } = AppRegistry.getApplication("Main");
     if (!isServerInserted.current) {
       isServerInserted.current = true;

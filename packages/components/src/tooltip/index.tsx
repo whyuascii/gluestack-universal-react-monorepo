@@ -1,16 +1,16 @@
 'use client';
-import React from 'react';
 import { createTooltip } from '@gluestack-ui/core/tooltip/creator';
-import { View, Text, ViewStyle } from 'react-native';
 import type { VariantProps } from '@gluestack-ui/utils/nativewind-utils';
 import { tva } from '@gluestack-ui/utils/nativewind-utils';
 import { withStyleContext } from '@gluestack-ui/utils/nativewind-utils';
 import {
   Motion,
   AnimatePresence,
-  MotionComponentProps,
+  type MotionComponentProps,
 } from '@legendapp/motion';
 import { cssInterop } from 'nativewind';
+import React from 'react';
+import { View, Text, type ViewStyle } from 'react-native';
 
 type IMotionViewProps = React.ComponentProps<typeof View> &
   MotionComponentProps<typeof View, ViewStyle, unknown, unknown, unknown>;

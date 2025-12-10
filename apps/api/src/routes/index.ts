@@ -1,5 +1,4 @@
 import type { FastifyInstance } from "fastify";
-
 import health from "./health";
 import swagger from "./swagger";
 

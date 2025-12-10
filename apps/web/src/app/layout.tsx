@@ -1,7 +1,7 @@
+import { GluestackUIProvider } from "components";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { GluestackUIProvider } from "components";
 import "./globals.css";
 import StyledJsxRegistry from "./registry";
 

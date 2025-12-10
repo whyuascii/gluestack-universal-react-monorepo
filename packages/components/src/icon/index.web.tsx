@@ -1,8 +1,8 @@
-import React from 'react';
 import { createIcon } from '@gluestack-ui/core/icon/creator';
-import { tva } from '@gluestack-ui/utils/nativewind-utils';
-import { VariantProps } from '@gluestack-ui/utils/nativewind-utils';
 import { PrimitiveIcon, Svg } from '@gluestack-ui/core/icon/creator';
+import { tva } from '@gluestack-ui/utils/nativewind-utils';
+import { type VariantProps } from '@gluestack-ui/utils/nativewind-utils';
+import React from 'react';
 
 export const UIIcon = createIcon({
   Root: PrimitiveIcon,

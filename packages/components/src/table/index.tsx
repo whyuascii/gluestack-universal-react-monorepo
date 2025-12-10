@@ -8,7 +8,6 @@ import {
     TR as ExpoTR,
 } from "@expo/html-elements";
 import React, { createContext, useContext, useMemo } from "react";
-
 import { Text, View } from "react-native";
 import {
     tableBodyStyle,

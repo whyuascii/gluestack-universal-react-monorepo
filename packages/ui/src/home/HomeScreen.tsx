@@ -1,7 +1,7 @@
+import { Box, Center, Heading, HStack, Text, VStack } from "components";
 import React from "react";
 import { ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Box, Center, Heading, HStack, Text, VStack } from "components";
 export function HomeScreen() {
     return (
         <SafeAreaView

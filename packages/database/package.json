@@ -20,7 +20,8 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "lint": "eslint",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "db:seed": "tsx scripts/seed.ts",
     "db:migrate": "tsx scripts/migrate.ts",
@@ -38,6 +39,7 @@
     "@types/pg": "^8.15.6",
     "drizzle-kit": "^0.31.7",
     "eslint": "^9.18.0",
+    "eslint-config": "workspace:*",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "typescript-config": "workspace:*"

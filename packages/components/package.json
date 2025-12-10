@@ -21,7 +21,8 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "lint": "eslint",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -34,6 +35,7 @@
   "devDependencies": {
     "@types/react": "^19.1.0",
     "eslint": "^9.18.0",
+    "eslint-config": "workspace:*",
     "typescript": "^5.9.3",
     "typescript-config": "workspace:*"
   },

@@ -1,5 +1,4 @@
-import { UserErrorResponse } from "service-contracts";
-
+import { type UserErrorResponse } from "service-contracts";
 import { AppCustomError } from "./base";
 
 export class LambdaInvocationError extends AppCustomError {

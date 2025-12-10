@@ -1,6 +1,5 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
-
 import { GetHealthResponse } from "service-contracts";
 
 const attachHandlers = (app: FastifyInstance) => {
@@ -20,7 +19,7 @@ const attachHandlers = (app: FastifyInstance) => {
             const gitHash = app.config.GIT_HASH || "";
             const gitHashShort = gitHash.substring(0, 7) || "";
 
-            let healthy = true;
+            const healthy = true;
 
             res.send({
                 healthy,

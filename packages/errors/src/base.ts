@@ -1,4 +1,4 @@
-import { UserErrorResponse } from "service-contracts";
+import { type UserErrorResponse } from "service-contracts";
 
 /**
  * Base class for application-specific errors.

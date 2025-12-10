@@ -1,10 +1,10 @@
 // This is a Next.js 15 compatible version of the GluestackUIProvider
 "use client";
-import React, { useEffect, useLayoutEffect } from "react";
-import { config } from "./config";
 import { OverlayProvider } from "@gluestack-ui/core/overlay/creator";
 import { ToastProvider } from "@gluestack-ui/core/toast/creator";
 import { setFlushStyles } from "@gluestack-ui/utils/nativewind-utils";
+import React, { useEffect, useLayoutEffect } from "react";
+import { config } from "./config";
 import { script } from "./script";
 
 const variableStyleTagId = "nativewind-style";

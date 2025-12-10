@@ -1,6 +1,6 @@
-import React from 'react';
 import type { VariantProps } from '@gluestack-ui/utils/nativewind-utils';
-import { View, ViewProps } from 'react-native';
+import React from 'react';
+import { View, type ViewProps } from 'react-native';
 import { cardStyle } from './styles';
 
 type ICardProps = ViewProps &

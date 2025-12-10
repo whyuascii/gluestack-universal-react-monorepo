@@ -1,16 +1,15 @@
 'use client';
-import React from 'react';
-import { Text, View } from 'react-native';
 import { PrimitiveIcon, UIIcon } from '@gluestack-ui/core/icon/creator';
 import { tva } from '@gluestack-ui/utils/nativewind-utils';
 import {
   withStyleContext,
   useStyleContext,
 } from '@gluestack-ui/utils/nativewind-utils';
-import { cssInterop } from 'nativewind';
 import type { VariantProps } from '@gluestack-ui/utils/nativewind-utils';
-
-import { Svg } from 'react-native-svg';
+import { cssInterop } from 'nativewind';
+import React from 'react';
+import { Text, View } from 'react-native';
+import { type Svg } from 'react-native-svg';
 const SCOPE = 'BADGE';
 
 const badgeStyle = tva({

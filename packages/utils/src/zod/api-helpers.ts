@@ -34,8 +34,8 @@ export const parseSortSchema = (sortString: string) => {
 
 export type sortStringType =
 	| {
-			[field: string]: 1 | -1;
-	  }
+		[field: string]: 1 | -1;
+	}
 	| undefined;
 
 /**

@@ -9,7 +9,7 @@ import {
 } from "@gluestack-ui/utils/nativewind-utils";
 import { cssInterop } from "nativewind";
 import React from "react";
-import { Platform, Pressable, Text, TextProps, View } from "react-native";
+import { Platform, Pressable, Text, type TextProps, View } from "react-native";
 
 const SCOPE = "ACCORDION";
 /** Styles */

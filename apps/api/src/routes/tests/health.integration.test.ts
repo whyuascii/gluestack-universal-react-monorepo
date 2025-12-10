@@ -1,7 +1,6 @@
-import type { FastifyBaseLogger, FastifyInstance, FastifyTypeProviderDefault, RawServerDefault } from "fastify";
 import type { IncomingMessage, ServerResponse } from "node:http";
+import type { FastifyBaseLogger, FastifyInstance, FastifyTypeProviderDefault, RawServerDefault } from "fastify";
 import { beforeEach, describe, expect, it } from "vitest";
-
 import { build } from "../../app";
 import stubEnv from "../../tests/stubEnvSetup";
 

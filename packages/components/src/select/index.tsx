@@ -1,15 +1,16 @@
 'use client';
 
-import React from 'react';
-import { tva } from '@gluestack-ui/utils/nativewind-utils';
 import { PrimitiveIcon, UIIcon } from '@gluestack-ui/core/icon/creator';
+import { createSelect } from '@gluestack-ui/core/select/creator';
+import { tva } from '@gluestack-ui/utils/nativewind-utils';
 import {
   withStyleContext,
   useStyleContext,
 } from '@gluestack-ui/utils/nativewind-utils';
 import type { VariantProps } from '@gluestack-ui/utils/nativewind-utils';
-import { createSelect } from '@gluestack-ui/core/select/creator';
 import { cssInterop } from 'nativewind';
+import React from 'react';
+import { Pressable, View, TextInput } from 'react-native';
 import {
   Actionsheet,
   ActionsheetContent,
@@ -24,7 +25,6 @@ import {
   ActionsheetSectionList,
   ActionsheetSectionHeaderText,
 } from './select-actionsheet';
-import { Pressable, View, TextInput } from 'react-native';
 
 const SelectTriggerWrapper = React.forwardRef<
   React.ComponentRef<typeof Pressable>,

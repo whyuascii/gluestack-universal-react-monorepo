@@ -40,7 +40,7 @@ export const isValidJSONString = (value: string): boolean => {
 	try {
 		JSON.parse(value);
 		return true;
-	} catch (e) {
+	} catch (_e) {
 		return false;
 	}
 };
