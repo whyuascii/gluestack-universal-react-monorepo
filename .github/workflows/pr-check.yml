@@ -11,7 +11,7 @@ concurrency:
 
 env:
   NODE_VERSION: 18
-  PNPM_VERSION: 9
+  PNPM_VERSION: 10
 
 jobs:
   # Quick validation job
