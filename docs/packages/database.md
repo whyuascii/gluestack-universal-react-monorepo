@@ -5,6 +5,7 @@ The `packages/database` package provides type-safe database access using **Drizz
 ## Overview
 
 This package is the single source of truth for:
+
 - Database schema definitions
 - Zod validation schemas (auto-generated)
 - TypeScript types (derived from Zod)
@@ -46,16 +47,19 @@ packages/database/
 
 ```typescript
 import {
-  db,                    // Database connection
-  users,                 // Table schemas
+  db, // Database connection
+  users, // Table schemas
   tenants,
-  insertUserSchema,      // Zod validators
+  insertUserSchema, // Zod validators
   selectUserSchema,
   updateUserSchema,
-  type User,             // TypeScript types
+  type User, // TypeScript types
   type InsertUser,
   type UpdateUser,
-  eq, and, or, sql       // Query utilities
+  eq,
+  and,
+  or,
+  sql, // Query utilities
 } from "database";
 ```
 
@@ -63,10 +67,7 @@ import {
 
 ```typescript
 // Select all users for a tenant
-const allUsers = await db
-  .select()
-  .from(users)
-  .where(eq(users.tenantId, tenantId));
+const allUsers = await db.select().from(users).where(eq(users.tenantId, tenantId));
 
 // Insert a user
 const newUser = await db
@@ -79,15 +80,10 @@ const newUser = await db
   .returning();
 
 // Update a user
-await db
-  .update(users)
-  .set({ name: "Jane Doe" })
-  .where(eq(users.id, userId));
+await db.update(users).set({ name: "Jane Doe" }).where(eq(users.id, userId));
 
 // Delete a user
-await db
-  .delete(users)
-  .where(eq(users.id, userId));
+await db.delete(users).where(eq(users.id, userId));
 ```
 
 ### Validation
@@ -141,14 +137,12 @@ export const insertPostSchema = createInsertSchema(posts, {
 
 export const selectPostSchema = createSelectSchema(posts);
 
-export const updatePostSchema = insertPostSchema
-  .partial()
-  .omit({
-    id: true,
-    tenantId: true,
-    createdAt: true,
-    updatedAt: true,
-  });
+export const updatePostSchema = insertPostSchema.partial().omit({
+  id: true,
+  tenantId: true,
+  createdAt: true,
+  updatedAt: true,
+});
 
 // Export TypeScript types
 export type InsertPost = z.infer<typeof insertPostSchema>;
@@ -201,6 +195,7 @@ DATABASE_URL="postgresql://user:password@localhost:5432/dbname"
 ### Drizzle Config
 
 `drizzle.config.ts` defines:
+
 - Schema location
 - Migration output directory
 - Database connection
@@ -227,10 +222,7 @@ export const myTable = pgTable("my_table", {
 Always filter by `tenantId` in queries:
 
 ```typescript
-await db
-  .select()
-  .from(myTable)
-  .where(eq(myTable.tenantId, currentTenantId));
+await db.select().from(myTable).where(eq(myTable.tenantId, currentTenantId));
 ```
 
 ## Best Practices

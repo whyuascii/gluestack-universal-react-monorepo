@@ -10,7 +10,7 @@ pnpm --filter mobile dev
 
 # Or from this directory
 pnpm dev        # Start Metro bundler
-pnpm ios        # Open iOS simulator  
+pnpm ios        # Open iOS simulator
 pnpm android    # Open Android emulator
 pnpm web        # Open in browser
 ```
@@ -18,6 +18,7 @@ pnpm web        # Open in browser
 ## 🏗️ Architecture
 
 This app demonstrates:
+
 - **Expo Router**: File-based routing with tab navigation
 - **Shared UI Components**: Uses components from `packages/ui/`
 - **NativeWind**: Tailwind CSS classes for consistent styling
@@ -43,9 +44,7 @@ Uses NativeWind for Tailwind CSS classes on React Native components:
 
 ```tsx
 <View className="flex-1 bg-gray-50 p-4">
-  <Text className="text-2xl font-bold text-gray-900">
-    Styled with Tailwind
-  </Text>
+  <Text className="text-2xl font-bold text-gray-900">Styled with Tailwind</Text>
 </View>
 ```
 

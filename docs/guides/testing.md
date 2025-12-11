@@ -93,6 +93,7 @@ describe("add function", () => {
 ```
 
 Guidelines:
+
 - Focus on a single use-case at a time
 - Have a minimal set of assertions per test
 - Test edge cases and error conditions
@@ -115,7 +116,7 @@ describe("User Service Integration", () => {
     const newUser = await createUser({
       tenantId: testTenantId,
       name: "John Doe",
-      email: "john@example.com"
+      email: "john@example.com",
     });
 
     const retrievedUser = await getUserById(newUser.id);
@@ -176,9 +177,9 @@ Tests should use a separate test database:
 export default defineConfig({
   test: {
     env: {
-      DATABASE_URL: "postgresql://postgres:test@localhost:5432/test"
-    }
-  }
+      DATABASE_URL: "postgresql://postgres:test@localhost:5432/test",
+    },
+  },
 });
 ```
 
@@ -237,6 +238,7 @@ describe("Score Utilities", () => {
 - Be specific about expected behavior
 
 Examples:
+
 ```typescript
 it("should return the sum of two numbers");
 it("returns an empty array when no items match");

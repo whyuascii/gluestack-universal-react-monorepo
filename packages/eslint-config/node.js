@@ -1,3 +1,4 @@
+import prettierConfig from "eslint-config-prettier";
 import baseConfig from "./base.js";
 
 /**
@@ -37,4 +38,7 @@ export default [
       "no-throw-literal": "error",
     },
   },
+
+  // Prettier config (must be last to override formatting rules)
+  prettierConfig,
 ];

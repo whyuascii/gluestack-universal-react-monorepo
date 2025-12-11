@@ -6,11 +6,7 @@ import React, { useRef, useState } from "react";
 import { AppRegistry } from "react-native-web";
 import { StyleRegistry, createStyleRegistry } from "styled-jsx";
 
-export default function StyledJsxRegistry({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function StyledJsxRegistry({ children }: { children: React.ReactNode }) {
   // Only create stylesheet once with lazy initial state
   // x-ref: https://reactjs.org/docs/hooks-reference.html#lazy-initial-state
   const [jsxStyleRegistry] = useState(() => createStyleRegistry());
@@ -24,11 +20,7 @@ export default function StyledJsxRegistry({
     const { getStyleElement } = AppRegistry.getApplication("Main");
     if (!isServerInserted.current) {
       isServerInserted.current = true;
-      const styles = [
-        getStyleElement(),
-        jsxStyleRegistry.styles(),
-        flush(),
-      ].filter(Boolean); // Remove any null/undefined styles
+      const styles = [getStyleElement(), jsxStyleRegistry.styles(), flush()].filter(Boolean); // Remove any null/undefined styles
 
       jsxStyleRegistry.flush();
 

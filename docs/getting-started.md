@@ -12,12 +12,14 @@ Welcome to the gluestack Universal React Monorepo! This guide will help you get 
 ## Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd gluestack-universal-react-monorepo
    ```
 
 2. **Install dependencies**
+
    ```bash
    pnpm install
    ```
@@ -25,6 +27,7 @@ Welcome to the gluestack Universal React Monorepo! This guide will help you get 
 3. **Set up environment variables**
 
    For the API:
+
    ```bash
    cd apps/api
    cp .env.example .env
@@ -32,6 +35,7 @@ Welcome to the gluestack Universal React Monorepo! This guide will help you get 
    ```
 
    For the database:
+
    ```bash
    cd packages/database
    cp .env.example .env
@@ -39,6 +43,7 @@ Welcome to the gluestack Universal React Monorepo! This guide will help you get 
    ```
 
 4. **Start PostgreSQL** (if using Docker)
+
    ```bash
    docker run --name postgres-dev \
      -e POSTGRES_PASSWORD=dev \
@@ -61,6 +66,7 @@ pnpm dev
 ```
 
 This starts:
+
 - Web app (Next.js) on `http://localhost:3000`
 - Mobile app (Expo) on `http://localhost:8081`
 - API server on `http://localhost:3030`
@@ -148,6 +154,7 @@ pnpm clean
 ### Port Already in Use
 
 If you get a port conflict:
+
 - Web: Change port in `apps/web/.env.local`
 - API: Change `PORT` in `apps/api/.env`
 - Mobile: Expo will automatically find an available port

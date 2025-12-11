@@ -53,11 +53,12 @@ const BaseQueryParams = z.object({
 const query: BaseQueryParams = {
   limit: 50,
   skip: 0,
-  sort: { name: 1, createdAt: -1 }
+  sort: { name: 1, createdAt: -1 },
 };
 ```
 
 **Fields:**
+
 - `limit` - Number of items to return (5-200, default: 20)
 - `skip` - Number of items to skip for pagination (min: 0, default: 0)
 - `sort` - Sort criteria using sortStringSchema from utils (e.g., "asc(name),desc(createdAt)")
@@ -80,11 +81,12 @@ const UserErrorResponseSchema = z.object({
 const errorResponse: UserErrorResponse = {
   message: "Some users already exist.",
   details: ["email1@example.com", "email4@example.com"],
-  meta: { duplicateCount: "2" }
+  meta: { duplicateCount: "2" },
 };
 ```
 
 **Fields:**
+
 - `message` - Friendly, high-level error description for end-users
 - `details` - Optional array of contextual details (e.g., affected items)
 - `meta` - Optional key-value pairs for field-specific errors or additional context
@@ -97,7 +99,7 @@ const errorResponse: UserErrorResponse = {
 import { GenericSuccessResponse } from "service-contracts";
 
 const response: GenericSuccessResponse = {
-  message: "Operation completed successfully."
+  message: "Operation completed successfully.",
 };
 ```
 
@@ -107,7 +109,7 @@ const response: GenericSuccessResponse = {
 import { GenericIdParams } from "service-contracts";
 
 const params: GenericIdParams = {
-  id: "user-123"
+  id: "user-123",
 };
 ```
 
@@ -140,13 +142,15 @@ export type GetUsersRequest = z.infer<typeof GetUsersRequest>;
 
 // Response contract
 export const GetUsersResponse = z.object({
-  users: z.array(z.object({
-    id: z.string(),
-    name: z.string(),
-    email: z.string().email(),
-    role: z.string(),
-    createdAt: z.string().datetime(),
-  })),
+  users: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      email: z.string().email(),
+      role: z.string(),
+      createdAt: z.string().datetime(),
+    })
+  ),
   total: z.number(),
   hasMore: z.boolean(),
 });
@@ -243,6 +247,7 @@ export function handleApiError(error: unknown): UserErrorResponse {
 Follow the naming pattern: `<Method><Service><Path><Request/Response>`
 
 **Examples:**
+
 - `GetUsersRequest` - GET request to /users
 - `GetUsersResponse` - Response from GET /users
 - `PostUsersRequest` - POST request to /users
@@ -303,16 +308,10 @@ Use preprocessing for data coercion:
 ```typescript
 const QueryParams = z.object({
   // Convert string to number
-  limit: z.preprocess(
-    (val) => Number.parseInt(val as string, 10),
-    z.number().min(5).max(200)
-  ),
+  limit: z.preprocess((val) => Number.parseInt(val as string, 10), z.number().min(5).max(200)),
 
   // Convert string to boolean
-  isActive: z.preprocess(
-    (val) => val === "true",
-    z.boolean()
-  ),
+  isActive: z.preprocess((val) => val === "true", z.boolean()),
 });
 ```
 
@@ -471,9 +470,7 @@ All contracts automatically generate TypeScript types:
 import { GetUsersRequest, GetUsersResponse } from "service-contracts";
 
 // Types are automatically inferred
-async function getUsers(
-  params: GetUsersRequest
-): Promise<GetUsersResponse> {
+async function getUsers(params: GetUsersRequest): Promise<GetUsersResponse> {
   // Implementation
 }
 ```

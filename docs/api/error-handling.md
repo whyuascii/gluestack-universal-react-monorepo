@@ -39,15 +39,15 @@ Use error classes from the `errors` package:
 import { AppCustomError } from "errors";
 
 throw new AppCustomError({
-  message: "User not found",  // Internal log message
+  message: "User not found", // Internal log message
   statusCode: 404,
   userResponse: {
-    message: "The requested user does not exist"
+    message: "The requested user does not exist",
   },
   debug: {
     userId: userId,
-    tenantId: tenantId
-  }
+    tenantId: tenantId,
+  },
 });
 ```
 
@@ -93,11 +93,11 @@ throw new InternalDocumentParseError({
   message: "Failed to parse user document",
   statusCode: 500,
   userResponse: {
-    message: "An error occurred while processing your request"
+    message: "An error occurred while processing your request",
   },
   debug: {
-    document: rawData
-  }
+    document: rawData,
+  },
 });
 ```
 
@@ -108,7 +108,7 @@ All errors return a consistent format:
 ```typescript
 interface UserErrorResponse {
   message: string;
-  details?: string[];  // For validation errors
+  details?: string[]; // For validation errors
 }
 ```
 
@@ -137,14 +137,14 @@ Examples:
 
 ## Status Codes
 
-| Code | Meaning | When to Use |
-|------|---------|-------------|
-| 400  | Bad Request | Invalid request format |
-| 401  | Unauthorized | Authentication required |
-| 403  | Forbidden | Insufficient permissions |
-| 404  | Not Found | Resource doesn't exist |
-| 422  | Unprocessable Entity | Validation failed |
-| 500  | Internal Server Error | Unexpected server error |
+| Code | Meaning               | When to Use              |
+| ---- | --------------------- | ------------------------ |
+| 400  | Bad Request           | Invalid request format   |
+| 401  | Unauthorized          | Authentication required  |
+| 403  | Forbidden             | Insufficient permissions |
+| 404  | Not Found             | Resource doesn't exist   |
+| 422  | Unprocessable Entity  | Validation failed        |
+| 500  | Internal Server Error | Unexpected server error  |
 
 ## Logging
 
@@ -160,6 +160,7 @@ fastify.log.error({
 ```
 
 Logs include:
+
 - Error context and type
 - Status code
 - Full error details
@@ -184,34 +185,30 @@ app.route({
   url: "/users/:id",
   schema: {
     params: z.object({
-      id: z.string().uuid()
+      id: z.string().uuid(),
     }),
     response: {
-      200: UserSchema
-    }
+      200: UserSchema,
+    },
   },
   handler: async (req, res) => {
     const { id } = req.params;
 
-    const user = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, id))
-      .limit(1);
+    const user = await db.select().from(users).where(eq(users.id, id)).limit(1);
 
     if (!user[0]) {
       throw new AppCustomError({
         message: `User ${id} not found`,
         statusCode: 404,
         userResponse: {
-          message: "User not found"
+          message: "User not found",
         },
-        debug: { userId: id }
+        debug: { userId: id },
       });
     }
 
     return user[0];
-  }
+  },
 });
 ```
 
@@ -221,12 +218,12 @@ app.route({
 it("should return 404 when user not found", async () => {
   const response = await app.inject({
     method: "GET",
-    url: "/users/non-existent-id"
+    url: "/users/non-existent-id",
   });
 
   expect(response.statusCode).toBe(404);
   expect(response.json()).toEqual({
-    message: "User not found"
+    message: "User not found",
   });
 });
 ```

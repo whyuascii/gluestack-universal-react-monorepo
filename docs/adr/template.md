@@ -60,10 +60,12 @@ This decision was made because:
 <!-- Describe the alternative and why it wasn't chosen -->
 
 **Pros:**
+
 - [Pro 1]
 - [Pro 2]
 
 **Cons:**
+
 - [Con 1]
 - [Con 2]
 
@@ -91,6 +93,6 @@ This decision was made because:
 
 <!-- Track changes to this ADR -->
 
-| Date       | Author | Changes |
-|------------|--------|---------|
+| Date       | Author | Changes       |
+| ---------- | ------ | ------------- |
 | YYYY-MM-DD | Name   | Initial draft |

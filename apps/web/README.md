@@ -19,6 +19,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 ## 🏗️ Architecture
 
 This app demonstrates:
+
 - **Next.js 15**: App Router with Server Components
 - **React Native Web**: Renders React Native components as HTML
 - **Shared UI Components**: Uses components from `packages/ui/`
@@ -59,6 +60,7 @@ export default function Page() {
 ## ⚙️ Configuration
 
 ### React Native Web Setup
+
 The `next.config.ts` handles React Native Web integration:
 
 ```tsx
@@ -80,6 +82,7 @@ webpack: (config) => {
 ```
 
 ### Tailwind Integration
+
 Works with both HTML elements and React Native components via NativeWind.
 
 ## 🔧 Development Features
@@ -99,12 +102,14 @@ Works with both HTML elements and React Native components via NativeWind.
 ## 🚀 Deployment
 
 ### Vercel (Recommended)
+
 ```bash
 pnpm build
 # Deploy to Vercel via Git or CLI
 ```
 
 ### Other Platforms
+
 ```bash
 pnpm build
 # Deploy the `.next` directory to any hosting platform

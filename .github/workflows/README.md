@@ -7,11 +7,13 @@ This directory contains CI/CD workflows for the monorepo.
 ### 1. CI Workflow (`ci.yml`)
 
 **Triggers:**
+
 - Push to `main` or `develop` branches
 - Pull requests to `main` or `develop`
 - Manual dispatch
 
 **Jobs:**
+
 - **setup** - Installs dependencies and sets up caching
 - **lint** - Runs ESLint across all packages
 - **typecheck** - Runs TypeScript type checking
@@ -20,6 +22,7 @@ This directory contains CI/CD workflows for the monorepo.
 - **test-integration** - Runs integration tests with PostgreSQL
 
 **Features:**
+
 - ✅ Runs jobs in parallel after setup
 - ✅ Caches pnpm store, node_modules, and Turbo
 - ✅ Matrix testing for different packages
@@ -31,9 +34,11 @@ This directory contains CI/CD workflows for the monorepo.
 ### 2. PR Check Workflow (`pr-check.yml`)
 
 **Triggers:**
+
 - Pull request opened, synchronized, or reopened
 
 **Jobs:**
+
 - **validate** - Validates PR title follows conventional commits
 - **changes** - Detects which files changed for smart CI
 - **quick-check** - Fast lint and typecheck
@@ -41,6 +46,7 @@ This directory contains CI/CD workflows for the monorepo.
 - **pr-comment** - Posts results as PR comment
 
 **Features:**
+
 - ✅ Smart CI - only runs checks for changed files
 - ✅ Bundle size analysis
 - ✅ PR title validation
@@ -52,14 +58,17 @@ This directory contains CI/CD workflows for the monorepo.
 ### 3. Test Coverage Workflow (`test-coverage.yml`)
 
 **Triggers:**
+
 - Push to `main`
 - Pull requests to `main`
 - Manual dispatch
 
 **Jobs:**
+
 - **coverage** - Runs tests with coverage reporting
 
 **Features:**
+
 - ✅ Generates coverage reports
 - ✅ Uploads to Codecov (if configured)
 - ✅ Adds coverage summary to job summary
@@ -71,13 +80,16 @@ This directory contains CI/CD workflows for the monorepo.
 ### 4. Dependency Review Workflow (`dependency-review.yml`)
 
 **Triggers:**
+
 - Pull requests to `main` or `develop`
 
 **Jobs:**
+
 - **dependency-review** - Reviews dependency changes
 - **audit** - Runs security audit
 
 **Features:**
+
 - ✅ Scans for vulnerable dependencies
 - ✅ Checks for outdated packages
 - ✅ Posts summary in PR
@@ -130,6 +142,7 @@ integration┘
 ### Matrix Testing
 
 Tests run in parallel for multiple packages:
+
 ```yaml
 matrix:
   package: [api, components, database, errors, utils]
@@ -147,6 +160,7 @@ Set these in GitHub repository settings (Settings → Secrets):
 ### Required Permissions
 
 The workflows need these permissions:
+
 - `contents: read` - Read repository contents
 - `pull-requests: write` - Comment on PRs
 - `actions: read` - Access workflow information
@@ -177,6 +191,7 @@ Add these to your README.md:
 ## 🐛 Debugging Workflows
 
 ### View Workflow Runs
+
 1. Go to repository → Actions tab
 2. Click on a workflow run
 3. Expand job steps to see logs
@@ -184,21 +199,25 @@ Add these to your README.md:
 ### Enable Debug Logging
 
 Add these secrets to enable verbose logging:
+
 - `ACTIONS_STEP_DEBUG: true`
 - `ACTIONS_RUNNER_DEBUG: true`
 
 ### Common Issues
 
 **Issue: Cache misses**
+
 - Check if pnpm-lock.yaml changed
 - Verify cache key matches across jobs
 
 **Issue: Tests failing in CI but passing locally**
+
 - Check environment variables
 - Verify PostgreSQL connection
 - Ensure GH_ACTIONS=true is set
 
 **Issue: Slow workflow runs**
+
 - Check cache hit rates
 - Consider splitting large jobs
 - Use matrix strategy for parallel execution
@@ -206,6 +225,7 @@ Add these secrets to enable verbose logging:
 ## 📈 Performance Tips
 
 1. **Use Turbo Remote Caching**
+
    ```bash
    # Set up Vercel Remote Cache
    pnpm turbo login

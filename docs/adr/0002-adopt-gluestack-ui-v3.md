@@ -9,6 +9,7 @@
 ## Context
 
 The monorepo needed a UI component library that would:
+
 - Work seamlessly across web (Next.js) and mobile (React Native/Expo)
 - Support styling with Tailwind CSS via NativeWind
 - Provide accessible, production-ready components
@@ -20,6 +21,7 @@ The monorepo needed a UI component library that would:
 We will use **Gluestack UI v3** as our primary UI component library, integrated with **NativeWind** for styling.
 
 The implementation will:
+
 - House components in a shared package (`packages/components`)
 - Use NativeWind (Tailwind CSS for React Native) for styling
 - Centralize theme configuration in `packages/tailwind-config`
@@ -66,11 +68,13 @@ This decision was made because:
 ### Alternative 1: React Native Paper + Separate Web Components
 
 **Pros:**
+
 - Mature React Native component library
 - Material Design out of the box
 - Well-documented
 
 **Cons:**
+
 - Would need separate component library for web
 - No code sharing for components
 - Different design system for each platform
@@ -80,11 +84,13 @@ This decision was made because:
 ### Alternative 2: Tamagui
 
 **Pros:**
+
 - Excellent performance optimizations
 - Strong Tailwind-like styling
 - Cross-platform support
 
 **Cons:**
+
 - Complex setup and configuration
 - Steeper learning curve
 - Less compatible with standard React Native components
@@ -94,11 +100,13 @@ This decision was made because:
 ### Alternative 3: Custom Component Library
 
 **Pros:**
+
 - Complete control over implementation
 - Exactly matches our needs
 - No third-party dependencies
 
 **Cons:**
+
 - Massive development time investment
 - Reinventing the wheel
 - Accessibility would need manual implementation
@@ -124,6 +132,6 @@ This decision was made because:
 
 ## Revision History
 
-| Date       | Author | Changes |
-|------------|--------|---------|
+| Date       | Author | Changes       |
+| ---------- | ------ | ------------- |
 | 2024-12-09 | Claude | Initial draft |

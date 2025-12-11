@@ -5,6 +5,7 @@ The `packages/errors` package contains application-specific error classes for co
 ## Overview
 
 This package provides:
+
 - **Custom Error Classes**: Structured errors with status codes and user responses
 - **Type Safety**: Full TypeScript support
 - **Debug Information**: Internal context for troubleshooting
@@ -33,16 +34,17 @@ throw new AppCustomError({
   message: "Internal error message for logs",
   statusCode: 400,
   userResponse: {
-    message: "User-friendly error message"
+    message: "User-friendly error message",
   },
   debug: {
     userId: "123",
-    action: "updateProfile"
-  }
+    action: "updateProfile",
+  },
 });
 ```
 
 **Properties:**
+
 - `message` (string): Internal error message for logging
 - `statusCode` (number): HTTP status code
 - `code` (number): Same as statusCode, for compatibility
@@ -60,12 +62,12 @@ throw new InternalDocumentParseError({
   message: "Failed to parse database record",
   statusCode: 500,
   userResponse: {
-    message: "An error occurred processing your request"
+    message: "An error occurred processing your request",
   },
   debug: {
     table: "users",
-    recordId: userId
-  }
+    recordId: userId,
+  },
 });
 ```
 
@@ -75,10 +77,7 @@ The package also exports specialized error classes:
 
 ```typescript
 // Database-related errors
-import {
-  DbAndModelOutOfSyncError,
-  UndefinedDocumentError
-} from "errors";
+import { DbAndModelOutOfSyncError, UndefinedDocumentError } from "errors";
 
 // AWS-related errors
 import {
@@ -87,9 +86,7 @@ import {
 } from "errors";
 
 // Generic errors
-import {
-  GenericError
-} from "errors";
+import { GenericError } from "errors";
 ```
 
 ## Usage in API Routes
@@ -105,27 +102,24 @@ app.route({
   handler: async (req, res) => {
     const { id } = req.params;
 
-    const result = await db
-      .delete(users)
-      .where(eq(users.id, id))
-      .returning();
+    const result = await db.delete(users).where(eq(users.id, id)).returning();
 
     if (!result[0]) {
       throw new AppCustomError({
         message: `User ${id} not found for deletion`,
         statusCode: 404,
         userResponse: {
-          message: "User not found"
+          message: "User not found",
         },
         debug: {
           userId: id,
-          tenantId: req.user.tenantId
-        }
+          tenantId: req.user.tenantId,
+        },
       });
     }
 
     return { success: true };
-  }
+  },
 });
 ```
 
@@ -140,9 +134,9 @@ export async function processPayment(amount: number) {
       message: `Invalid payment amount: ${amount}`,
       statusCode: 400,
       userResponse: {
-        message: "Payment amount must be greater than zero"
+        message: "Payment amount must be greater than zero",
       },
-      debug: { amount }
+      debug: { amount },
     });
   }
 
@@ -157,7 +151,7 @@ All errors use the `UserErrorResponse` type from `service-contracts`:
 ```typescript
 interface UserErrorResponse {
   message: string;
-  details?: string[];  // Optional array of detailed error messages
+  details?: string[]; // Optional array of detailed error messages
 }
 ```
 
@@ -190,9 +184,9 @@ interface UserErrorResponse {
        message: `External service failed: ${error.message}`,
        statusCode: 500,
        userResponse: {
-         message: "Service temporarily unavailable"
+         message: "Service temporarily unavailable",
        },
-       debug: { originalError: error }
+       debug: { originalError: error },
      });
    }
    ```
@@ -204,9 +198,7 @@ import { AppCustomError } from "errors";
 
 describe("User Service", () => {
   it("should throw AppCustomError when user not found", async () => {
-    await expect(
-      getUserById("non-existent-id")
-    ).rejects.toThrow(AppCustomError);
+    await expect(getUserById("non-existent-id")).rejects.toThrow(AppCustomError);
   });
 
   it("should return 404 status code", async () => {

@@ -22,10 +22,10 @@ The service contracts are defined using Zod schemas. Each contract represents a 
 import { z } from "zod";
 
 const GetUsersRequest = z.object({
-    id: z.string(),
-    name: z.string().min(2).max(50),
-    email: z.string().email(),
-    age: z.number().min(18).max(120),
+  id: z.string(),
+  name: z.string().min(2).max(50),
+  email: z.string().email(),
+  age: z.number().min(18).max(120),
 });
 
 type User = z.infer<typeof GetUsersRequest>;
@@ -40,13 +40,13 @@ By using `z.infer<typeof GetUsersRequest>`, we can create a corresponding TypeSc
 The service contracts package is used in the following ways:
 
 1. **Request/Response Validation**: When a service receives a request, it can validate the incoming data against the defined contract using Zod. If the data does not match the expected schema, an error can be thrown or an appropriate response can be sent back to the client. Additonally with transforms the incoming data can be coerced into the correct type, such as when converting certain properties of a JSON response to be a Date or ObjectId.
-    - Validation and parsing can be done with the `parse` or `safeParse` function from the exported zod object.
-        - **Unfortunately the React App currently cannot make use of the parsing functions, only the TS types can be used.**
+   - Validation and parsing can be done with the `parse` or `safeParse` function from the exported zod object.
+     - **Unfortunately the React App currently cannot make use of the parsing functions, only the TS types can be used.**
 
 2. **API Documentation**: The service contracts can be used to generate API documentation automatically. Tools like Swagger can leverage the Zod schemas to create interactive documentation that describes the available endpoints, their input and output structures, and any validation rules.
 
 3. **Client-Side Type Generation**: The service contracts can be used to generate TypeScript types for the client-side code (e.g., the React frontend). By sharing the Zod schemas between the server and the client, we can ensure that both sides have a consistent understanding of the data structures being exchanged.
-    - ObjectIds do not belong in the UI, therefore the service-contract type you use in the UI must be stripped of ObjectIds. This is done by using the `ConvertObjectIdToString` TypeScript utility function from `utils`.
+   - ObjectIds do not belong in the UI, therefore the service-contract type you use in the UI must be stripped of ObjectIds. This is done by using the `ConvertObjectIdToString` TypeScript utility function from `utils`.
 
 4. **Data Transformation**: The service contracts can be used to transform the data as part of validation. Zod provides utility functions for preprocessing or postprocessing the data, such as `transform`, `default`, `refine`. These functions can be used to manipulate the data according to specific requirements.
 

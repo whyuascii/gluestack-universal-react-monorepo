@@ -5,6 +5,7 @@ The `apps/api` directory contains a **Fastify-based REST API** server with full 
 ## Overview
 
 The API is built using:
+
 - **Fastify**: Fast and low-overhead web framework for Node.js
 - **Zod**: TypeScript-first schema declaration and validation
 - **fastify-type-provider-zod**: Seamless integration between Fastify and Zod

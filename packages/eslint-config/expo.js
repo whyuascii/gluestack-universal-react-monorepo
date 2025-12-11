@@ -1,5 +1,6 @@
 import reactPlugin from "eslint-plugin-react";
 import reactHooksPlugin from "eslint-plugin-react-hooks";
+import prettierConfig from "eslint-config-prettier";
 import baseConfig from "./base.js";
 
 /**
@@ -38,10 +39,10 @@ export default [
       ...reactHooksPlugin.configs.recommended.rules,
 
       // React Native specific
-      "react/jsx-filename-extension": [
-        "warn",
-        { extensions: [".jsx", ".tsx"] },
-      ],
+      "react/jsx-filename-extension": ["warn", { extensions: [".jsx", ".tsx"] }],
     },
   },
+
+  // Prettier config (must be last to override formatting rules)
+  prettierConfig,
 ];

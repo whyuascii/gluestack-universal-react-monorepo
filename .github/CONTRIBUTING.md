@@ -50,6 +50,7 @@ git checkout -b fix/your-bug-fix
 ```
 
 Branch naming conventions:
+
 - `feature/` - New features
 - `fix/` - Bug fixes
 - `docs/` - Documentation changes
@@ -60,6 +61,7 @@ Branch naming conventions:
 ### 4. Make Your Changes
 
 Follow our [coding standards](#coding-standards) and ensure your changes:
+
 - Are focused and atomic (one concern per PR)
 - Include appropriate tests
 - Update relevant documentation
@@ -93,6 +95,7 @@ git commit -m "docs(database): update migration guide"
 ```
 
 Commit types:
+
 - `feat:` - New feature
 - `fix:` - Bug fix
 - `docs:` - Documentation changes
@@ -309,6 +312,7 @@ See [Monorepo Best Practices](../docs/guides/monorepo-best-practices.md) for mor
 ## 🎉 Recognition
 
 Contributors are recognized in:
+
 - GitHub contributors list
 - Release notes (for significant contributions)
 - Project documentation (for major features)

@@ -19,6 +19,7 @@ A cross-platform monorepo template for building modern web and mobile applicatio
 This is a **foundation template** for building cross-platform applications with maximum code sharing between web and mobile. It represents years of experience building successful products and represents my preferred project structure.
 
 **Why this template exists:**
+
 - ✅ Proven architecture that scales
 - ✅ Maximum code reuse (~80-90% between platforms)
 - ✅ Type-safe from database to UI
@@ -26,6 +27,7 @@ This is a **foundation template** for building cross-platform applications with 
 - ✅ Easy to understand and maintain
 
 **Use this template if you:**
+
 - Want to build for web and mobile simultaneously
 - Value type safety and developer experience
 - Need a solid foundation without the bloat
@@ -34,31 +36,39 @@ This is a **foundation template** for building cross-platform applications with 
 ## ✨ What Makes This Special
 
 ### 🎨 True Cross-Platform
+
 - **One codebase** for web (Next.js) and mobile (Expo)
 - **Shared components** that work identically on all platforms
 - **Unified styling** with Tailwind CSS via NativeWind
 - **Same developer experience** across platforms
 
 ### 🗄️ Flexible Database Layer
+
 I chose **Drizzle ORM** over raw SQL for two key reasons:
+
 1. **Simplicity** - Type-safe queries without the complexity
 2. **Flexibility** - Easy to pivot to different databases (PostgreSQL, MySQL, SQLite)
 
 The database package (`packages/database`) provides:
+
 - Auto-generated Zod validators from schemas
 - Single source of truth for types
 - Easy migrations with Drizzle Kit
 - Multitenant architecture built-in
 
 ### 🏗️ Monorepo Architecture
+
 This structure has proven successful because:
+
 - **Clear boundaries** - Each package has a single purpose
 - **Type safety** - TypeScript across all packages
 - **Fast builds** - Turborepo caches everything
 - **Easy testing** - Isolated, testable packages
 
 ### 📦 Package Philosophy
+
 Every package serves a specific purpose:
+
 - **components** - Shared UI primitives (gluestack + custom)
 - **ui** - Screens, hooks, and business logic
 - **database** - Drizzle schemas and connection
@@ -82,36 +92,40 @@ Every package serves a specific purpose:
 ## 🛠️ Tech Stack
 
 ### Core
-| Technology | Purpose | Why This Choice |
-|------------|---------|-----------------|
-| **Turborepo** | Monorepo build system | Fastest builds with smart caching |
-| **pnpm** | Package manager | Disk efficient, fast, workspace support |
-| **TypeScript** | Type safety | Catch errors at compile time |
+
+| Technology     | Purpose               | Why This Choice                         |
+| -------------- | --------------------- | --------------------------------------- |
+| **Turborepo**  | Monorepo build system | Fastest builds with smart caching       |
+| **pnpm**       | Package manager       | Disk efficient, fast, workspace support |
+| **TypeScript** | Type safety           | Catch errors at compile time            |
 
 ### Frontend
-| Technology | Purpose | Why This Choice |
-|------------|---------|-----------------|
-| **Next.js 15** | Web framework | App Router, RSC, best DX |
-| **Expo 54** | Mobile platform | Best React Native DX |
-| **React 19** | UI library | Latest features, concurrent rendering |
-| **Gluestack UI v3** | Component library | True cross-platform components |
-| **NativeWind 4** | Styling | Tailwind for React Native |
+
+| Technology          | Purpose           | Why This Choice                       |
+| ------------------- | ----------------- | ------------------------------------- |
+| **Next.js 15**      | Web framework     | App Router, RSC, best DX              |
+| **Expo 54**         | Mobile platform   | Best React Native DX                  |
+| **React 19**        | UI library        | Latest features, concurrent rendering |
+| **Gluestack UI v3** | Component library | True cross-platform components        |
+| **NativeWind 4**    | Styling           | Tailwind for React Native             |
 
 ### Backend
-| Technology | Purpose | Why This Choice |
-|------------|---------|-----------------|
-| **Fastify** | API server | Fast, low overhead, great DX |
-| **Drizzle ORM** | Database ORM | Type-safe, flexible, lightweight |
-| **PostgreSQL** | Database | Robust, feature-rich (easily swappable) |
-| **Zod** | Validation | Type-safe schemas, auto-generated |
+
+| Technology      | Purpose      | Why This Choice                         |
+| --------------- | ------------ | --------------------------------------- |
+| **Fastify**     | API server   | Fast, low overhead, great DX            |
+| **Drizzle ORM** | Database ORM | Type-safe, flexible, lightweight        |
+| **PostgreSQL**  | Database     | Robust, feature-rich (easily swappable) |
+| **Zod**         | Validation   | Type-safe schemas, auto-generated       |
 
 ### Testing & Quality
-| Technology | Purpose |
-|------------|---------|
-| **Vitest** | Test runner |
+
+| Technology                | Purpose           |
+| ------------------------- | ----------------- |
+| **Vitest**                | Test runner       |
 | **React Testing Library** | Component testing |
-| **ESLint** | Code linting |
-| **Prettier** | Code formatting |
+| **ESLint**                | Code linting      |
+| **Prettier**              | Code formatting   |
 
 ## 📁 Project Structure
 
@@ -207,6 +221,7 @@ pnpm dev
 ```
 
 This starts:
+
 - 🌐 Web app at `http://localhost:3000`
 - 📱 Mobile app at `http://localhost:8081`
 - 🔌 API server at `http://localhost:3030`
@@ -232,14 +247,14 @@ pnpm web        # Browser
 
 ## 📋 Available Scripts
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start all apps in development mode |
-| `pnpm build` | Build all apps for production |
-| `pnpm lint` | Lint all packages |
-| `pnpm typecheck` | Run TypeScript type checking |
-| `pnpm test` | Run all tests |
-| `pnpm clean` | Clean build artifacts |
+| Command          | Description                        |
+| ---------------- | ---------------------------------- |
+| `pnpm dev`       | Start all apps in development mode |
+| `pnpm build`     | Build all apps for production      |
+| `pnpm lint`      | Lint all packages                  |
+| `pnpm typecheck` | Run TypeScript type checking       |
+| `pnpm test`      | Run all tests                      |
+| `pnpm clean`     | Clean build artifacts              |
 
 ### Package-Specific Commands
 
@@ -268,12 +283,14 @@ See [docs/adr/](./docs/adr/) for all architectural decisions.
 ## 🎨 Styling System
 
 **Unified theme** via `packages/tailwind-config`:
+
 - Shared color palette, typography, spacing
 - CSS variables for dynamic theming
 - Dark mode support
 - Platform-specific overrides when needed
 
 **Usage:**
+
 ```tsx
 // Works on both web and mobile!
 <Button className="bg-primary-500 text-white px-4 py-2 rounded-lg" />
@@ -282,6 +299,7 @@ See [docs/adr/](./docs/adr/) for all architectural decisions.
 ## 🗄️ Database Package
 
 **Schema-first development:**
+
 ```typescript
 // Define table schema once
 export const users = pgTable("users", {
@@ -301,6 +319,7 @@ export type User = z.infer<typeof selectUserSchema>;
 ```
 
 **Benefits:**
+
 - Single source of truth
 - Type-safe queries
 - Auto-validated inputs
@@ -321,6 +340,7 @@ pnpm --filter components test
 ```
 
 **Testing stack:**
+
 - **Vitest** - Fast, modern test runner
 - **React Testing Library** - Component testing
 - **PostgreSQL** - Integration tests with real database
@@ -331,27 +351,32 @@ See [docs/guides/testing.md](./docs/guides/testing.md) for the complete guide.
 ## 🚀 Deployment
 
 ### Web (Next.js)
+
 - Deploy to **Vercel**, **Netlify**, or any Node.js host
 - Build: `pnpm --filter web build`
 - Start: `pnpm --filter web start`
 
 ### Mobile (Expo)
+
 - Use **EAS Build** for app store deployment
 - Preview: `eas build --profile preview`
 - Production: `eas build --profile production`
 
 ### API (Fastify)
+
 - Deploy to any Node.js host or container platform
 - Build: `pnpm --filter api build`
 - Start: `node apps/api/dist/index.js`
 
 ### Database
+
 - Managed PostgreSQL: **Supabase**, **Neon**, **Railway**
 - Migrations: `pnpm --filter database db:migrate`
 
 ## 🤝 Contributing
 
 Contributions are welcome! Please read [CONTRIBUTING.md](./.github/CONTRIBUTING.md) for:
+
 - How to contribute
 - Coding standards
 - Testing requirements

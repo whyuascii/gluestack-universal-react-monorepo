@@ -26,10 +26,12 @@ NNNN-title-with-dashes.md
 ```
 
 Where:
+
 - `NNNN` is a sequential number (e.g., 0001, 0002, 0003)
 - `title-with-dashes` is a short, descriptive title in kebab-case
 
 Examples:
+
 - `0001-use-drizzle-orm-for-database.md`
 - `0002-adopt-gluestack-ui-for-components.md`
 - `0003-use-pnpm-workspaces-for-monorepo.md`

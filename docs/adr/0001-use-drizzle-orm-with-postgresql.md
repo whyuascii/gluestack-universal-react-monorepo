@@ -9,6 +9,7 @@
 ## Context
 
 The monorepo needed a database solution that would:
+
 - Provide type-safe database access
 - Support both backend services (API) and serverless functions
 - Enable schema-first development with migrations
@@ -20,6 +21,7 @@ The monorepo needed a database solution that would:
 We will use **Drizzle ORM** with **PostgreSQL** as our database layer.
 
 The database will be implemented as a shared package (`packages/database`) that:
+
 - Defines all table schemas using Drizzle's type-safe schema builder
 - Automatically generates Zod validators using `drizzle-zod`
 - Exports TypeScript types derived from Zod schemas
@@ -65,11 +67,13 @@ This decision was made because:
 ### Alternative 1: Prisma
 
 **Pros:**
+
 - Larger ecosystem and community
 - Excellent tooling and developer experience
 - Built-in migration system
 
 **Cons:**
+
 - Heavier runtime overhead
 - Less flexible query builder
 - Zod integration requires additional tools
@@ -79,11 +83,13 @@ This decision was made because:
 ### Alternative 2: TypeORM
 
 **Pros:**
+
 - Mature and battle-tested
 - Decorator-based syntax familiar to backend developers
 - Large community
 
 **Cons:**
+
 - Decorator syntax doesn't align with our functional approach
 - Less TypeScript-first compared to Drizzle
 - Zod integration would require manual work
@@ -93,11 +99,13 @@ This decision was made because:
 ### Alternative 3: Raw SQL with Manual Types
 
 **Pros:**
+
 - Maximum control and flexibility
 - No ORM overhead
 - Can optimize every query
 
 **Cons:**
+
 - Manual type management is error-prone
 - No automatic validation generation
 - Significant boilerplate
@@ -122,6 +130,6 @@ This decision was made because:
 
 ## Revision History
 
-| Date       | Author | Changes |
-|------------|--------|---------|
+| Date       | Author | Changes       |
+| ---------- | ------ | ------------- |
 | 2024-12-09 | Claude | Initial draft |

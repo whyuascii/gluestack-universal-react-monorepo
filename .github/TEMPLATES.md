@@ -57,6 +57,7 @@ Discussion templates are in the `DISCUSSION_TEMPLATE/` directory:
 ## 📖 Contributing Guidelines
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for:
+
 - How to contribute
 - Coding standards
 - Testing requirements
@@ -121,6 +122,7 @@ To modify templates:
 ## 🔧 Template Maintenance
 
 Templates should be reviewed periodically to ensure they:
+
 - Reflect current project structure
 - Include relevant options/fields
 - Are easy to understand

@@ -1,4 +1,3 @@
-
 export * from "./type-guards";
 /**
  * ts utility type to set some properties of an object to optional
@@ -25,7 +24,6 @@ export type RemoveNullable<T, K extends keyof T> = Omit<T, K> & { [P in K]: NonN
  */
 export type NonUndefined<T> = T extends undefined ? never : T;
 
-
 type Primitive = string | number | boolean | null | undefined;
 
 /**
@@ -35,15 +33,15 @@ type Primitive = string | number | boolean | null | undefined;
  * @template NestedKeys A union type of top-level keys to nest.
  */
 export type NestedKeyOf<ObjectType extends object, NestedKeys extends keyof ObjectType = never> = {
-	[Key in keyof ObjectType & (string | number)]: Key extends NestedKeys
-		? ObjectType[Key] extends Primitive
-			? `${Key}`
-			: ObjectType[Key] extends (infer ArrayType)[]
-				? ArrayType extends object
-					? `${Key}` | `${Key}.${keyof ArrayType & (string | number)}`
-					: `${Key}`
-				: ObjectType[Key] extends object
-					? `${Key}` | `${Key}.${keyof ObjectType[Key] & (string | number)}`
-					: `${Key}`
-		: `${Key}`;
+  [Key in keyof ObjectType & (string | number)]: Key extends NestedKeys
+    ? ObjectType[Key] extends Primitive
+      ? `${Key}`
+      : ObjectType[Key] extends (infer ArrayType)[]
+        ? ArrayType extends object
+          ? `${Key}` | `${Key}.${keyof ArrayType & (string | number)}`
+          : `${Key}`
+        : ObjectType[Key] extends object
+          ? `${Key}` | `${Key}.${keyof ObjectType[Key] & (string | number)}`
+          : `${Key}`
+    : `${Key}`;
 }[keyof ObjectType & (string | number)];

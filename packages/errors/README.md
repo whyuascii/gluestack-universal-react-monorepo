@@ -26,9 +26,9 @@ throw new AppCustomError({
   userResponse: {
     message: "User-friendly message",
     details: ["Optional array of details"],
-    meta: { key: "Optional metadata" }
+    meta: { key: "Optional metadata" },
   },
-  debug: { userId: "123", requestId: "abc" }
+  debug: { userId: "123", requestId: "abc" },
 });
 ```
 
@@ -106,10 +106,7 @@ import { NotFoundError, BadRequestError } from "errors";
 
 export async function getUser(userId: string) {
   if (!userId) {
-    throw new BadRequestError(
-      "Missing userId parameter",
-      { message: "User ID is required." }
-    );
+    throw new BadRequestError("Missing userId parameter", { message: "User ID is required." });
   }
 
   const user = await db.users.findById(userId);
@@ -139,7 +136,7 @@ export function errorHandler(error: unknown, req, res, next) {
       message: error.message,
       code: error.code,
       debug: error.debug,
-      stack: error.stack
+      stack: error.stack,
     });
 
     // Return the user-safe response
@@ -149,7 +146,7 @@ export function errorHandler(error: unknown, req, res, next) {
   // Handle unexpected errors
   console.error("Unexpected error:", error);
   return res.status(500).json({
-    message: "An unexpected error occurred."
+    message: "An unexpected error occurred.",
   });
 }
 ```
@@ -162,7 +159,7 @@ import { z } from "zod";
 
 const UserSchema = z.object({
   name: z.string().min(1),
-  email: z.string().email()
+  email: z.string().email(),
 });
 
 export function createUser(data: unknown) {
@@ -173,10 +170,10 @@ export function createUser(data: unknown) {
       "User validation failed",
       {
         message: "Invalid user data provided.",
-        details: result.error.errors.map(e => e.message),
+        details: result.error.errors.map((e) => e.message),
         meta: {
-          fields: result.error.errors.map(e => e.path.join("."))
-        }
+          fields: result.error.errors.map((e) => e.path.join(".")),
+        },
       },
       { input: data }
     );

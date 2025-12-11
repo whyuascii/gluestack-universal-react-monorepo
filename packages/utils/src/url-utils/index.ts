@@ -12,40 +12,40 @@ const LOCAL_PORT = 3000;
  * @returns The full domain URL
  */
 export const buildDomainUrl = (
-	options: {
-		environmentStage?: string;
-		subdomain?: string;
-		useDevEnvNames?: boolean;
-	} = {}
+  options: {
+    environmentStage?: string;
+    subdomain?: string;
+    useDevEnvNames?: boolean;
+  } = {}
 ): string => {
-	const { environmentStage, subdomain, useDevEnvNames = true } = options;
-	let domain: string;
+  const { environmentStage, subdomain, useDevEnvNames = true } = options;
+  let domain: string;
 
-	if (!environmentStage || environmentStage === "other") {
-		domain = `staging.${BASE_DOMAIN}`;
-	} else if (environmentStage === "local" || environmentStage === "localhost") {
-		return `localhost:${LOCAL_PORT}`;
-	} else if (environmentStage.startsWith("dev-")) {
-		if (useDevEnvNames) {
-			const devEnvironment = environmentStage.replace("dev-", "");
-			domain = `${devEnvironment}.staging.${BASE_DOMAIN}`;
-		} else {
-			domain = `staging.${BASE_DOMAIN}`;
-		}
-	} else if (environmentStage === "production") {
-		domain = BASE_DOMAIN;
-	} else if (["staging", "sandbox", "demo", "preview"].includes(environmentStage)) {
-		domain = `${environmentStage}.${BASE_DOMAIN}`;
-	} else {
-		// Default fallback for other environments
-		domain = `${environmentStage}.staging.${BASE_DOMAIN}`;
-	}
+  if (!environmentStage || environmentStage === "other") {
+    domain = `staging.${BASE_DOMAIN}`;
+  } else if (environmentStage === "local" || environmentStage === "localhost") {
+    return `localhost:${LOCAL_PORT}`;
+  } else if (environmentStage.startsWith("dev-")) {
+    if (useDevEnvNames) {
+      const devEnvironment = environmentStage.replace("dev-", "");
+      domain = `${devEnvironment}.staging.${BASE_DOMAIN}`;
+    } else {
+      domain = `staging.${BASE_DOMAIN}`;
+    }
+  } else if (environmentStage === "production") {
+    domain = BASE_DOMAIN;
+  } else if (["staging", "sandbox", "demo", "preview"].includes(environmentStage)) {
+    domain = `${environmentStage}.${BASE_DOMAIN}`;
+  } else {
+    // Default fallback for other environments
+    domain = `${environmentStage}.staging.${BASE_DOMAIN}`;
+  }
 
-	if (subdomain) {
-		return `${subdomain}.${domain}`;
-	}
+  if (subdomain) {
+    return `${subdomain}.${domain}`;
+  }
 
-	return domain;
+  return domain;
 };
 
 /**
@@ -59,21 +59,22 @@ export const buildDomainUrl = (
  * @returns The full URL
  */
 export const buildUrl = (
-	options: {
-		environmentStage?: string;
-		subdomain?: string;
-		path?: string;
-		protocol?: "http" | "https";
-	} = {}
+  options: {
+    environmentStage?: string;
+    subdomain?: string;
+    path?: string;
+    protocol?: "http" | "https";
+  } = {}
 ): string => {
-	const { environmentStage, subdomain, path, protocol } = options;
+  const { environmentStage, subdomain, path, protocol } = options;
 
-	// Determine the protocol - use http for local environments unless explicitly overridden
-	const finalProtocol =
-		protocol || (environmentStage === "local" || environmentStage === "localhost" ? "http" : "https");
+  // Determine the protocol - use http for local environments unless explicitly overridden
+  const finalProtocol =
+    protocol ||
+    (environmentStage === "local" || environmentStage === "localhost" ? "http" : "https");
 
-	const domain = buildDomainUrl({ environmentStage, subdomain });
-	const basePath = path || "";
+  const domain = buildDomainUrl({ environmentStage, subdomain });
+  const basePath = path || "";
 
-	return `${finalProtocol}://${domain}${basePath}`;
+  return `${finalProtocol}://${domain}${basePath}`;
 };

@@ -5,8 +5,8 @@ import swagger from "./swagger";
 export { VERSIONS } from "./versions";
 
 const attachAllHandlers = (app: FastifyInstance) => {
-	health(app);
-	swagger(app);
+  health(app);
+  swagger(app);
 };
 
 export default attachAllHandlers;

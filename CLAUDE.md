@@ -11,6 +11,7 @@ This is a cross-platform React monorepo using Turborepo, pnpm workspaces, Next.j
 **Package Manager:** pnpm (v10.15.0)
 
 ### Root-level Commands
+
 ```bash
 pnpm dev              # Start all apps in development (web + mobile)
 pnpm build            # Build all apps for production
@@ -19,6 +20,7 @@ pnpm check-types      # TypeScript type checking across all packages
 ```
 
 ### Working with Specific Packages
+
 ```bash
 # Run commands in specific packages
 pnpm --filter web dev              # Next.js web app
@@ -41,7 +43,9 @@ pnpm web              # Web browser (Expo web)
 ```
 
 ### Testing Individual Components
+
 When developing or testing specific components, you can:
+
 - For web: Run `pnpm --filter web dev` and navigate to the component in the browser
 - For mobile: Run `pnpm --filter mobile dev` and test on iOS/Android/web platforms
 
@@ -147,7 +151,9 @@ import { tenants } from "./tenants";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
-  tenantId: uuid("tenant_id").notNull().references(() => tenants.id, { onDelete: "cascade" }),
+  tenantId: uuid("tenant_id")
+    .notNull()
+    .references(() => tenants.id, { onDelete: "cascade" }),
   email: varchar("email", { length: 255 }).notNull(),
   name: varchar("name", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -180,15 +186,18 @@ export type UpdateUser = z.infer<typeof updateUserSchema>;
 ```typescript
 // Import in your API server or lambdas
 import {
-  db,                    // Database connection instance
-  users,                 // Table schema
-  tenants,               // Table schema
-  insertUserSchema,      // Zod validator for inserts
-  selectUserSchema,      // Zod validator for selects
-  updateUserSchema,      // Zod validator for updates
-  type User,             // TypeScript type
-  type InsertUser,       // TypeScript type
-  eq, and, or, sql       // Drizzle query utilities
+  db, // Database connection instance
+  users, // Table schema
+  tenants, // Table schema
+  insertUserSchema, // Zod validator for inserts
+  selectUserSchema, // Zod validator for selects
+  updateUserSchema, // Zod validator for updates
+  type User, // TypeScript type
+  type InsertUser, // TypeScript type
+  eq,
+  and,
+  or,
+  sql, // Drizzle query utilities
 } from "database";
 
 // Validate input with Zod
@@ -299,6 +308,7 @@ module.exports = createTailwindConfig({
 - **Custom Shadows**: `hard-*` and `soft-*` shadow utilities (1-5 variants)
 
 **Benefits:**
+
 - Single source of truth for theme (colors, fonts, shadows, etc.)
 - Theme changes propagate automatically to both platforms
 - Apps can't accidentally exclude shared package paths
@@ -310,9 +320,7 @@ Both apps wrap their content with the same providers (in the same order):
 
 ```tsx
 <GluestackUIProvider mode="light">
-  <SafeAreaProvider>
-    {/* App content */}
-  </SafeAreaProvider>
+  <SafeAreaProvider>{/* App content */}</SafeAreaProvider>
 </GluestackUIProvider>
 ```
 
@@ -329,6 +337,7 @@ For web, an additional `StyledJsxRegistry` wraps everything for Next.js 15 compa
 ### Creating Shared Screens and UI Logic
 
 **For screens:**
+
 1. Add screen to `packages/ui/src/<feature>/`
 2. Export from `packages/ui/src/index.ts`
 3. Import in app-specific routing:
@@ -336,16 +345,19 @@ For web, an additional `StyledJsxRegistry` wraps everything for Next.js 15 compa
    - Mobile: `apps/mobile/src/app/` (Expo Router)
 
 **For hooks:**
+
 1. Add hook to `packages/ui/src/hooks/<hook-name>.ts`
 2. Export from `packages/ui/src/index.ts`
 3. Import via `import { useHookName } from "ui"`
 
 **For state management:**
+
 1. Add stores to `packages/ui/src/store/<store-name>.ts`
 2. Export from `packages/ui/src/index.ts`
 3. Import via `import { useStore } from "ui"`
 
 **For utilities:**
+
 1. Add utilities to `packages/ui/src/utils/<util-name>.ts`
 2. Export from `packages/ui/src/index.ts`
 3. Import via `import { utilityFunction } from "ui"`
@@ -374,8 +386,12 @@ import { users } from "./users";
 
 export const posts = pgTable("posts", {
   id: uuid("id").primaryKey().defaultRandom(),
-  tenantId: uuid("tenant_id").notNull().references(() => tenants.id, { onDelete: "cascade" }),
-  authorId: uuid("author_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  tenantId: uuid("tenant_id")
+    .notNull()
+    .references(() => tenants.id, { onDelete: "cascade" }),
+  authorId: uuid("author_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
   title: varchar("title", { length: 255 }).notNull(),
   content: text("content"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -423,6 +439,7 @@ pnpm --filter database db:studio   # Opens GUI at https://local.drizzle.studio
 **Database connection:**
 
 The `db` instance is a singleton exported from `packages/database/src/db.ts`. It automatically:
+
 - Loads `DATABASE_URL` from environment variables via `dotenv`
 - Configures SSL based on `NODE_ENV` (enabled in production)
 - Includes all schemas for type inference and relations
@@ -432,11 +449,13 @@ The `db` instance is a singleton exported from `packages/database/src/db.ts`. It
 All theme customizations (colors, fonts, shadows, etc.) are centralized in `packages/tailwind-config/index.js`:
 
 **To update theme colors:**
+
 1. Edit `packages/tailwind-config/index.js`
 2. Modify the `colors` object in `theme.extend`
 3. Changes apply to both apps immediately (hot reload works)
 
 **To add new theme values:**
+
 ```javascript
 // packages/tailwind-config/index.js
 theme: {
@@ -453,6 +472,7 @@ theme: {
 ```
 
 **For app-specific theme overrides:**
+
 ```javascript
 // apps/web/tailwind.config.js
 const baseConfig = require("tailwind-config")({ content: [...] });
@@ -478,29 +498,33 @@ module.exports = {
 All shared TypeScript compiler options are centralized in `packages/typescript-config/`:
 
 **To update compiler options for all projects:**
+
 1. Edit `packages/typescript-config/base.json`
 2. Add/modify compiler options
 3. Changes apply immediately to all apps and packages
 
 **To update Next.js-specific settings:**
+
 1. Edit `packages/typescript-config/nextjs.json`
 2. Only affects the web app
 
 **To update Expo/React Native settings:**
+
 1. Edit `packages/typescript-config/expo.json`
 2. Affects mobile app and all packages (ui, screens)
 
 **For app-specific TypeScript overrides:**
+
 ```json
 // apps/web/tsconfig.json
 {
   "extends": "typescript-config/nextjs.json",
   "compilerOptions": {
     "paths": {
-      "@/*": ["./src/*"],        // App-specific path aliases
+      "@/*": ["./src/*"], // App-specific path aliases
       "@components/*": ["./src/components/*"]
     },
-    "baseUrl": "."               // App-specific setting
+    "baseUrl": "." // App-specific setting
   }
 }
 ```
@@ -525,6 +549,7 @@ The monorepo uses a Turborepo-style TypeScript configuration with platform-speci
 **Configuration files:**
 
 1. **`base.json`** - Core compiler options shared by all projects:
+
 ```json
 {
   "compilerOptions": {
@@ -539,6 +564,7 @@ The monorepo uses a Turborepo-style TypeScript configuration with platform-speci
 ```
 
 2. **`nextjs.json`** - Extends base.json, adds Next.js-specific settings:
+
 ```json
 {
   "extends": "./base.json",
@@ -556,6 +582,7 @@ The monorepo uses a Turborepo-style TypeScript configuration with platform-speci
 ```
 
 3. **`expo.json`** - Extends Expo's base config with our strict mode:
+
 ```json
 {
   "extends": "expo/tsconfig.base",
@@ -609,6 +636,7 @@ The monorepo uses a Turborepo-style TypeScript configuration with platform-speci
 ```
 
 **Benefits:**
+
 - Platform-specific configs (Next.js vs Expo vs Node.js) clearly defined
 - Compiler options centralized - update once, applies everywhere
 - Apps/packages reduced to minimal configs (just paths and includes)
@@ -618,6 +646,7 @@ The monorepo uses a Turborepo-style TypeScript configuration with platform-speci
 ### Build Caching
 
 Turborepo caches build outputs:
+
 - Web: `.next/**` (excluding cache)
 - Task dependencies defined in `turbo.json`
 
@@ -626,12 +655,14 @@ Turborepo caches build outputs:
 ### Version Constraints
 
 Always respect the pnpm overrides in root `package.json`. These versions are locked for compatibility:
+
 - React 19 requires specific native module versions
 - NativeWind 4.x requires Tailwind 3.x
 
 ### gluestack Component Conditionals
 
 Some components are commented out in `packages/components/src/index.ts`:
+
 - `accordion`, `actionsheet`: Not yet implemented
 - `bottomsheet`, `input-accessory-view`: Expo-only (no web support)
 - `select`, `table`: Currently disabled
@@ -639,9 +670,14 @@ Some components are commented out in `packages/components/src/index.ts`:
 ### Build Errors to Ignore
 
 `next.config.ts` has:
+
 ```ts
-eslint: { ignoreDuringBuilds: true }
-typescript: { ignoreBuildErrors: true }
+eslint: {
+  ignoreDuringBuilds: true;
+}
+typescript: {
+  ignoreBuildErrors: true;
+}
 ```
 
 This is intentional for faster builds during development. Remove when stabilizing.
@@ -655,6 +691,7 @@ Not all React Native components work on web. The components package selectively 
 ### Module Resolution
 
 If imports fail:
+
 1. Check `pnpm-workspace.yaml` includes the package path
 2. Verify `package.json` has `"main"` and `"types"` fields pointing to entry
 3. Run `pnpm install` from root to update workspace links
@@ -670,6 +707,7 @@ If imports fail:
 ### TypeScript Errors
 
 If TypeScript is not recognizing the shared config:
+
 1. Verify the app/package has `typescript-config: "workspace:*"` in `devDependencies`
 2. Run `pnpm install` from root to ensure workspace linking
 3. Check that `tsconfig.json` extends the correct config:
@@ -679,6 +717,7 @@ If TypeScript is not recognizing the shared config:
 4. Restart your TypeScript server (VS Code: Cmd+Shift+P → "TypeScript: Restart TS Server")
 
 If you need to modify compiler options:
+
 - **DO NOT** add compiler options directly to app/package `tsconfig.json` files
 - **DO** update the shared config in `packages/typescript-config/`
 - Only add app-specific settings like `paths`, `baseUrl`, or `include` to individual configs
@@ -691,24 +730,28 @@ Use `pnpm --filter mobile dev` to test all three platforms (iOS/Android/web) bef
 ### Database Package Issues
 
 **Connection errors:**
+
 1. Verify `DATABASE_URL` is set in environment variables (`.env` file or system env)
 2. Check database is running and accessible at the connection string
 3. For production, ensure SSL is enabled (automatically enabled when `NODE_ENV=production`)
 4. Test connection with: `pnpm --filter database db:studio`
 
 **Migration errors:**
+
 1. Ensure `drizzle.config.ts` points to correct schema path (`./src/schema/index.ts`)
 2. Run `pnpm --filter database generate` after schema changes
 3. Apply migrations with `pnpm --filter database db:migrate`
 4. Check `drizzle/` directory for generated SQL files
 
 **Type errors with Drizzle/Zod:**
+
 1. Ensure `drizzle-orm`, `drizzle-zod`, and `zod` versions are compatible
 2. Run `pnpm install` from root to ensure workspace dependencies are linked
 3. Verify schema files export both Zod schemas and TypeScript types
 4. Check that `createInsertSchema` and `createSelectSchema` are imported from `drizzle-zod`
 
 **Import errors in API/lambdas:**
+
 1. Verify the consuming app has `"database": "workspace:*"` in dependencies
 2. Run `pnpm install` from root to link workspace packages
 3. Check import path is `from "database"` (not `from "@/database"` or relative paths)

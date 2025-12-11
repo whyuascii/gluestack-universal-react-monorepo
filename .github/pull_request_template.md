@@ -63,9 +63,7 @@
 
 ### Before
 
-
 ### After
-
 
 ## Checklist
 
@@ -95,8 +93,6 @@
 
 <!-- If this is a breaking change, describe the impact and migration path -->
 
-
-
 ## Performance Impact
 
 <!-- Describe any performance implications of your changes -->
@@ -117,13 +113,9 @@
 
 <!-- Add any other context about the PR here -->
 
-
-
 ## Reviewer Notes
 
 <!-- Any specific areas you'd like reviewers to focus on? -->
-
-
 
 ---
 

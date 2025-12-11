@@ -3,6 +3,7 @@ import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import importPlugin from "eslint-plugin-import";
 import turboConfig from "eslint-config-turbo/flat";
+import prettierConfig from "eslint-config-prettier";
 
 /**
  * Base ESLint configuration for the monorepo
@@ -54,23 +55,13 @@ export default [
 
       // Disable base rule in favor of TypeScript version
       "no-redeclare": "off",
-      "@typescript-eslint/no-redeclare": [
-        "error",
-        { ignoreDeclarationMerge: true },
-      ],
+      "@typescript-eslint/no-redeclare": ["error", { ignoreDeclarationMerge: true }],
 
       // Import rules
       "import/order": [
         "warn",
         {
-          groups: [
-            "builtin",
-            "external",
-            "internal",
-            "parent",
-            "sibling",
-            "index",
-          ],
+          groups: ["builtin", "external", "internal", "parent", "sibling", "index"],
           "newlines-between": "never",
           alphabetize: {
             order: "asc",
@@ -116,14 +107,7 @@ export default [
       "import/order": [
         "warn",
         {
-          groups: [
-            "builtin",
-            "external",
-            "internal",
-            "parent",
-            "sibling",
-            "index",
-          ],
+          groups: ["builtin", "external", "internal", "parent", "sibling", "index"],
           "newlines-between": "never",
           alphabetize: {
             order: "asc",
@@ -138,11 +122,7 @@ export default [
 
   // Web-specific files (need browser globals)
   {
-    files: [
-      "**/*.web.{ts,tsx,js,jsx}",
-      "**/*.next*.{ts,tsx}",
-      "**/script.ts",
-    ],
+    files: ["**/*.web.{ts,tsx,js,jsx}", "**/*.next*.{ts,tsx}", "**/script.ts"],
     languageOptions: {
       globals: {
         document: "readonly",
@@ -165,13 +145,13 @@ export default [
 
   // Relax rules for files with existing TypeScript suppressions
   {
-    files: [
-      "**/bottomsheet/**",
-      "**/table/**",
-    ],
+    files: ["**/bottomsheet/**", "**/table/**"],
     rules: {
       "@typescript-eslint/ban-ts-comment": "warn",
       "@typescript-eslint/no-unused-expressions": "warn",
     },
   },
+
+  // Prettier config (must be last to override formatting rules)
+  prettierConfig,
 ];

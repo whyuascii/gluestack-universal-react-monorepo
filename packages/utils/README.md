@@ -7,8 +7,8 @@ This package contains utility functions that do not have backend nor frontend de
 ## When should you add a function to this package?
 
 - The function is used across multiple workspaces.
-    - If the function is only used in one workspace, keep it in the utils directory of that workspace.
-    - Avoid prematurely adding functions to this package based on anticipated future use. This can lead to stale code.
+  - If the function is only used in one workspace, keep it in the utils directory of that workspace.
+  - Avoid prematurely adding functions to this package based on anticipated future use. This can lead to stale code.
 - The function does not have any backend-specific dependencies.
 - The function is not frontend-specific.
 - The function can be used in both frontend and backend environments.

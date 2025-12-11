@@ -1,40 +1,40 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import dotenv from "dotenv";
 import type {
-    FastifyBaseLogger,
-    FastifyInstance,
-    FastifyTypeProviderDefault,
-    RawServerDefault,
+  FastifyBaseLogger,
+  FastifyInstance,
+  FastifyTypeProviderDefault,
+  RawServerDefault,
 } from "fastify";
 import { build } from "./app";
 
 const start = async () => {
-    let fastify: FastifyInstance<
-        RawServerDefault,
-        IncomingMessage,
-        ServerResponse<IncomingMessage>,
-        FastifyBaseLogger,
-        FastifyTypeProviderDefault
-    >;
+  let fastify: FastifyInstance<
+    RawServerDefault,
+    IncomingMessage,
+    ServerResponse<IncomingMessage>,
+    FastifyBaseLogger,
+    FastifyTypeProviderDefault
+  >;
 
-    // load env vars
-    if (process.env.NODE_ENV === "local") {
-        const localEnv = dotenv.config({ path: "./.env" });
+  // load env vars
+  if (process.env.NODE_ENV === "local") {
+    const localEnv = dotenv.config({ path: "./.env" });
 
-        console.info("populated local environment: ", localEnv.parsed);
-    }
+    console.info("populated local environment: ", localEnv.parsed);
+  }
 
-    try {
-        fastify = await build();
-    } catch (err) {
-        console.error("error", "Error starting server", { error: err });
-        return;
-    }
+  try {
+    fastify = await build();
+  } catch (err) {
+    console.error("error", "Error starting server", { error: err });
+    return;
+  }
 
-    await fastify.listen({
-        host: fastify.config.HOST,
-        port: fastify.config.PORT,
-    });
+  await fastify.listen({
+    host: fastify.config.HOST,
+    port: fastify.config.PORT,
+  });
 };
 
 start();

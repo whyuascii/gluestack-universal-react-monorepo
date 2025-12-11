@@ -25,10 +25,7 @@ export default function Demo() {
   const handleClose = () => setShowAlertDialog(false);
 
   return (
-    <SafeAreaView
-      className="flex-1 bg-gray-50"
-      edges={["top", "left", "right"]}
-    >
+    <SafeAreaView className="flex-1 bg-gray-50" edges={["top", "left", "right"]}>
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
@@ -46,18 +43,14 @@ export default function Demo() {
             Cross-platform components built with React Native and NativeWind
           </Text>
           <View className="bg-purple-100 px-3 py-1 rounded-full">
-            <Text className="text-purple-800 text-sm font-medium">
-              📱 Mobile App
-            </Text>
+            <Text className="text-purple-800 text-sm font-medium">📱 Mobile App</Text>
           </View>
         </View>
 
         {/* Component Showcase */}
         <View className="gap-6">
           {/* Button Component */}
-          <Text className="text-lg font-semibold text-gray-900 mb-4">
-            Button
-          </Text>
+          <Text className="text-lg font-semibold text-gray-900 mb-4">Button</Text>
           <View className="gap-3">
             <Button size="xl">
               <ButtonIcon as={PlusCircleIcon} />
@@ -74,9 +67,7 @@ export default function Demo() {
           </View>
 
           {/* Card Component */}
-          <Text className="text-lg font-semibold text-gray-900 mb-4">
-            Alert
-          </Text>
+          <Text className="text-lg font-semibold text-gray-900 mb-4">Alert</Text>
           <View>
             <Alert variant="solid" action="error">
               <AlertIcon as={AlertCircleIcon} />
@@ -96,26 +87,18 @@ export default function Demo() {
             <AlertDialogBackdrop />
             <AlertDialogContent>
               <AlertDialogHeader>
-                <Heading
-                  className="text-typography-950 font-semibold"
-                  size="md"
-                >
+                <Heading className="text-typography-950 font-semibold" size="md">
                   Are you sure you want to delete this post?
                 </Heading>
               </AlertDialogHeader>
               <AlertDialogBody className="mt-3 mb-4">
                 <Text>
-                  Deleting the post will remove it permanently and cannot be
-                  undone. Please confirm if you want to proceed.
+                  Deleting the post will remove it permanently and cannot be undone. Please confirm
+                  if you want to proceed.
                 </Text>
               </AlertDialogBody>
               <AlertDialogFooter className="">
-                <Button
-                  variant="outline"
-                  action="secondary"
-                  onPress={handleClose}
-                  size="sm"
-                >
+                <Button variant="outline" action="secondary" onPress={handleClose} size="sm">
                   <ButtonText>Cancel</ButtonText>
                 </Button>
                 <Button size="sm" onPress={handleClose}>
@@ -127,13 +110,10 @@ export default function Demo() {
 
           {/* How It Works */}
           <View className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4">
-            <Text className="text-lg font-semibold text-gray-900 mb-3">
-              How It Works
-            </Text>
+            <Text className="text-lg font-semibold text-gray-900 mb-3">How It Works</Text>
             <Text className="text-gray-600 text-sm mb-4 leading-5">
-              Components use React Native primitives (View, Text, Pressable)
-              with NativeWind for styling. React Native Web transforms these
-              into HTML elements for the browser.
+              Components use React Native primitives (View, Text, Pressable) with NativeWind for
+              styling. React Native Web transforms these into HTML elements for the browser.
             </Text>
 
             <View className="flex-row gap-3">
@@ -142,21 +122,15 @@ export default function Demo() {
                   <Text className="text-blue-600">🌐</Text>
                   <Text className="font-medium text-blue-900 text-sm">Web</Text>
                 </View>
-                <Text className="text-blue-700 text-xs">
-                  React Native Web → HTML
-                </Text>
+                <Text className="text-blue-700 text-xs">React Native Web → HTML</Text>
               </View>
 
               <View className="flex-1 bg-white p-3 rounded border border-purple-100">
                 <View className="flex-row items-center gap-2 mb-1">
                   <Text className="text-purple-600">📱</Text>
-                  <Text className="font-medium text-purple-900 text-sm">
-                    Mobile
-                  </Text>
+                  <Text className="font-medium text-purple-900 text-sm">Mobile</Text>
                 </View>
-                <Text className="text-purple-700 text-xs">
-                  Native iOS/Android
-                </Text>
+                <Text className="text-purple-700 text-xs">Native iOS/Android</Text>
               </View>
             </View>
           </View>
@@ -168,9 +142,7 @@ export default function Demo() {
             <Pressable className="bg-blue-600 px-6 py-2 rounded-lg active:opacity-80">
               <View className="flex-row items-center gap-2">
                 <Text className="text-white text-sm">🏠</Text>
-                <Text className="text-white font-medium text-sm">
-                  Back to Home
-                </Text>
+                <Text className="text-white font-medium text-sm">Back to Home</Text>
               </View>
             </Pressable>
           </Link>
