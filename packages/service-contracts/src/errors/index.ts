@@ -6,7 +6,7 @@ import { z } from "zod";
  * This format is returned from APIs or UI clients to communicate issues
  * in a clear and controlled way, avoiding exposure of sensitive system details.
  */
-export const UserErrorResponseSchema = z.object({
+export const UserErrorResponse = z.object({
   /**
    * A friendly, high-level message describing what went wrong.
    *
@@ -41,4 +41,4 @@ export const UserErrorResponseSchema = z.object({
 /**
  * TypeScript type inferred from the Zod schema.
  */
-export type UserErrorResponse = z.infer<typeof UserErrorResponseSchema>;
+export type TUserErrorResponse = z.infer<typeof UserErrorResponse>;

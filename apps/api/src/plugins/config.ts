@@ -10,7 +10,7 @@ export default fastifyPlugin(
   ) => {
     const envSchema = {
       type: "object",
-      required: [],
+      required: ["BETTER_AUTH_SECRET", "BETTER_AUTH_URL"],
       properties: {
         AWS_REGION: { type: "string", default: "us-east-1" },
         PORT: { type: "number", default: 3030 },
@@ -19,6 +19,15 @@ export default fastifyPlugin(
         HOST: { type: "string", default: "0.0.0.0" },
         ENVIRONMENT_STAGE: { type: "string", default: "production" },
         NODE_ENV: { type: "string", default: "production" },
+        DATABASE_URL: {
+          type: "string",
+          default: "postgresql://postgres:postgres@localhost:5432/repo_development",
+        },
+        BETTER_AUTH_SECRET: { type: "string" },
+        BETTER_AUTH_URL: {
+          type: "string",
+          default: "http://localhost:3030",
+        },
       },
     };
 

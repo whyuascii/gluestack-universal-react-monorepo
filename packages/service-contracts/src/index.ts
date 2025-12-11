@@ -7,4 +7,6 @@ export * from "./errors";
 // Generic reusable contracts
 export * from "./generic";
 
+export * from "./auth";
 export * from "./health";
+export * from "./users";
