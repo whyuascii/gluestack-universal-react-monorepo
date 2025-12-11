@@ -6,7 +6,7 @@ import {
   isResponseSerializationError,
   type ZodFastifySchemaValidationError,
 } from "fastify-type-provider-zod";
-import { type UserErrorResponse } from "service-contracts";
+import { type TUserErrorResponse } from "service-contracts";
 import { transformValidationErrorMessages } from "utils";
 import type { z } from "zod";
 
@@ -14,9 +14,9 @@ export const globalErrorHandler = (
   fastify: FastifyInstance,
   error: FastifyError,
   request: FastifyRequest
-): { statusCode: number; response: UserErrorResponse } => {
+): { statusCode: number; response: TUserErrorResponse } => {
   let statusCode = error.statusCode || 500;
-  let response: UserErrorResponse = {
+  let response: TUserErrorResponse = {
     message: error.message || "Internal Server Error",
   };
   let internalErrorMessage = `Unhandled Error: ${JSON.stringify(error)}`;

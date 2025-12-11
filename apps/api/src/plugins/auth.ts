@@ -5,24 +5,24 @@ import fastifyPlugin from "fastify-plugin";
 /**
  * Auth plugin that:
  * 1. Initializes Better Auth with database connection
- * 2. Decorates Fastify instance with auth methods
- * 3. Provides authentication verification preHandler
+ * 2. Decorates Fastify instance with betterAuth instance
+ * 3. Provides authentication verification preHandler (verifyAuth)
  */
 export default fastifyPlugin(
   async (fastify: FastifyInstance) => {
     try {
-      // NOTE: Not sure if I need auth decorator. I think I just need verify
-      // Decorate fastify instance with auth
-      // fastify.decorate("auth", auth);
+      // Create Better Auth instance
+      const betterAuth = createAuthConfig();
 
-      // Decorate with verify method for protecting routes
-      fastify.decorate("verify", async (request: FastifyRequest, reply: FastifyReply) => {
-        // Create Better Auth instance
-        const auth = createAuthConfig();
+      // Decorate fastify instance with betterAuth
+      fastify.decorate("betterAuth", betterAuth);
+
+      // Decorate with verifyAuth method for protecting routes
+      fastify.decorate("verifyAuth", async (request: FastifyRequest, reply: FastifyReply) => {
         try {
           // Get session from Better Auth
-          const session = await auth.api.getSession({
-            headers: request.headers as any,
+          const session = await betterAuth.api.getSession({
+            headers: request.headers,
           });
 
           if (!session) {
@@ -50,5 +50,5 @@ export default fastifyPlugin(
       throw err;
     }
   },
-  { name: "auth", dependencies: ["config", "database"] }
+  { name: "betterAuth", dependencies: ["config", "database"] }
 );

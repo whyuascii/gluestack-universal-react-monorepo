@@ -285,3 +285,8 @@ const timeout = process.env.GH_ACTIONS ? 10000 : 5000;
 5. **Keep Tests Fast**: Unit tests should run in milliseconds
 6. **Mock External Dependencies**: Don't call real APIs in tests
 7. **Test Edge Cases**: Cover error conditions and boundary values
+
+## Related Documentation
+
+- [API Testing Guide](../api/testing.md) - Detailed API testing guide
+- [Database Package](../packages/database.md) - Database testing strategies

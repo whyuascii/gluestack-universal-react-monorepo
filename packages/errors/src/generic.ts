@@ -1,10 +1,10 @@
-import { type UserErrorResponse } from "service-contracts";
+import { TUserErrorResponse } from "service-contracts";
 import { AppCustomError } from "./base";
 
 export class NotFoundError extends AppCustomError {
   constructor(
     message = "Resource not found",
-    userResponse: UserErrorResponse = {
+    userResponse: TUserErrorResponse = {
       message: "The requested resource was not found.",
     },
     debug?: Record<string, unknown>
@@ -21,7 +21,7 @@ export class NotFoundError extends AppCustomError {
 export class BadRequestError extends AppCustomError {
   constructor(
     message = "Bad request",
-    userResponse: UserErrorResponse = {
+    userResponse: TUserErrorResponse = {
       message: "The request was invalid or missing required data.",
     },
     debug?: Record<string, unknown>
@@ -38,7 +38,7 @@ export class BadRequestError extends AppCustomError {
 export class UnauthorizedError extends AppCustomError {
   constructor(
     message = "Unauthorized",
-    userResponse: UserErrorResponse = {
+    userResponse: TUserErrorResponse = {
       message: "You are not authorized to perform this action.",
     },
     debug?: Record<string, unknown>
@@ -55,7 +55,7 @@ export class UnauthorizedError extends AppCustomError {
 export class ForbiddenError extends AppCustomError {
   constructor(
     message = "Forbidden",
-    userResponse: UserErrorResponse = {
+    userResponse: TUserErrorResponse = {
       message: "You do not have permission to access this resource.",
     },
     debug?: Record<string, unknown>
@@ -72,7 +72,7 @@ export class ForbiddenError extends AppCustomError {
 export class ConflictError extends AppCustomError {
   constructor(
     message = "Conflict",
-    userResponse: UserErrorResponse = {
+    userResponse: TUserErrorResponse = {
       message: "A conflict occurred while processing the request.",
     },
     debug?: Record<string, unknown>
@@ -89,7 +89,7 @@ export class ConflictError extends AppCustomError {
 export class UnprocessableEntityError extends AppCustomError {
   constructor(
     message = "Unprocessable entity",
-    userResponse: UserErrorResponse = {
+    userResponse: TUserErrorResponse = {
       message: "The provided data could not be processed.",
     },
     debug?: Record<string, unknown>
@@ -106,7 +106,7 @@ export class UnprocessableEntityError extends AppCustomError {
 export class PermissionsError extends AppCustomError {
   constructor(
     message = "Permission denied",
-    userResponse: UserErrorResponse = {
+    userResponse: TUserErrorResponse = {
       message: "You do not have permission to perform this action.",
     },
     debug?: Record<string, unknown>
@@ -123,7 +123,7 @@ export class PermissionsError extends AppCustomError {
 export class DataFetchError extends AppCustomError {
   constructor(
     message: string,
-    userResponse: UserErrorResponse = {
+    userResponse: TUserErrorResponse = {
       message: "Failed to retrieve required data.",
     },
     debug?: Record<string, unknown>
@@ -140,7 +140,7 @@ export class DataFetchError extends AppCustomError {
 export class InternalServerError extends AppCustomError {
   constructor(
     message = "Internal server error",
-    userResponse: UserErrorResponse = {
+    userResponse: TUserErrorResponse = {
       message: "An internal server error occurred.",
     },
     debug?: Record<string, unknown>

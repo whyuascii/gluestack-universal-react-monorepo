@@ -75,3 +75,92 @@ A common pattern is **One "purpose" per package** design. This is a [recommendat
 When you're creating Application Packages, it's best to avoid putting shared code in those packages. Instead, you should create a separate package for the shared code and have the application packages depend on that package.
 
 Additionally, Application Packages are not meant to be installed into other packages. Instead, they should be thought of as an entry point to your Package Graph.
+
+## This Monorepo's Structure
+
+Our monorepo follows a specific package dependency hierarchy:
+
+**Base Layer (No Dependencies):**
+
+- `database` - Drizzle ORM + schemas
+- `utils` - Pure utility functions
+- `errors` - Error classes
+- `service-contracts` - Type definitions
+
+**Auth Layer:**
+
+- `auth` - Better Auth configuration (depends on `database`)
+
+**UI Layer:**
+
+- `components` - gluestack UI primitives (no dependencies)
+- `ui` - Screens, hooks, state (depends on `components`, `utils`)
+
+**Application Layer:**
+
+- `web` - Next.js app (depends on all UI packages)
+- `mobile` - Expo app (depends on all UI packages)
+- `api` - Fastify server (depends on `auth`, `database`, `errors`, `service-contracts`, `utils`)
+
+**Configuration Packages:**
+
+- `tailwind-config` - Shared Tailwind theme
+- `typescript-config` - Shared TypeScript settings
+- `eslint-config` - Shared ESLint rules
+
+### Package Manager
+
+This monorepo uses **pnpm** (not npm). Commands differ:
+
+```bash
+# pnpm (used in this project)
+pnpm --filter api test
+pnpm install
+pnpm dev
+
+# npm (from general guide above)
+npm install --workspace=api
+```
+
+### Workspace Dependencies
+
+Internal packages use `workspace:*` protocol:
+
+```json
+{
+  "dependencies": {
+    "database": "workspace:*",
+    "auth": "workspace:*",
+    "components": "workspace:*"
+  }
+}
+```
+
+This ensures:
+
+- Always uses latest local version
+- No need to publish to npm
+- Proper TypeScript resolution
+
+### Version Overrides
+
+The root `package.json` uses pnpm overrides to enforce consistent versions:
+
+```json
+{
+  "pnpm": {
+    "overrides": {
+      "react": "19.1.0",
+      "tailwindcss": "3.4.17"
+    }
+  }
+}
+```
+
+Don't override these in individual packages unless absolutely necessary.
+
+## Related Documentation
+
+- [Monorepo Structure](../architecture/monorepo-structure.md)
+- [Architecture Overview](../architecture/overview.md)
+- [Cross-Platform Strategy](../architecture/cross-platform.md)

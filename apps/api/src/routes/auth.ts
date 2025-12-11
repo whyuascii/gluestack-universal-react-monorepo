@@ -31,16 +31,16 @@ export default (app: FastifyInstance, routeOptions: RouteOptions) => {
         const { name, email, password } = request.body;
 
         // Use Better Auth to create account
-        const result = await app.auth.api.signUpEmail({
+        const result = await app.betterAuth.api.signUpEmail({
           body: {
             name,
             email,
             password,
           },
-          headers: request.headers as any,
+          headers: request.headers,
         });
 
-        if (!result) {
+        if (!result || !result.token) {
           return reply.status(400).send({
             message: "Failed to create account",
             code: "SIGNUP_FAILED",
@@ -84,15 +84,15 @@ export default (app: FastifyInstance, routeOptions: RouteOptions) => {
         const { email, password } = request.body;
 
         // Use Better Auth to sign in
-        const result = await app.auth.api.signInEmail({
+        const result = await app.betterAuth.api.signInEmail({
           body: {
             email,
             password,
           },
-          headers: request.headers as any,
+          headers: request.headers,
         });
 
-        if (!result) {
+        if (!result || !result.token) {
           return reply.status(401).send({
             message: "Invalid email or password",
             code: "INVALID_CREDENTIALS",
@@ -121,7 +121,7 @@ export default (app: FastifyInstance, routeOptions: RouteOptions) => {
   app.withTypeProvider<ZodTypeProvider>().route({
     method: "POST",
     url: `${basePath}/signout`,
-    preHandler: [app.verify],
+    preHandler: [app.verifyAuth],
     schema: {
       description: "Sign out and invalidate session",
       tags: ["Auth"],
@@ -134,8 +134,8 @@ export default (app: FastifyInstance, routeOptions: RouteOptions) => {
     handler: async (request, reply) => {
       try {
         // Use Better Auth to sign out
-        await app.auth.api.signOut({
-          headers: request.headers as any,
+        await app.betterAuth.api.signOut({
+          headers: request.headers,
         });
 
         return reply.status(200).send({

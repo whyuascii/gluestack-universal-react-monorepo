@@ -29,6 +29,11 @@ packages/database/
 │   ├── db.ts                 # Database connection singleton
 │   └── schema/               # Table schemas
 │       ├── index.ts          # Schema exports
+│       ├── auth/             # Better Auth tables
+│       │   ├── user.ts
+│       │   ├── session.ts
+│       │   ├── account.ts
+│       │   └── verification.ts
 │       ├── tenants.ts        # Tenants table
 │       └── users.ts          # Users table (example)
 ├── drizzle/                  # Generated migrations

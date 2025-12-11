@@ -146,6 +146,19 @@ Examples:
 | 422  | Unprocessable Entity  | Validation failed        |
 | 500  | Internal Server Error | Unexpected server error  |
 
+## Authentication Error Codes
+
+Better Auth integration adds specific error codes:
+
+| Code                  | HTTP Status | Description                      |
+| --------------------- | ----------- | -------------------------------- |
+| `EMAIL_EXISTS`        | 400         | Email already registered         |
+| `INVALID_CREDENTIALS` | 401         | Invalid email or password        |
+| `UNAUTHORIZED`        | 401         | Missing or invalid session token |
+| `SIGNUP_ERROR`        | 500         | Error during user registration   |
+| `SIGNIN_ERROR`        | 500         | Error during sign in             |
+| `SIGNOUT_ERROR`       | 500         | Error during sign out            |
+
 ## Logging
 
 The global error handler logs all errors:

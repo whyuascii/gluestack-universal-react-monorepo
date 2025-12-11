@@ -1,4 +1,4 @@
-import { type UserErrorResponse } from "service-contracts";
+import { type TUserErrorResponse } from "service-contracts";
 
 /**
  * Base class for application-specific errors.
@@ -26,7 +26,7 @@ export class AppCustomError extends Error {
   /**
    * Safe, structured error information to be returned to the client.
    */
-  public readonly userResponse: UserErrorResponse;
+  public readonly userResponse: TUserErrorResponse;
 
   /**
    * Internal-only debugging context.
@@ -54,7 +54,7 @@ export class AppCustomError extends Error {
   }: {
     message: string;
     statusCode: number;
-    userResponse: UserErrorResponse;
+    userResponse: TUserErrorResponse;
     debug?: Record<string, unknown>;
   }) {
     super(message);

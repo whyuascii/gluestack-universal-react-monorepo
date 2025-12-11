@@ -7,9 +7,11 @@ The `apps/api` directory contains a **Fastify-based REST API** server with full 
 The API is built using:
 
 - **Fastify**: Fast and low-overhead web framework for Node.js
+- **Better Auth**: Authentication with email/password and OAuth support
 - **Zod**: TypeScript-first schema declaration and validation
 - **fastify-type-provider-zod**: Seamless integration between Fastify and Zod
 - **Drizzle ORM**: Type-safe database access (see [database package](../packages/database.md))
+- **PostgreSQL**: Primary database
 
 ## Quick Start
 
@@ -43,6 +45,7 @@ apps/api/
 │   ├── @types/                 # TypeScript type definitions
 │   │   └── fastify.d.ts       # Fastify augmentations
 │   ├── plugins/                # Fastify plugins
+│   │   ├── auth.ts            # Better Auth integration
 │   │   ├── config.ts          # Environment configuration
 │   │   ├── cors.ts            # CORS setup
 │   │   ├── sensible.ts        # HTTP helpers
@@ -52,6 +55,10 @@ apps/api/
 │   │   ├── index.ts           # Route registration
 │   │   ├── health.ts          # Health check endpoint
 │   │   ├── swagger.ts         # Swagger UI route
+│   │   ├── versions.ts        # API version info
+│   │   ├── auth.ts            # Authentication routes
+│   │   ├── users.ts           # User management routes
+│   │   ├── me.ts              # Current user routes
 │   │   └── tests/             # Route tests
 │   ├── utils/                  # Utility functions
 │   │   ├── error-handling.ts  # Global error handler
@@ -67,33 +74,99 @@ apps/api/
 
 ## Key Features
 
+- **Authentication**: Better Auth with email/password and OAuth providers
 - **Type-Safe Routes**: Zod schemas ensure request/response validation
 - **Auto-Generated Docs**: Swagger/OpenAPI docs from Zod schemas
-- **Global Error Handling**: Consistent error responses
+- **Global Error Handling**: Consistent error responses with error package
 - **Environment Configuration**: Type-safe env var management
+- **Database Integration**: Drizzle ORM with PostgreSQL
 - **Testing**: Unit and integration tests with Vitest
+- **Logging**: Structured logging with Pino
 
 ## Endpoints
 
-### Health Check
+All endpoints are versioned and prefixed with `/api/v1` unless otherwise noted.
+
+### Health & Documentation
 
 ```
-GET /health
+GET  /health              # Health check
+GET  /api/versions        # API version information
+GET  /documentation       # Swagger UI
+GET  /documentation/json  # OpenAPI spec
 ```
 
-Returns server health status and environment info.
-
-### Swagger Documentation
+### Authentication
 
 ```
-GET /documentation
-GET /documentation/json
+POST /api/v1/auth/signup   # Register new user
+POST /api/v1/auth/signin   # Sign in with email/password
+POST /api/v1/auth/signout  # Sign out (requires auth)
 ```
 
-Interactive API documentation and OpenAPI spec.
+### User Management
+
+```
+GET  /api/v1/me            # Get current user (requires auth)
+GET  /api/v1/users         # List users (requires auth)
+POST /api/v1/users         # Create user (requires auth)
+GET  /api/v1/users/:id     # Get user by ID (requires auth)
+PUT  /api/v1/users/:id     # Update user (requires auth)
+DELETE /api/v1/users/:id   # Delete user (requires auth)
+```
+
+See [routes.md](./routes.md) for detailed API documentation with request/response examples.
+
+## Configuration
+
+The API server can be configured via environment variables:
+
+```bash
+# Server
+PORT=3030
+HOST=0.0.0.0
+NODE_ENV=development
+
+# Database
+DATABASE_URL=postgresql://user:password@localhost:5432/dbname
+
+# Auth
+BETTER_AUTH_SECRET=your-secret-key
+BETTER_AUTH_URL=http://localhost:3030
+```
+
+## Authentication
+
+The API uses **Better Auth** for authentication. It's integrated via the `plugins/auth.ts` plugin:
+
+```typescript
+// Registers Better Auth with Fastify
+import { auth } from "auth";
+
+app.decorate("betterAuth", auth);
+app.decorate("verifyAuth", async (request, reply) => {
+  // Verify JWT token from Authorization header
+});
+```
+
+Protected routes use the `verifyAuth` pre-handler:
+
+```typescript
+app.route({
+  method: "GET",
+  url: "/api/v1/me",
+  preHandler: [app.verifyAuth],
+  handler: async (request, reply) => {
+    return request.user;
+  },
+});
+```
+
+See [Authentication Package](../packages/auth.md) for more details.
 
 ## Next Steps
 
+- [API Routes Documentation](./routes.md)
 - [Error Handling](./error-handling.md)
-- [Creating Routes](./creating-routes.md) (Coming Soon)
-- [Testing](../guides/testing.md)
+- [Testing Guide](./testing.md)
+- [Route Implementation Guide](./route-implementation.md)

@@ -69,18 +69,23 @@ This structure has proven successful because:
 
 Every package serves a specific purpose:
 
+- **auth** - Better Auth configuration and clients
 - **components** - Shared UI primitives (gluestack + custom)
 - **ui** - Screens, hooks, and business logic
 - **database** - Drizzle schemas and connection
+- **utils** - Date/time, validation, and helper utilities
 - **errors** - Structured error handling
 - **service-contracts** - Shared types and contracts
-- **utils** - Pure utility functions
+- **eslint-config** - Shared linting rules
+- **tailwind-config** - Shared Tailwind theme
+- **typescript-config** - Shared TypeScript configs
 
 ## 🚀 Features
 
 - ✅ **Cross-Platform**: Web (Next.js) + Mobile (Expo) with 80%+ code sharing
 - ✅ **Type-Safe**: TypeScript everywhere, from database to UI
 - ✅ **Modern Stack**: React 19, Next.js 15, Expo 54
+- ✅ **Authentication Ready**: Better Auth with email/password + OAuth support
 - ✅ **Database Ready**: Drizzle ORM with PostgreSQL (easy to change)
 - ✅ **API Server**: Fastify with Zod validation
 - ✅ **Styled**: Tailwind CSS + NativeWind for cross-platform styling
@@ -111,12 +116,13 @@ Every package serves a specific purpose:
 
 ### Backend
 
-| Technology      | Purpose      | Why This Choice                         |
-| --------------- | ------------ | --------------------------------------- |
-| **Fastify**     | API server   | Fast, low overhead, great DX            |
-| **Drizzle ORM** | Database ORM | Type-safe, flexible, lightweight        |
-| **PostgreSQL**  | Database     | Robust, feature-rich (easily swappable) |
-| **Zod**         | Validation   | Type-safe schemas, auto-generated       |
+| Technology      | Purpose        | Why This Choice                         |
+| --------------- | -------------- | --------------------------------------- |
+| **Fastify**     | API server     | Fast, low overhead, great DX            |
+| **Better Auth** | Authentication | Type-safe, full-featured, email + OAuth |
+| **Drizzle ORM** | Database ORM   | Type-safe, flexible, lightweight        |
+| **PostgreSQL**  | Database       | Robust, feature-rich (easily swappable) |
+| **Zod**         | Validation     | Type-safe schemas, auto-generated       |
 
 ### Testing & Quality
 
@@ -146,6 +152,10 @@ Every package serves a specific purpose:
 │       └── src/utils/         # API utilities
 │
 ├── packages/
+│   ├── auth/                  # Authentication (Better Auth)
+│   │   ├── src/config.ts     # Auth configuration
+│   │   └── src/client/       # React & React Native clients
+│   │
 │   ├── components/            # Shared UI components (gluestack + custom)
 │   │   └── src/              # 50+ cross-platform components
 │   │
@@ -157,12 +167,18 @@ Every package serves a specific purpose:
 │   │
 │   ├── database/              # Database layer (Drizzle ORM)
 │   │   ├── src/schema/       # Table schemas + Zod validators
+│   │   │   ├── auth/         # Better Auth tables
+│   │   │   ├── tenants.ts    # Tenant schema
+│   │   │   └── users.ts      # User schema
 │   │   ├── drizzle/          # Migrations
 │   │   └── scripts/          # Seed/migration scripts
 │   │
+│   ├── utils/                 # Pure utility functions
+│   │   └── src/              # Date, validation, lodash helpers
+│   │
 │   ├── errors/                # Structured error classes
 │   ├── service-contracts/     # Shared type definitions
-│   ├── utils/                 # Pure utility functions
+│   ├── eslint-config/         # Shared ESLint configuration
 │   ├── tailwind-config/       # Shared Tailwind theme
 │   └── typescript-config/     # Shared TypeScript configs
 │
@@ -325,6 +341,53 @@ export type User = z.infer<typeof selectUserSchema>;
 - Auto-validated inputs
 - Easy migrations
 - Swap databases anytime
+
+## 🔐 Authentication
+
+**Powered by Better Auth:**
+
+The `auth` package provides a complete authentication solution using [Better Auth](https://www.better-auth.com/):
+
+```typescript
+// Server-side configuration (packages/auth/src/config.ts)
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+
+export const auth = betterAuth({
+  database: drizzleAdapter(db, {
+    provider: "pg",
+  }),
+  emailAndPassword: {
+    enabled: true,
+  },
+  // OAuth providers configured here
+});
+```
+
+**Client usage:**
+
+```typescript
+// Web (React)
+import { createAuthClient } from "auth/client/react";
+const authClient = createAuthClient();
+await authClient.signIn.email({ email, password });
+
+// Mobile (React Native)
+import { createAuthClient } from "auth/client/native";
+const authClient = createAuthClient();
+await authClient.signUp.email({ email, password, name });
+```
+
+**Features:**
+
+- Email/password authentication
+- OAuth providers (Google, GitHub, etc.)
+- Session management
+- Type-safe auth hooks
+- Integrated with database package
+- Works on web and mobile
+
+See [docs/packages/auth.md](./docs/packages/auth.md) and [docs/guides/authentication.md](./docs/guides/authentication.md) for complete guides.
 
 ## 🧪 Testing
 

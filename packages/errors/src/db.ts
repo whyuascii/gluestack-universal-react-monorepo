@@ -1,4 +1,4 @@
-import { type UserErrorResponse } from "service-contracts";
+import { type TUserErrorResponse } from "service-contracts";
 import { AppCustomError } from "./base";
 
 /**
@@ -7,7 +7,7 @@ import { AppCustomError } from "./base";
 export class InternalDocumentParseError extends AppCustomError {
   constructor(
     message = "Error parsing document",
-    userResponse?: Partial<UserErrorResponse>,
+    userResponse?: Partial<TUserErrorResponse>,
 
     debug?: Record<string, unknown>
   ) {
@@ -29,7 +29,7 @@ export class InternalDocumentParseError extends AppCustomError {
 export class DocumentIsDeletedError extends AppCustomError {
   constructor(
     message = "Document is deleted",
-    userResponse: UserErrorResponse = {
+    userResponse: TUserErrorResponse = {
       message: "The requested document is no longer available.",
     },
     debug?: Record<string, unknown>

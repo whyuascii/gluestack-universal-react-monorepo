@@ -6,7 +6,7 @@ const attachHandlers = (fastify: FastifyInstance) => {
   fastify.withTypeProvider<ZodTypeProvider>().route({
     method: "GET",
     url: "/me",
-    preHandler: [fastify.verify],
+    preHandler: [fastify.verifyAuth],
     schema: {
       description: "Get current user session information",
       tags: ["Auth"],
@@ -16,7 +16,7 @@ const attachHandlers = (fastify: FastifyInstance) => {
       },
     },
     handler: async (request, reply) => {
-      // Session and user are attached by the verify preHandler
+      // Session and user are attached by the verifyAuth preHandler
       const { session, user } = request;
 
       if (!session || !user) {

@@ -1,10 +1,10 @@
-import { type UserErrorResponse } from "service-contracts";
+import { type TUserErrorResponse } from "service-contracts";
 import { AppCustomError } from "./base";
 
 export class LambdaInvocationError extends AppCustomError {
   constructor(
     message = "Error invoking Lambda function",
-    userResponse: UserErrorResponse = {
+    userResponse: TUserErrorResponse = {
       message: "We encountered an issue while invoking a service. Please try again.",
     },
     debug?: Record<string, unknown>
@@ -21,7 +21,7 @@ export class LambdaInvocationError extends AppCustomError {
 export class SecretManagerError extends AppCustomError {
   constructor(
     message = "Error fetching secret from AWS Secrets Manager",
-    userResponse: UserErrorResponse = {
+    userResponse: TUserErrorResponse = {
       message:
         "We encountered an issue while fetching a secret from AWS Secrets Manager. Please try again.",
     },

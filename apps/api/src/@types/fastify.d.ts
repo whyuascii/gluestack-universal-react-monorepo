@@ -12,8 +12,8 @@ declare module "fastify" {
   }
 
   export interface FastifyInstance {
-    verify(request: FastifyRequest, reply: FastifyReply): Promise<void>;
-    auth: AuthConfig;
+    verifyAuth(request: FastifyRequest, reply: FastifyReply): Promise<void>;
+    betterAuth: AuthConfig;
     db: typeof db;
     config: {
       ENVIRONMENT_STAGE: string;
