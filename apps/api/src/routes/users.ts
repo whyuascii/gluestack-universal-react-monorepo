@@ -1,8 +1,8 @@
 import { insertUserSchema, users, type InsertUser } from "database";
 import type { FastifyInstance } from "fastify";
-import { ZodTypeProvider } from "fastify-type-provider-zod";
+import { type ZodTypeProvider } from "fastify-type-provider-zod";
 import { GetUserResponse, UserErrorResponse } from "service-contracts";
-import { RouteOptions } from "../models";
+import { type RouteOptions } from "../models";
 
 export default (app: FastifyInstance, routeOptions: RouteOptions) => {
   const { rootPath, versionPrefix } = routeOptions;

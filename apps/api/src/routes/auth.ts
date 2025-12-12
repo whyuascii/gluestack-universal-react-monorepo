@@ -1,12 +1,12 @@
 import type { FastifyInstance } from "fastify";
-import { ZodTypeProvider } from "fastify-type-provider-zod";
+import { type ZodTypeProvider } from "fastify-type-provider-zod";
 import {
   AuthenticationResponse,
   AuthErrorResponse,
   SignInRequest,
   SignUpRequest,
 } from "service-contracts";
-import { RouteOptions } from "../models";
+import { type RouteOptions } from "../models";
 
 export default (app: FastifyInstance, routeOptions: RouteOptions) => {
   const { rootPath, versionPrefix } = routeOptions;

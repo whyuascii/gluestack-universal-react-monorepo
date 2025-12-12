@@ -24,9 +24,14 @@
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@tanstack/react-query": "^5.62.11",
+    "zustand": "^5.0.2"
+  },
   "devDependencies": {
     "eslint": "^9.18.0",
     "eslint-config": "workspace:*",
+    "tailwind-config": "workspace:*",
     "typescript": "^5.9.3",
     "typescript-config": "workspace:*"
   },
@@ -34,6 +39,7 @@
     "components": "workspace:*",
     "react": "^18",
     "react-native": "*",
+    "service-contracts": "workspace:*",
     "typescript": "^5"
   },
   "engines": {

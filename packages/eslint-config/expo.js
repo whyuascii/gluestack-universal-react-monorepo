@@ -12,12 +12,29 @@ export default [
 
   // React and React Native configuration
   {
-    files: ["**/*.tsx", "**/*.jsx"],
+    files: ["**/*.tsx", "**/*.jsx", "**/*.ts", "**/*.js"],
     languageOptions: {
       parserOptions: {
         ecmaFeatures: {
           jsx: true,
         },
+      },
+      globals: {
+        // Cross-platform globals (available in both React Native and web)
+        process: "readonly",
+        fetch: "readonly",
+        console: "readonly",
+
+        // Browser globals (available when running on web platform)
+        window: "readonly",
+        document: "readonly",
+        navigator: "readonly",
+        localStorage: "readonly",
+        sessionStorage: "readonly",
+        alert: "readonly",
+
+        // React Native globals
+        __DEV__: "readonly",
       },
     },
     plugins: {

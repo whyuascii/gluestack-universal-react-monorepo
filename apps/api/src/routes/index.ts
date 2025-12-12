@@ -1,5 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import auth from "./auth";
+import dashboard from "./dashboard";
 import health from "./health";
 import me from "./me";
 import swagger from "./swagger";
@@ -24,6 +25,7 @@ const attachAllHandlers = (fastify: FastifyInstance) => {
 
   // Versioned API routes (alphabetical order)
   auth(fastify, { rootPath: "auth", versionPrefix: VERSIONS.V1 });
+  dashboard(fastify, { rootPath: "dashboard", versionPrefix: VERSIONS.V1 });
   users(fastify, { rootPath: "users", versionPrefix: VERSIONS.V1 });
 };
 
