@@ -71,7 +71,7 @@ Every package serves a specific purpose:
 
 - **auth** - Better Auth configuration and clients
 - **components** - Shared UI primitives (gluestack + custom)
-- **ui** - Screens, hooks, and business logic
+- **ui** - Screens, hooks, subscriptions (RevenueCat), and business logic
 - **database** - Drizzle schemas and connection
 - **i18n** - Internationalization with i18next (English + Spanish)
 - **analytics** - PostHog analytics and error tracking
@@ -88,6 +88,7 @@ Every package serves a specific purpose:
 - ✅ **Type-Safe**: TypeScript everywhere, from database to UI
 - ✅ **Modern Stack**: React 19, Next.js 15, Expo 54
 - ✅ **Authentication Ready**: Better Auth with email/password + OAuth support
+- ✅ **Subscriptions Ready**: RevenueCat for in-app purchases and subscriptions
 - ✅ **Database Ready**: Drizzle ORM with PostgreSQL (easy to change)
 - ✅ **API Server**: Fastify with Zod validation
 - ✅ **Internationalization**: i18next with English and Spanish support
@@ -167,6 +168,7 @@ Every package serves a specific purpose:
 │   │   ├── src/screens/      # Screen implementations
 │   │   ├── src/hooks/        # Custom React hooks
 │   │   ├── src/store/        # State management
+│   │   ├── src/subscriptions/ # RevenueCat subscriptions
 │   │   └── src/utils/        # UI utilities
 │   │
 │   ├── database/              # Database layer (Drizzle ORM)
@@ -542,6 +544,105 @@ EXPO_PUBLIC_POSTHOG_HOST=https://app.posthog.com
 
 See [docs/guides/POSTHOG.md](./docs/guides/POSTHOG.md) for complete setup and usage guide.
 
+## 💳 Subscriptions & In-App Purchases
+
+**Powered by RevenueCat:**
+
+The `ui` package includes a complete subscription management solution using [RevenueCat](https://www.revenuecat.com/) for handling in-app purchases and subscriptions across platforms:
+
+```typescript
+// Wrap your app with the provider (works on web and mobile)
+import { RevenueCatProvider } from "ui";
+
+function App() {
+  return (
+    <RevenueCatProvider>
+      <YourApp />
+    </RevenueCatProvider>
+  );
+}
+```
+
+**Using subscriptions in your components:**
+
+```typescript
+import { useSubscription, PremiumGate } from "ui";
+
+function MyComponent() {
+  const { isActive, isPremium } = useSubscription();
+
+  return (
+    <View>
+      {isPremium ? (
+        <Text>You have premium access!</Text>
+      ) : (
+        <Text>Subscribe to unlock premium features</Text>
+      )}
+    </View>
+  );
+}
+
+// Or use the PremiumGate component
+function ProtectedFeature() {
+  return (
+    <PremiumGate
+      fallback={<UpgradePrompt />}
+    >
+      <PremiumContent />
+    </PremiumGate>
+  );
+}
+```
+
+**Showing the paywall:**
+
+```typescript
+import { PaywallScreen } from "ui";
+
+function SubscriptionPage() {
+  return <PaywallScreen onDismiss={() => router.back()} />;
+}
+```
+
+**Features:**
+
+- Cross-platform subscriptions (iOS, Android, and Web)
+- Automatic receipt validation
+- Subscription status tracking
+- Premium content gating
+- Paywall screens included
+- Entitlement management
+- Restore purchases support
+- Platform-specific implementations (iOS/Android native, web fallback)
+
+**Configuration:**
+
+```bash
+# Web (.env)
+NEXT_PUBLIC_REVENUECAT_API_KEY=your_api_key
+NEXT_PUBLIC_REVENUECAT_ENTITLEMENT_PREMIUM=premium
+NEXT_PUBLIC_REVENUECAT_PRODUCT_MONTHLY=monthly_sub
+NEXT_PUBLIC_REVENUECAT_PRODUCT_YEARLY=yearly_sub
+
+# Mobile (.env)
+EXPO_PUBLIC_REVENUECAT_API_KEY=your_api_key
+EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_PREMIUM=premium
+EXPO_PUBLIC_REVENUECAT_PRODUCT_MONTHLY=monthly_sub
+EXPO_PUBLIC_REVENUECAT_PRODUCT_YEARLY=yearly_sub
+```
+
+**Available hooks and components:**
+
+- `useRevenueCat()` - Access RevenueCat SDK instance
+- `useSubscription()` - Subscription status and entitlements
+- `usePaywall()` - Present and manage paywalls
+- `PremiumGate` - Conditionally render premium content
+- `SubscriptionStatus` - Display current subscription info
+- `PaywallScreen` - Full-screen paywall UI
+- `SubscriptionScreen` - Manage subscription settings
+
+See [docs/guides/REVENUECAT.md](./docs/guides/REVENUECAT.md) for complete setup and usage guide.
+
 ## 🧪 Testing
 
 ```bash
@@ -653,7 +754,7 @@ If this template helped you ship faster, consider buying me a coffee!
 ---
 
 <p align="center">
-  Built with ❤️ using Turborepo • Next.js • Expo • Drizzle • Gluestack • NativeWind • PostHog • i18next
+  Built with ❤️ using Turborepo • Next.js • Expo • Drizzle • Gluestack • NativeWind • PostHog • RevenueCat • i18next
 </p>
 
 <p align="center">
