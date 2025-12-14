@@ -224,6 +224,13 @@ jobs:
 
       - name: Build all packages
         run: pnpm build
+        env:
+          # Dummy values for build-time config (actual values loaded at runtime)
+          NEXT_PUBLIC_REVENUECAT_API_KEY: "dummy-key-for-ci-build"
+          NEXT_PUBLIC_REVENUECAT_ENTITLEMENT_PREMIUM: "premium"
+          NEXT_PUBLIC_REVENUECAT_PRODUCT_MONTHLY: "monthly"
+          NEXT_PUBLIC_REVENUECAT_PRODUCT_YEARLY: "yearly"
+          NEXT_PUBLIC_REVENUECAT_DEFAULT_OFFERING: "default"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -279,6 +286,8 @@ jobs:
         run: pnpm --filter ${{ matrix.package }} test
         env:
           GH_ACTIONS: true
+          BETTER_AUTH_SECRET: test-secret-key-for-ci-only
+          BETTER_AUTH_URL: http://localhost:3030
 
   # Integration tests with PostgreSQL
   test-integration:
@@ -336,3 +345,5 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
           NODE_ENV: test
           GH_ACTIONS: true
+          BETTER_AUTH_SECRET: test-secret-key-for-ci-only
+          BETTER_AUTH_URL: http://localhost:3030

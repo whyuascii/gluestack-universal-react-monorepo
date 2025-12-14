@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect } from "react";
+import React, { createContext, useContext, useEffect, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import { analytics } from "../config/posthog.web";
@@ -8,7 +8,7 @@ import type { Analytics } from "../types";
 
 const AnalyticsContext = createContext<Analytics | null>(null);
 
-export function PostHogProvider({ children }: { children: React.ReactNode }) {
+function PostHogPageView() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -25,7 +25,18 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
     }
   }, [pathname, searchParams]);
 
-  return <AnalyticsContext.Provider value={analytics}>{children}</AnalyticsContext.Provider>;
+  return null;
+}
+
+export function PostHogProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <AnalyticsContext.Provider value={analytics}>
+      <Suspense fallback={null}>
+        <PostHogPageView />
+      </Suspense>
+      {children}
+    </AnalyticsContext.Provider>
+  );
 }
 
 export function useAnalytics(): Analytics {

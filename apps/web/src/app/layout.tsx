@@ -7,6 +7,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
 import { PostHogProvider } from "analytics/web";
 import i18n from "i18n/web";
+import { RevenueCatProvider } from "ui";
 import "./globals.css";
 import StyledJsxRegistry from "./registry";
 import { useState } from "react";
@@ -57,9 +58,11 @@ export default function RootLayout({
               <QueryClientProvider client={queryClient}>
                 <GluestackUIProvider>
                   <SafeAreaProvider className={` flex-1 overflow-hidden`}>
-                    <div className="h-screen w-screen overflow-hidden overflow-y-scroll">
-                      {children}
-                    </div>
+                    <RevenueCatProvider>
+                      <div className="h-screen w-screen overflow-hidden overflow-y-scroll">
+                        {children}
+                      </div>
+                    </RevenueCatProvider>
                   </SafeAreaProvider>
                 </GluestackUIProvider>
               </QueryClientProvider>

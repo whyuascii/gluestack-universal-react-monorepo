@@ -6,7 +6,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
 import { PostHogProvider } from "analytics/mobile";
 import i18n from "i18n/mobile";
-import { useAuthStore } from "ui";
+import { useAuthStore, RevenueCatProvider } from "ui";
 import "../../global.css";
 
 export default function RootLayout() {
@@ -42,7 +42,9 @@ export default function RootLayout() {
         <QueryClientProvider client={queryClient}>
           <GluestackUIProvider mode="light">
             <SafeAreaProvider>
-              <Slot />
+              <RevenueCatProvider>
+                <Slot />
+              </RevenueCatProvider>
             </SafeAreaProvider>
           </GluestackUIProvider>
         </QueryClientProvider>

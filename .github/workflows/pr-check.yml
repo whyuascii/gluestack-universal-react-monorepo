@@ -140,10 +140,24 @@ jobs:
       - name: Build web app
         if: needs.changes.outputs.web == 'true'
         run: pnpm --filter web build
+        env:
+          # Dummy values for build-time config (actual values loaded at runtime)
+          NEXT_PUBLIC_REVENUECAT_API_KEY: "dummy-key-for-ci-build"
+          NEXT_PUBLIC_REVENUECAT_ENTITLEMENT_PREMIUM: "premium"
+          NEXT_PUBLIC_REVENUECAT_PRODUCT_MONTHLY: "monthly"
+          NEXT_PUBLIC_REVENUECAT_PRODUCT_YEARLY: "yearly"
+          NEXT_PUBLIC_REVENUECAT_DEFAULT_OFFERING: "default"
 
       - name: Build mobile app
         if: needs.changes.outputs.mobile == 'true'
         run: pnpm --filter mobile build
+        env:
+          # Dummy values for build-time config (actual values loaded at runtime)
+          EXPO_PUBLIC_REVENUECAT_API_KEY: "dummy-key-for-ci-build"
+          EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_PREMIUM: "premium"
+          EXPO_PUBLIC_REVENUECAT_PRODUCT_MONTHLY: "monthly"
+          EXPO_PUBLIC_REVENUECAT_PRODUCT_YEARLY: "yearly"
+          EXPO_PUBLIC_REVENUECAT_DEFAULT_OFFERING: "default"
 
       - name: Analyze bundle size
         run: |

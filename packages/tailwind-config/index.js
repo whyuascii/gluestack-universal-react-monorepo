@@ -21,10 +21,10 @@
  * @example
  * // With custom theme preset
  * const createTailwindConfig = require("tailwind-config");
- * const nestquestTheme = require("tailwind-config/themes/nestquest");
+ * const sampleTheme = require("tailwind-config/themes/sample");
  * module.exports = createTailwindConfig({
  *   content: ["./src/**\/*.{js,jsx,ts,tsx}"],
- *   theme: nestquestTheme,
+ *   theme: sampleTheme,
  *   plugins: [require('@tailwindcss/forms')]
  * });
  *

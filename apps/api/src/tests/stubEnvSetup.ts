@@ -11,4 +11,7 @@ export default function stubEnv() {
   vi.stubEnv("ENVIRONMENT_STAGE", "test");
   vi.stubEnv("GIT_BRANCH", "test-branch");
   vi.stubEnv("GIT_HASH", "testhash123");
+  vi.stubEnv("BETTER_AUTH_SECRET", "test-secret-key-for-ci-only-do-not-use-in-production");
+  vi.stubEnv("BETTER_AUTH_URL", "http://localhost:3030");
+  vi.stubEnv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/test");
 }

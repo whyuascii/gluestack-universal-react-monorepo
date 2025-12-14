@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@gluestack/ui-next-adapter": "^3.0.3",
+    "@revenuecat/purchases-js": "^1.20.1",
     "analytics": "workspace:*",
     "components": "workspace:*",
     "dom-helpers": "^6.0.1",
