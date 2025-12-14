@@ -5,6 +5,7 @@ import { GluestackUIProvider } from "components";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
+import { PostHogProvider } from "analytics/web";
 import i18n from "i18n/web";
 import "./globals.css";
 import StyledJsxRegistry from "./registry";
@@ -51,17 +52,19 @@ export default function RootLayout({
         style={{ flex: 1 }}
       >
         <StyledJsxRegistry>
-          <I18nextProvider i18n={i18n}>
-            <QueryClientProvider client={queryClient}>
-              <GluestackUIProvider>
-                <SafeAreaProvider className={` flex-1 overflow-hidden`}>
-                  <div className="h-screen w-screen overflow-hidden overflow-y-scroll">
-                    {children}
-                  </div>
-                </SafeAreaProvider>
-              </GluestackUIProvider>
-            </QueryClientProvider>
-          </I18nextProvider>
+          <PostHogProvider>
+            <I18nextProvider i18n={i18n}>
+              <QueryClientProvider client={queryClient}>
+                <GluestackUIProvider>
+                  <SafeAreaProvider className={` flex-1 overflow-hidden`}>
+                    <div className="h-screen w-screen overflow-hidden overflow-y-scroll">
+                      {children}
+                    </div>
+                  </SafeAreaProvider>
+                </GluestackUIProvider>
+              </QueryClientProvider>
+            </I18nextProvider>
+          </PostHogProvider>
         </StyledJsxRegistry>
       </body>
     </html>

@@ -36,6 +36,7 @@
     "typescript-config": "workspace:*"
   },
   "peerDependencies": {
+    "analytics": "workspace:*",
     "components": "workspace:*",
     "react": "^18",
     "react-i18next": "^15",

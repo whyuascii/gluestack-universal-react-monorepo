@@ -1,6 +1,6 @@
+import { HStack, Button, ButtonText } from "components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { HStack, Button, ButtonText } from "components";
 
 export const LanguageSwitcher: React.FC = () => {
   const { i18n } = useTranslation();
@@ -11,7 +11,16 @@ export const LanguageSwitcher: React.FC = () => {
   ];
 
   const changeLanguage = (langCode: string) => {
+    const previousLanguage = i18n.language;
     i18n.changeLanguage(langCode);
+
+    // Track language change if analytics is available
+    if (typeof window !== "undefined" && (window as any).posthog) {
+      (window as any).posthog.capture("language_changed", {
+        from_language: previousLanguage,
+        to_language: langCode,
+      });
+    }
   };
 
   return (

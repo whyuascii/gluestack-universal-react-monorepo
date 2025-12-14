@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
   transpilePackages: [
     "ui",
     "i18n",
+    "analytics",
     "nativewind",
     "@gluestack-ui/core",
     "@gluestack-ui/utils",
