@@ -73,6 +73,8 @@ Every package serves a specific purpose:
 - **components** - Shared UI primitives (gluestack + custom)
 - **ui** - Screens, hooks, and business logic
 - **database** - Drizzle schemas and connection
+- **i18n** - Internationalization with i18next (English + Spanish)
+- **analytics** - PostHog analytics and error tracking
 - **utils** - Date/time, validation, and helper utilities
 - **errors** - Structured error handling
 - **service-contracts** - Shared types and contracts
@@ -88,6 +90,8 @@ Every package serves a specific purpose:
 - ✅ **Authentication Ready**: Better Auth with email/password + OAuth support
 - ✅ **Database Ready**: Drizzle ORM with PostgreSQL (easy to change)
 - ✅ **API Server**: Fastify with Zod validation
+- ✅ **Internationalization**: i18next with English and Spanish support
+- ✅ **Analytics & Error Tracking**: PostHog integration for web, mobile, and API
 - ✅ **Styled**: Tailwind CSS + NativeWind for cross-platform styling
 - ✅ **Tested**: Vitest + React Testing Library
 - ✅ **CI/CD**: GitHub Actions with smart caching
@@ -172,6 +176,20 @@ Every package serves a specific purpose:
 │   │   │   └── users.ts      # User schema
 │   │   ├── drizzle/          # Migrations
 │   │   └── scripts/          # Seed/migration scripts
+│   │
+│   ├── i18n/                  # Internationalization (i18next)
+│   │   ├── src/locales/      # Translation files
+│   │   │   ├── en/           # English translations
+│   │   │   └── es/           # Spanish translations
+│   │   ├── src/i18n.web.ts   # Web i18n configuration
+│   │   └── src/i18n.mobile.ts # Mobile i18n configuration
+│   │
+│   ├── analytics/             # Analytics & Error Tracking (PostHog)
+│   │   ├── src/config/       # PostHog configuration
+│   │   │   ├── posthog.web.ts    # Web PostHog setup
+│   │   │   └── posthog.mobile.ts # Mobile PostHog setup
+│   │   ├── src/providers/    # React providers
+│   │   └── src/components/   # ErrorBoundary components
 │   │
 │   ├── utils/                 # Pure utility functions
 │   │   └── src/              # Date, validation, lodash helpers
@@ -389,6 +407,141 @@ await authClient.signUp.email({ email, password, name });
 
 See [docs/packages/auth.md](./docs/packages/auth.md) and [docs/guides/authentication.md](./docs/guides/authentication.md) for complete guides.
 
+## 🌍 Internationalization (i18n)
+
+**Powered by i18next:**
+
+The `i18n` package provides a complete internationalization solution with platform-specific configurations:
+
+```typescript
+// Web usage (apps/web)
+import { useTranslation } from "i18n/web";
+
+function MyComponent() {
+  const { t, i18n } = useTranslation();
+
+  return (
+    <div>
+      <h1>{t("common.welcome")}</h1>
+      <button onClick={() => i18n.changeLanguage("es")}>
+        Español
+      </button>
+    </div>
+  );
+}
+
+// Mobile usage (apps/mobile)
+import { useTranslation } from "i18n/mobile";
+
+function MyComponent() {
+  const { t, i18n } = useTranslation();
+
+  return (
+    <View>
+      <Text>{t("auth.signIn")}</Text>
+      <Button onPress={() => i18n.changeLanguage("en")}>
+        English
+      </Button>
+    </View>
+  );
+}
+```
+
+**Features:**
+
+- English and Spanish translations included
+- Platform-specific configurations (web vs mobile)
+- Automatic language detection
+- Persistent language preference
+- Organized translation files by domain (common, auth, validation)
+- Type-safe translation keys
+- Integrated with UI package
+
+**Translation structure:**
+
+```
+packages/i18n/src/locales/
+├── en/
+│   ├── common.json       # Common UI strings
+│   ├── auth.json         # Authentication strings
+│   └── validation.json   # Validation messages
+└── es/
+    ├── common.json
+    ├── auth.json
+    └── validation.json
+```
+
+## 📊 Analytics & Error Tracking
+
+**Powered by PostHog:**
+
+The `analytics` package provides unified analytics and error tracking across all platforms:
+
+```typescript
+// Tracking events (works on web, mobile, and API)
+import { analytics } from "analytics/web"; // or "analytics/mobile"
+
+// Track custom events
+analytics.track("button_clicked", {
+  button_name: "sign_up",
+  page: "landing",
+});
+
+// Identify users
+analytics.identify(userId, {
+  email: user.email,
+  plan: "premium",
+});
+
+// Reset on logout
+analytics.reset();
+```
+
+**Error Boundary for React:**
+
+```tsx
+// Web or Mobile
+import { ErrorBoundary } from "analytics/web"; // or "analytics/mobile"
+
+function App() {
+  return (
+    <ErrorBoundary
+      fallback={(error, errorInfo) => <div>Something went wrong: {error.message}</div>}
+      onError={(error, errorInfo) => {
+        console.log("Error caught:", error);
+      }}
+    >
+      <YourApp />
+    </ErrorBoundary>
+  );
+}
+```
+
+**Features:**
+
+- Unified analytics interface for web, mobile, and API
+- Automatic error tracking with exception capture
+- React ErrorBoundary components
+- Unhandled error and rejection tracking
+- Event tracking with custom properties
+- User identification and session management
+- Privacy-focused (self-hostable)
+- Platform-specific optimizations
+
+**Configuration:**
+
+```bash
+# Web (.env)
+NEXT_PUBLIC_POSTHOG_KEY=your_posthog_key
+NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
+
+# Mobile (.env)
+EXPO_PUBLIC_POSTHOG_KEY=your_posthog_key
+EXPO_PUBLIC_POSTHOG_HOST=https://app.posthog.com
+```
+
+See [docs/guides/POSTHOG.md](./docs/guides/POSTHOG.md) for complete setup and usage guide.
+
 ## 🧪 Testing
 
 ```bash
@@ -500,7 +653,7 @@ If this template helped you ship faster, consider buying me a coffee!
 ---
 
 <p align="center">
-  Built with ❤️ using Turborepo • Next.js • Expo • Drizzle • Gluestack • NativeWind
+  Built with ❤️ using Turborepo • Next.js • Expo • Drizzle • Gluestack • NativeWind • PostHog • i18next
 </p>
 
 <p align="center">

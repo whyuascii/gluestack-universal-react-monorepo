@@ -26,6 +26,7 @@ describe.concurrent("Unit: Public API Config Plugin", () => {
     vi.stubEnv("ENVIRONMENT_STAGE", "staging");
     vi.stubEnv("PORT", "3030");
     vi.stubEnv("HOST", "0.0.0.0");
+    vi.stubEnv("BETTER_AUTH_SECRET", "test-secret");
 
     context.fastify = Fastify();
     await context.fastify.register(configPlugin);

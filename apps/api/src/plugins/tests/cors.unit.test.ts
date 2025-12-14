@@ -28,6 +28,7 @@ describe.concurrent("Unit: Public API CORS Plugin", () => {
     vi.stubEnv("DB_REPORTING_SECRET_ID", "mockReportingDbSecretId");
     vi.stubEnv("AWS_REGION", "us-east-1");
     vi.stubEnv("ENVIRONMENT_STAGE", "staging");
+    vi.stubEnv("BETTER_AUTH_SECRET", "test-secret");
 
     context.fastify = Fastify();
 
