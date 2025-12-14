@@ -1,0 +1,48 @@
+{
+  "app": {
+    "name": "TaskManager"
+  },
+  "actions": {
+    "login": "Iniciar sesión",
+    "signup": "Registrarse",
+    "getStarted": "Comenzar",
+    "getStartedFree": "Comenzar gratis"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "dashboard": "Panel",
+    "settings": "Configuración"
+  },
+  "pricing": {
+    "title": "Precios",
+    "perMonth": "/mes",
+    "tiers": {
+      "free": {
+        "name": "Gratis",
+        "price": "$0",
+        "features": {
+          "tasks": "Hasta 10 tareas",
+          "collaboration": "Colaboración básica",
+          "support": "Soporte por correo electrónico"
+        }
+      },
+      "pro": {
+        "name": "Pro",
+        "price": "$12",
+        "features": {
+          "tasks": "Tareas ilimitadas",
+          "collaboration": "Colaboración avanzada",
+          "support": "Soporte prioritario",
+          "analytics": "Analíticas"
+        }
+      }
+    }
+  },
+  "hero": {
+    "title": "Gestión de tareas simple",
+    "subtitle": "Organiza tu trabajo y tu vida, finalmente."
+  },
+  "footer": {
+    "copyright": "© 2024 TaskManager. Todos los derechos reservados."
+  }
+}

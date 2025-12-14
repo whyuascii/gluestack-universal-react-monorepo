@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GluestackUIProvider } from "components";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { I18nextProvider } from "react-i18next";
+import i18n from "i18n/web";
 import "./globals.css";
 import StyledJsxRegistry from "./registry";
 import { useState } from "react";
@@ -49,15 +51,17 @@ export default function RootLayout({
         style={{ flex: 1 }}
       >
         <StyledJsxRegistry>
-          <QueryClientProvider client={queryClient}>
-            <GluestackUIProvider>
-              <SafeAreaProvider className={` flex-1 overflow-hidden`}>
-                <div className="h-screen w-screen overflow-hidden overflow-y-scroll">
-                  {children}
-                </div>
-              </SafeAreaProvider>
-            </GluestackUIProvider>
-          </QueryClientProvider>
+          <I18nextProvider i18n={i18n}>
+            <QueryClientProvider client={queryClient}>
+              <GluestackUIProvider>
+                <SafeAreaProvider className={` flex-1 overflow-hidden`}>
+                  <div className="h-screen w-screen overflow-hidden overflow-y-scroll">
+                    {children}
+                  </div>
+                </SafeAreaProvider>
+              </GluestackUIProvider>
+            </QueryClientProvider>
+          </I18nextProvider>
         </StyledJsxRegistry>
       </body>
     </html>

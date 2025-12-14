@@ -38,6 +38,7 @@
     "@react-navigation/native": "^7.1.6",
     "@tanstack/react-query": "^5.62.11",
     "components": "workspace:*",
+    "i18n": "workspace:*",
     "service-contracts": "workspace:*",
     "expo": "~54.0.12",
     "expo-blur": "~15.0.7",

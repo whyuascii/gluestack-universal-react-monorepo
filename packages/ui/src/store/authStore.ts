@@ -96,7 +96,9 @@ export const useAuthStore = create<AuthState>()(
       }),
       // Rehydrate and set status based on whether we have user data
       onRehydrateStorage: () => (state) => {
-        if (state && state.user && state.session) {
+        if (!state) return;
+
+        if (state.user && state.session) {
           state.status = "authenticated";
         } else {
           state.status = "anonymous";

@@ -38,6 +38,7 @@
   "peerDependencies": {
     "components": "workspace:*",
     "react": "^18",
+    "react-i18next": "^15",
     "react-native": "*",
     "service-contracts": "workspace:*",
     "typescript": "^5"

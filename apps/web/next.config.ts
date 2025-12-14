@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
   },
   transpilePackages: [
     "ui",
+    "i18n",
     "nativewind",
     "@gluestack-ui/core",
     "@gluestack-ui/utils",

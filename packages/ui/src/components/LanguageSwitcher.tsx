@@ -1,0 +1,40 @@
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { HStack, Button, ButtonText } from "components";
+
+export const LanguageSwitcher: React.FC = () => {
+  const { i18n } = useTranslation();
+
+  const languages = [
+    { code: "en", label: "English" },
+    { code: "es", label: "Español" },
+  ];
+
+  const changeLanguage = (langCode: string) => {
+    i18n.changeLanguage(langCode);
+  };
+
+  return (
+    <HStack space="sm">
+      {languages.map((lang) => (
+        <Button
+          key={lang.code}
+          onPress={() => changeLanguage(lang.code)}
+          className={`px-3 py-1.5 rounded-md ${
+            i18n.language === lang.code
+              ? "bg-primary-600"
+              : "bg-transparent border border-outline-300"
+          }`}
+        >
+          <ButtonText
+            className={`text-sm ${
+              i18n.language === lang.code ? "text-white font-semibold" : "text-typography-700"
+            }`}
+          >
+            {lang.label}
+          </ButtonText>
+        </Button>
+      ))}
+    </HStack>
+  );
+};

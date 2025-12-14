@@ -1,0 +1,22 @@
+{
+  "email": {
+    "required": "Email is required",
+    "invalid": "Please enter a valid email"
+  },
+  "password": {
+    "required": "Password is required",
+    "minLength": "Password must be at least {{count}} characters",
+    "minLength_plural": "Password must be at least {{count}} characters",
+    "mismatch": "Passwords do not match"
+  },
+  "name": {
+    "required": "Name is required",
+    "minLength": "Name must be at least {{count}} characters",
+    "maxLength": "Name must be less than {{count}} characters"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "network": "Network error. Please check your connection.",
+    "unauthorized": "Invalid credentials. Please try again."
+  }
+}

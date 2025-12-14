@@ -1,0 +1,22 @@
+{
+  "email": {
+    "required": "El correo electrónico es requerido",
+    "invalid": "Por favor ingresa un correo electrónico válido"
+  },
+  "password": {
+    "required": "La contraseña es requerida",
+    "minLength": "La contraseña debe tener al menos {{count}} caracteres",
+    "minLength_plural": "La contraseña debe tener al menos {{count}} caracteres",
+    "mismatch": "Las contraseñas no coinciden"
+  },
+  "name": {
+    "required": "El nombre es requerido",
+    "minLength": "El nombre debe tener al menos {{count}} caracteres",
+    "maxLength": "El nombre debe tener menos de {{count}} caracteres"
+  },
+  "errors": {
+    "generic": "Algo salió mal. Por favor intenta de nuevo.",
+    "network": "Error de red. Por favor verifica tu conexión.",
+    "unauthorized": "Credenciales inválidas. Por favor intenta de nuevo."
+  }
+}

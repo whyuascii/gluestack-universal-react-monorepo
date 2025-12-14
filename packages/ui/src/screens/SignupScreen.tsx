@@ -3,6 +3,7 @@
 import { VStack, Heading, Text, Link, LinkText, Box } from "components";
 import { AuthCard, FormField, PrimaryButton } from "components";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useSignup } from "../hooks";
 
 interface SignupScreenProps {
@@ -10,6 +11,7 @@ interface SignupScreenProps {
 }
 
 export const SignupScreen: React.FC<SignupScreenProps> = ({ onNavigateToLogin }) => {
+  const { t } = useTranslation(["auth", "validation"]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,16 +32,16 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onNavigateToLogin })
     // Validation
     const newErrors: typeof errors = {};
     if (!name || name.length < 1) {
-      newErrors.name = "Name is required";
+      newErrors.name = t("validation:name.required");
     }
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "Please enter a valid email";
+      newErrors.email = t("validation:email.invalid");
     }
     if (!password || password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
+      newErrors.password = t("validation:password.minLength", { count: 8 });
     }
     if (password !== confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+      newErrors.confirmPassword = t("validation:password.mismatch");
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -56,62 +58,64 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onNavigateToLogin })
         <VStack space="lg">
           <VStack space="xs">
             <Heading size="2xl" className="text-typography-900">
-              Create Account
+              {t("auth:signup.title")}
             </Heading>
             <Text size="sm" className="text-typography-600">
-              Sign up to get started
+              {t("auth:signup.subtitle")}
             </Text>
           </VStack>
 
           <VStack space="md">
             <FormField
-              label="Name"
+              label={t("auth:signup.name")}
               value={name}
               onChangeText={setName}
               error={errors.name}
-              placeholder="John Doe"
+              placeholder={t("auth:signup.namePlaceholder")}
               autoCapitalize="words"
             />
 
             <FormField
-              label="Email"
+              label={t("auth:signup.email")}
               value={email}
               onChangeText={setEmail}
               error={
                 errors.email || (signupMutation.isError ? signupMutation.error.message : undefined)
               }
-              placeholder="you@example.com"
+              placeholder={t("auth:signup.emailPlaceholder")}
               keyboardType="email-address"
             />
 
             <FormField
-              label="Password"
+              label={t("auth:signup.password")}
               value={password}
               onChangeText={setPassword}
               error={errors.password}
-              placeholder="At least 8 characters"
+              placeholder={t("auth:signup.passwordPlaceholder")}
               secureTextEntry
             />
 
             <FormField
-              label="Confirm Password"
+              label={t("auth:signup.confirmPassword")}
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               error={errors.confirmPassword}
-              placeholder="Re-enter your password"
+              placeholder={t("auth:signup.confirmPasswordPlaceholder")}
               secureTextEntry
             />
 
             <PrimaryButton onPress={handleSignup} isLoading={signupMutation.isPending}>
-              Sign Up
+              {t("auth:signup.submit")}
             </PrimaryButton>
           </VStack>
 
           <Box className="items-center">
             <Text size="sm" className="text-typography-600">
-              Already have an account?{" "}
+              {t("auth:signup.hasAccount")}{" "}
               <Link onPress={onNavigateToLogin}>
-                <LinkText className="text-primary-600 font-semibold">Sign in</LinkText>
+                <LinkText className="text-primary-600 font-semibold">
+                  {t("auth:signup.loginLink")}
+                </LinkText>
               </Link>
             </Text>
           </Box>

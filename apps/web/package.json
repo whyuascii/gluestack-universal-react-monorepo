@@ -41,6 +41,7 @@
     "react-native-web": "^0.21.1",
     "tailwindcss": "^3.4.17",
     "components": "workspace:*",
+    "i18n": "workspace:*",
     "service-contracts": "workspace:*",
     "ui": "workspace:*"
   },
