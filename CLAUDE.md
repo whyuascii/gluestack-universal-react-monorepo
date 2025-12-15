@@ -2,757 +2,367 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Overview
+## Project Overview
 
-This is a cross-platform React monorepo using Turborepo, pnpm workspaces, Next.js (web), and Expo (mobile). The codebase enables maximum code sharing between web and mobile platforms using gluestack-v3 UI primitives and NativeWind (Tailwind CSS for React Native).
+This is a cross-platform monorepo template for building web and mobile applications with maximum code sharing (~80-90%). It's a production-ready foundation with authentication, database, analytics, subscriptions, and internationalization already configured.
 
-## Package Manager & Commands
+**Tech Stack:**
 
-**Package Manager:** pnpm (v10.15.0)
+- **Monorepo:** Turborepo + pnpm workspaces
+- **Web:** Next.js 15 (App Router) + React 19
+- **Mobile:** Expo 54 + React Native 0.81
+- **API:** Fastify 5 with Zod validation
+- **Database:** Drizzle ORM + PostgreSQL
+- **Auth:** Better Auth (email/password + OAuth)
+- **Styling:** Tailwind CSS + NativeWind 4 + Gluestack UI v3
+- **Analytics:** PostHog (web, mobile, API)
+- **Subscriptions:** RevenueCat
+- **i18n:** i18next (English + Spanish)
 
-### Root-level Commands
+## Essential Commands
+
+### Development
 
 ```bash
-pnpm dev              # Start all apps in development (web + mobile)
-pnpm build            # Build all apps for production
-pnpm lint             # Lint all workspaces
-pnpm check-types      # TypeScript type checking across all packages
-```
+# Start all apps (web, mobile, api)
+pnpm dev
 
-### Working with Specific Packages
+# Start specific app
+pnpm --filter web dev      # Web at http://localhost:3000
+pnpm --filter mobile dev   # Mobile at http://localhost:8081
+pnpm --filter api dev      # API at http://localhost:3030
 
-```bash
-# Run commands in specific packages
-pnpm --filter web dev              # Next.js web app
-pnpm --filter mobile dev           # Expo mobile app
-pnpm --filter components <command> # Component library (gluestack primitives)
-pnpm --filter ui <command>         # UI package (screens, hooks, state, utils)
-pnpm --filter database <command>   # Database package
-
-# Database-specific commands
-pnpm --filter database generate    # Generate migrations from schema
-pnpm --filter database db:migrate  # Apply migrations to database
-pnpm --filter database db:studio   # Open Drizzle Studio GUI
-pnpm --filter database db:seed     # Seed initial data
-
-# Mobile platform-specific (run from apps/mobile/)
+# Mobile platform-specific
 cd apps/mobile
-pnpm ios              # iOS simulator
-pnpm android          # Android emulator
-pnpm web              # Web browser (Expo web)
+pnpm ios                   # iOS simulator
+pnpm android               # Android emulator
 ```
 
-### Testing Individual Components
+### Testing
 
-When developing or testing specific components, you can:
+```bash
+# Run all tests
+pnpm test
 
-- For web: Run `pnpm --filter web dev` and navigate to the component in the browser
-- For mobile: Run `pnpm --filter mobile dev` and test on iOS/Android/web platforms
+# Run tests for specific package
+pnpm --filter api test
+pnpm --filter components test
 
-## Repository Structure
+# Run with coverage
+pnpm --filter api coverage
 
-```
-/
-├── apps/
-│   ├── mobile/               # Expo React Native app
-│   │   ├── src/app/          # Expo Router file-based routing
-│   │   │   ├── (tabs)/       # Tab-based navigation
-│   │   │   └── _layout.tsx   # Root layout with providers
-│   │   ├── global.css        # Global Tailwind styles
-│   │   └── tailwind.config.js
-│   │
-│   └── web/                  # Next.js web app
-│       ├── src/app/          # Next.js App Router
-│       │   ├── layout.tsx    # Root layout with providers
-│       │   ├── page.tsx      # Home page
-│       │   └── registry.tsx  # Styled-jsx registry for gluestack
-│       ├── globals.css       # Global Tailwind styles
-│       ├── next.config.ts    # Next.js config with gluestack adapter
-│       └── tailwind.config.js
-│
-├── packages/
-│   ├── components/           # Shared component library (gluestack-v3 + custom)
-│   │   ├── src/              # 50+ cross-platform components
-│   │   └── index.ts          # Component exports
-│   │
-│   ├── ui/                   # Shared UI logic package
-│   │   ├── src/
-│   │   │   ├── home/         # Screen implementations
-│   │   │   ├── auth/         # Auth screens
-│   │   │   ├── hooks/        # Shared React hooks
-│   │   │   ├── store/        # State management (Zustand/etc)
-│   │   │   └── utils/        # Utility functions
-│   │   └── index.ts          # Package exports
-│   │
-│   ├── database/             # Shared database package (Drizzle ORM + PostgreSQL)
-│   │   ├── src/
-│   │   │   ├── schema/       # Drizzle table schemas with Zod validators
-│   │   │   ├── db.ts         # Database connection singleton
-│   │   │   └── index.ts      # Package exports
-│   │   ├── drizzle/          # Generated migration files
-│   │   ├── scripts/          # Seed and migration scripts
-│   │   └── drizzle.config.ts # Drizzle Kit configuration
-│   │
-│   ├── tailwind-config/      # Shared Tailwind configuration
-│   │   ├── index.js          # Factory function for Tailwind config
-│   │   └── package.json      # Package definition
-│   │
-│   ├── typescript-config/    # Shared TypeScript configuration
-│   │   ├── base.json         # Core compiler options
-│   │   ├── nextjs.json       # Next.js-specific settings
-│   │   ├── expo.json         # Expo/React Native settings
-│   │   └── package.json      # Package definition
-│   │
-│   ├── errors/               # Shared error handling
-│   └── service-contracts/    # Shared type definitions/interfaces
-│
-├── turbo.json                # Turborepo pipeline configuration
-└── pnpm-workspace.yaml       # pnpm workspace configuration
+# Test-specific commands
+pnpm --filter api test:unit
 ```
 
-## Architecture & Key Concepts
+### Database
 
-### Cross-Platform Strategy
+```bash
+# Run migrations
+pnpm --filter database db:migrate
 
-This monorepo achieves web/mobile code sharing through:
+# Open Drizzle Studio (database GUI)
+pnpm --filter database db:studio
 
-1. **Shared Components (`packages/components`)**: gluestack-v3 primitives + custom components that work on both web and native
-2. **Shared UI Logic (`packages/ui`)**: Screens, hooks, state management, and utilities used by both apps
-3. **Shared Database (`packages/database`)**: Database schemas, types, and connection shared across backend services
-4. **Shared Tailwind Config (`packages/tailwind-config`)**: Centralized theme configuration ensuring visual consistency
-5. **Shared TypeScript Config (`packages/typescript-config`)**: Platform-specific TypeScript configurations (Next.js vs Expo)
-6. **NativeWind**: Enables Tailwind CSS classes on React Native (both apps use identical theme)
-7. **React Native Web**: Transpiles React Native components to web (configured in `next.config.ts`)
+# Generate new migration from schema changes
+pnpm --filter database generate
 
-### Database Package (`packages/database`)
+# Seed database
+pnpm --filter database db:seed
+```
 
-**Architecture:**
+### Type Checking & Linting
 
-The database package uses **Drizzle ORM** with **PostgreSQL** and provides type-safe database schemas with automatic **Zod** validation. It's designed for multitenant SaaS applications using a shared tables approach (tenant_id column).
+```bash
+# Type check all packages
+pnpm typecheck
 
-**Key Features:**
+# Lint all packages
+pnpm lint
 
-1. **Drizzle ORM**: Type-safe SQL query builder with excellent TypeScript inference
-2. **drizzle-zod**: Automatically generates Zod schemas from Drizzle table definitions
-3. **Single source of truth**: Database schema → Zod validators → TypeScript types
-4. **Multitenant ready**: All tables include `tenant_id` for data isolation
-5. **Shared package**: Used by API server, lambdas, scripts, and future backend services
+# Lint specific package
+pnpm --filter web lint
+pnpm --filter api lint:fix
+```
 
-**Schema Organization:**
+### Building
 
-Each table is defined in its own file under `src/schema/`:
+```bash
+# Build all apps
+pnpm build
+
+# Build specific app
+pnpm --filter web build
+pnpm --filter api build
+pnpm --filter mobile build  # expo export
+
+# Clean build artifacts
+pnpm clean
+```
+
+### API-Specific
+
+```bash
+# Generate Swagger/OpenAPI docs
+pnpm --filter api swagger
+```
+
+## High-Level Architecture
+
+### Monorepo Structure
+
+The repository follows a **strict separation of concerns** with three types of top-level directories:
+
+1. **`apps/`** - Deployable applications (web, mobile, api)
+2. **`packages/`** - Shared libraries used by apps
+3. **`docs/`** - Comprehensive documentation
+
+### Package Dependency Philosophy
+
+Packages are organized in **layers** to prevent circular dependencies:
+
+```
+Layer 1 (Foundation):
+  - typescript-config, eslint-config, tailwind-config
+  - errors, service-contracts, utils
+
+Layer 2 (Infrastructure):
+  - database (depends on: nothing from this repo)
+  - auth (depends on: database)
+
+Layer 3 (Features):
+  - components (depends on: tailwind-config)
+  - i18n (depends on: nothing from this repo)
+  - analytics (depends on: nothing from this repo)
+
+Layer 4 (Business Logic):
+  - ui (depends on: components, i18n, analytics, service-contracts)
+
+Layer 5 (Applications):
+  - web, mobile, api (can depend on any package)
+```
+
+### Key Packages
+
+- **`auth`** - Better Auth configuration with separate clients for web (`auth/client/react`) and mobile (`auth/client/native`)
+- **`components`** - 50+ cross-platform UI primitives from Gluestack UI v3 + custom components
+- **`ui`** - Business logic layer containing screens, hooks, state management, and RevenueCat subscription logic
+- **`database`** - Drizzle ORM schemas in `src/schema/`, with auto-generated Zod validators
+- **`i18n`** - Platform-specific configs (`i18n/web`, `i18n/mobile`) with translations in `src/locales/{en,es}/`
+- **`analytics`** - PostHog integration with platform-specific configs (`analytics/web`, `analytics/mobile`) and ErrorBoundary components
+- **`service-contracts`** - Shared TypeScript types and interfaces used across all apps
+
+### How Code is Shared
+
+The monorepo achieves 80-90% code sharing through:
+
+1. **Shared UI Components** - `packages/components` works identically on web (React Native Web) and mobile (React Native)
+2. **Unified Styling** - Tailwind classes via NativeWind work on both platforms
+3. **Business Logic in `ui` package** - Screens, hooks, and logic are platform-agnostic
+4. **Type Safety Everywhere** - `service-contracts` ensures API contracts match between frontend and backend
+
+**Platform-specific code only needed for:**
+
+- Navigation (Next.js App Router vs Expo Router)
+- Platform APIs (camera, notifications, etc.)
+- Auth clients (different fetch implementations)
+- Analytics initialization (web vs mobile SDKs)
+
+## Critical Patterns
+
+### Database Schema-First Development
+
+**All database changes follow this workflow:**
+
+1. Modify schema in `packages/database/src/schema/*.ts`
+2. Generate migration: `pnpm --filter database generate`
+3. Review migration in `packages/database/drizzle/`
+4. Apply migration: `pnpm --filter database db:migrate`
+
+**Important:** Drizzle auto-generates Zod validators from schemas. After schema changes, TypeScript types and validators are automatically in sync.
+
+Example pattern in schemas:
 
 ```typescript
-// Example: packages/database/src/schema/users.ts
-import { pgTable, uuid, varchar, timestamp } from "drizzle-orm/pg-core";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
-import { tenants } from "./tenants";
-
+// Define table
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
-  tenantId: uuid("tenant_id")
-    .notNull()
-    .references(() => tenants.id, { onDelete: "cascade" }),
   email: varchar("email", { length: 255 }).notNull(),
-  name: varchar("name", { length: 255 }),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-// Auto-generated Zod schemas with custom validations
+// Auto-generate validators
 export const insertUserSchema = createInsertSchema(users, {
-  email: z.string().email("Invalid email address").max(255),
-  name: z.string().min(1).max(255).optional(),
-  tenantId: z.string().uuid("Invalid tenant ID"),
+  email: z.string().email(),
 });
 
-export const selectUserSchema = createSelectSchema(users);
-export const updateUserSchema = insertUserSchema.partial().omit({
-  id: true,
-  tenantId: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-// TypeScript types derived from Zod schemas
-export type InsertUser = z.infer<typeof insertUserSchema>;
+// Derive types
 export type User = z.infer<typeof selectUserSchema>;
-export type UpdateUser = z.infer<typeof updateUserSchema>;
 ```
 
-**What the package exports:**
+### Authentication Architecture
 
-```typescript
-// Import in your API server or lambdas
-import {
-  db, // Database connection instance
-  users, // Table schema
-  tenants, // Table schema
-  insertUserSchema, // Zod validator for inserts
-  selectUserSchema, // Zod validator for selects
-  updateUserSchema, // Zod validator for updates
-  type User, // TypeScript type
-  type InsertUser, // TypeScript type
-  eq,
-  and,
-  or,
-  sql, // Drizzle query utilities
-} from "database";
+Better Auth provides a **unified auth solution** with database integration:
 
-// Validate input with Zod
-const result = insertUserSchema.safeParse(input);
-if (!result.success) {
-  // Handle validation errors
-}
+- **Server config:** `packages/auth/src/config.ts` (uses Drizzle adapter)
+- **Web client:** Import from `auth/client/react`
+- **Mobile client:** Import from `auth/client/native`
+- **Database tables:** Managed by Better Auth, schemas in `packages/database/src/schema/auth/`
 
-// Query with type-safe Drizzle
-const allUsers = await db.select().from(users).where(eq(users.tenantId, tenantId));
-```
+**Auth is integrated at the API level** - apps/api mounts Better Auth routes, while web and mobile apps use respective clients.
 
-**Environment Variables:**
+### Environment Variables
 
-The database package requires a `DATABASE_URL` environment variable:
+**Critical variables** (defined in `turbo.json` globalEnv):
 
 ```bash
-# .env (at package or app level)
-DATABASE_URL="postgresql://user:password@localhost:5432/dbname"
+# Database
+DATABASE_URL=postgresql://...
+
+# Better Auth
+BETTER_AUTH_SECRET=
+BETTER_AUTH_URL=http://localhost:3030
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+
+# API URLs
+NEXT_PUBLIC_API_URL=http://localhost:3030
+EXPO_PUBLIC_API_URL=http://localhost:3030
+
+# PostHog Analytics
+NEXT_PUBLIC_POSTHOG_KEY=
+NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
+EXPO_PUBLIC_POSTHOG_KEY=
+EXPO_PUBLIC_POSTHOG_HOST=https://app.posthog.com
+POSTHOG_KEY=  # For API server
+POSTHOG_HOST=
+
+# RevenueCat (Optional)
+NEXT_PUBLIC_REVENUECAT_API_KEY=
+EXPO_PUBLIC_REVENUECAT_API_KEY=
 ```
 
-**Intended Usage:**
+**Note:** Web uses `NEXT_PUBLIC_*` prefix, Mobile uses `EXPO_PUBLIC_*` prefix.
 
-- **API Server** (`apps/api`): Main consumer, handles all database operations
-- **Lambdas/Serverless Functions**: Import for event-driven database operations
-- **Scripts**: Migration, seeding, data maintenance scripts
-- **Future Services**: Any backend service needing database access
+### Analytics & Error Tracking
 
-Frontend apps (web/mobile) should **NEVER** import the database package directly - they call the API instead.
+PostHog is initialized **differently per platform**:
 
-### Package Dependencies
+- **Web:** `analytics/web` uses posthog-js
+- **Mobile:** `analytics/mobile` uses posthog-react-native
+- **API:** Direct PostHog Node SDK in `apps/api/src/plugins/posthog-analytics.ts`
 
-- **pnpm overrides** (root `package.json`): Enforces consistent versions across the monorepo
-  - React 19.1.0
-  - React Native 0.81.4
-  - React Native Web 0.21.1
-  - Tailwind CSS 3.4.17
-  - NativeWind 4.2.1
+**ErrorBoundary usage:** Always wrap apps with `<ErrorBoundary>` from the appropriate platform package to automatically capture and report React errors.
 
-- **Workspace dependencies**: Packages reference each other via `workspace:*` protocol
-  - Both apps depend on `components` and `ui` packages
-  - `ui` package depends on `components` package
+### Subscription Management (RevenueCat)
 
-### Next.js Configuration
+RevenueCat logic lives in **`packages/ui/src/subscriptions/`**:
 
-The web app's `next.config.ts` includes critical setup:
+- `RevenueCatProvider` - Wrap app root
+- `useSubscription()` - Check subscription status
+- `usePaywall()` - Show/hide paywall
+- `PremiumGate` - Component for gating premium features
+- `PaywallScreen` - Full paywall UI
+- `SubscriptionScreen` - Manage subscriptions
 
-1. **`withGluestackUI` adapter**: Enables gluestack components on web
-2. **`transpilePackages`**: Transpiles workspace packages and React Native libraries
-3. **Webpack alias**: Maps `react-native` → `react-native-web`
-4. **File extensions**: Prioritizes `.web.*` files for web-specific implementations
+**Platform differences:** Mobile uses native SDKs (`react-native-purchases`), web uses JavaScript SDK (`@revenuecat/purchases-js`).
 
-### Expo Configuration
+### Internationalization (i18n)
 
-The mobile app uses:
+Translations organized by domain in `packages/i18n/src/locales/`:
 
-1. **Expo Router**: File-based routing (similar to Next.js)
-2. **Expo SDK 54**: Latest stable version
-3. **File-based navigation**: Screens in `src/app/(tabs)/` directory
-
-### Styling System
-
-**Shared Tailwind Configuration (`packages/tailwind-config`):**
-
-The monorepo uses a centralized Tailwind configuration package that ensures styling consistency across all platforms. The configuration is exported as a factory function that both apps consume.
-
-**How it works:**
-
-```javascript
-// packages/tailwind-config/index.js
-module.exports = function createTailwindConfig(options = {}) {
-  const { content = [], important } = options;
-
-  return {
-    // Shared package paths automatically included
-    content: [
-      "../../packages/components/src/**/*.{js,jsx,ts,tsx}",
-      "../../packages/ui/src/**/*.{js,jsx,ts,tsx}",
-      ...content, // App-specific paths
-    ],
-    // Full theme configuration...
-  };
-};
+```
+locales/
+├── en/
+│   ├── common.json       # UI strings
+│   ├── auth.json         # Auth-related
+│   └── validation.json   # Form validation
+└── es/
+    └── (same structure)
 ```
 
-Apps consume the shared config:
+**Usage:**
 
-```javascript
-// apps/web/tailwind.config.js
-const createTailwindConfig = require("tailwind-config");
+- Web: `import { useTranslation } from 'i18n/web'`
+- Mobile: `import { useTranslation } from 'i18n/mobile'`
 
-module.exports = createTailwindConfig({
-  content: ["./src/**/*.{html,js,jsx,ts,tsx,mdx}"],
-  important: "html", // Web-specific setting
-});
-```
+Platform configs handle language detection and persistence differently.
 
-**Theme features:**
+## Turborepo Pipeline
 
-- **CSS Variables**: Custom color system using RGB CSS variables
-  - `primary-*`, `secondary-*`, `error-*`, `success-*`, `warning-*`, `info-*`
-  - `typography-*`, `outline-*`, `background-*`, `indicator-*`
-  - All colors have shades from 0-950
+**Build pipeline** (defined in `turbo.json`):
 
-- **Dark Mode**: Controlled via `DARK_MODE` environment variable (defaults to `"class"`)
-- **Safelist**: Ensures all semantic color classes are included in builds
-- **Font Families**: Defined but fonts loaded differently per platform
-- **Custom Shadows**: `hard-*` and `soft-*` shadow utilities (1-5 variants)
+- **`dev`** - Persistent task, no caching
+- **`build`** - Depends on `^build` (builds dependencies first)
+- **`typecheck`, `lint`, `test`** - Depend on dependencies being checked/linted/tested first
 
-**Benefits:**
+**Caching:** Turborepo caches build outputs (`.next/`, `dist/`) based on file hashes. Clean with `pnpm clean`.
 
-- Single source of truth for theme (colors, fonts, shadows, etc.)
-- Theme changes propagate automatically to both platforms
-- Apps can't accidentally exclude shared package paths
-- Platform-specific overrides still possible via the factory options
+## Testing Strategy
 
-### Provider Setup
+**Test runner:** Vitest (configured in each package)
 
-Both apps wrap their content with the same providers (in the same order):
+**Coverage:** Run `pnpm --filter <package> coverage` to generate coverage reports
 
-```tsx
-<GluestackUIProvider mode="light">
-  <SafeAreaProvider>{/* App content */}</SafeAreaProvider>
-</GluestackUIProvider>
-```
+**API testing:** Uses real PostgreSQL database for integration tests (see `apps/api/src/__tests__/`)
 
-For web, an additional `StyledJsxRegistry` wraps everything for Next.js 15 compatibility.
+**Component testing:** React Testing Library for UI components
 
-## Development Workflow
+**Important:** Apps (web, mobile) have placeholder tests. Packages (database, utils, errors, api) have comprehensive test suites.
 
-### Adding New Components to Components Package
+## Common Development Workflows
 
-1. Create component directory in `packages/components/src/<component-name>/`
-2. Export from `packages/components/src/index.ts`
-3. Component will be automatically available in both apps via `import { Component } from "components"`
+### Adding a New API Endpoint
 
-### Creating Shared Screens and UI Logic
+1. Create route file in `apps/api/src/routes/<domain>/`
+2. Define Zod schema for request/response in route file or `service-contracts`
+3. Implement handler with Fastify TypeScript types
+4. Register route in `apps/api/src/index.ts` or route index
+5. Add tests in `apps/api/src/routes/<domain>/__tests__/`
 
-**For screens:**
+### Adding a New Screen
 
-1. Add screen to `packages/ui/src/<feature>/`
-2. Export from `packages/ui/src/index.ts`
-3. Import in app-specific routing:
-   - Web: `apps/web/src/app/` (Next.js App Router)
-   - Mobile: `apps/mobile/src/app/` (Expo Router)
+1. Create screen component in `packages/ui/src/screens/`
+2. Use components from `packages/components`
+3. Add routing in `apps/web/src/app/` (Next.js) and `apps/mobile/src/app/` (Expo Router)
+4. Screens automatically work on both platforms
 
-**For hooks:**
+### Adding a Database Table
 
-1. Add hook to `packages/ui/src/hooks/<hook-name>.ts`
-2. Export from `packages/ui/src/index.ts`
-3. Import via `import { useHookName } from "ui"`
+1. Create schema in `packages/database/src/schema/<domain>.ts`
+2. Export from `packages/database/src/schema/index.ts`
+3. Run `pnpm --filter database generate`
+4. Review generated migration
+5. Run `pnpm --filter database db:migrate`
+6. Types and validators are now available in all packages
 
-**For state management:**
-
-1. Add stores to `packages/ui/src/store/<store-name>.ts`
-2. Export from `packages/ui/src/index.ts`
-3. Import via `import { useStore } from "ui"`
-
-**For utilities:**
-
-1. Add utilities to `packages/ui/src/utils/<util-name>.ts`
-2. Export from `packages/ui/src/index.ts`
-3. Import via `import { utilityFunction } from "ui"`
-
-### Working with the Database Package
-
-**Adding new tables:**
-
-1. Create a new schema file in `packages/database/src/schema/<table-name>.ts`
-2. Define the Drizzle table with all columns
-3. Create Zod schemas using `createInsertSchema` and `createSelectSchema`
-4. Add custom Zod validations in the second parameter
-5. Export insert, select, and update schemas
-6. Export TypeScript types using `z.infer<typeof schema>`
-7. Export from `packages/database/src/schema/index.ts`
-
-**Example workflow:**
-
-```typescript
-// 1. Create packages/database/src/schema/posts.ts
-import { pgTable, uuid, varchar, text, timestamp } from "drizzle-orm/pg-core";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
-import { tenants } from "./tenants";
-import { users } from "./users";
-
-export const posts = pgTable("posts", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  tenantId: uuid("tenant_id")
-    .notNull()
-    .references(() => tenants.id, { onDelete: "cascade" }),
-  authorId: uuid("author_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  title: varchar("title", { length: 255 }).notNull(),
-  content: text("content"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
-
-export const insertPostSchema = createInsertSchema(posts, {
-  title: z.string().min(1).max(255),
-  content: z.string().optional(),
-});
-
-export const selectPostSchema = createSelectSchema(posts);
-export const updatePostSchema = insertPostSchema.partial().omit({
-  id: true,
-  tenantId: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-export type InsertPost = z.infer<typeof insertPostSchema>;
-export type Post = z.infer<typeof selectPostSchema>;
-export type UpdatePost = z.infer<typeof updatePostSchema>;
-
-// 2. Export from packages/database/src/schema/index.ts
-export * from "./posts";
-
-// 3. Generate migration
-// pnpm --filter database generate
-
-// 4. Apply migration
-// pnpm --filter database db:migrate
-```
-
-**Generating and applying migrations:**
+### Running Single Test File
 
 ```bash
-# After adding/modifying schemas
-pnpm --filter database generate    # Generates SQL migration files in drizzle/
-pnpm --filter database db:migrate  # Applies pending migrations to database
+# API test
+pnpm --filter api test src/routes/health/__tests__/health.test.ts
 
-# Open Drizzle Studio to browse data
-pnpm --filter database db:studio   # Opens GUI at https://local.drizzle.studio
+# Any package test
+pnpm --filter <package-name> test <path-to-test-file>
 ```
 
-**Database connection:**
+## Project-Specific Notes
 
-The `db` instance is a singleton exported from `packages/database/src/db.ts`. It automatically:
+- **React 19 & Next.js 15:** Using latest versions with App Router
+- **NativeWind 4:** Tailwind works identically on web and mobile
+- **Multitenant:** Database has `tenants` table for SaaS use cases
+- **Expo Router:** Mobile app uses file-based routing like Next.js
+- **Type Safety:** Zod schemas at API boundaries ensure runtime validation
+- **Monorepo References:** Packages reference each other via `workspace:*` in package.json
 
-- Loads `DATABASE_URL` from environment variables via `dotenv`
-- Configures SSL based on `NODE_ENV` (enabled in production)
-- Includes all schemas for type inference and relations
+## Documentation
 
-### Modifying the Theme
+Full documentation in `docs/`:
 
-All theme customizations (colors, fonts, shadows, etc.) are centralized in `packages/tailwind-config/index.js`:
+- `docs/guides/` - How-to guides (authentication, database migrations, testing, etc.)
+- `docs/packages/` - Package-specific documentation
+- `docs/adr/` - Architecture Decision Records
+- `docs/api/` - API documentation
 
-**To update theme colors:**
-
-1. Edit `packages/tailwind-config/index.js`
-2. Modify the `colors` object in `theme.extend`
-3. Changes apply to both apps immediately (hot reload works)
-
-**To add new theme values:**
-
-```javascript
-// packages/tailwind-config/index.js
-theme: {
-  extend: {
-    colors: { /* existing colors */ },
-    spacing: {
-      '128': '32rem', // Add custom spacing
-    },
-    animation: {
-      'spin-slow': 'spin 3s linear infinite', // Add custom animation
-    }
-  }
-}
-```
-
-**For app-specific theme overrides:**
-
-```javascript
-// apps/web/tailwind.config.js
-const baseConfig = require("tailwind-config")({ content: [...] });
-
-module.exports = {
-  ...baseConfig,
-  theme: {
-    ...baseConfig.theme,
-    extend: {
-      ...baseConfig.theme.extend,
-      // Web-only additions
-      colors: {
-        ...baseConfig.theme.extend.colors,
-        'web-specific': '#custom',
-      }
-    }
-  }
-};
-```
-
-### Modifying TypeScript Settings
-
-All shared TypeScript compiler options are centralized in `packages/typescript-config/`:
-
-**To update compiler options for all projects:**
-
-1. Edit `packages/typescript-config/base.json`
-2. Add/modify compiler options
-3. Changes apply immediately to all apps and packages
-
-**To update Next.js-specific settings:**
-
-1. Edit `packages/typescript-config/nextjs.json`
-2. Only affects the web app
-
-**To update Expo/React Native settings:**
-
-1. Edit `packages/typescript-config/expo.json`
-2. Affects mobile app and all packages (ui, screens)
-
-**For app-specific TypeScript overrides:**
-
-```json
-// apps/web/tsconfig.json
-{
-  "extends": "typescript-config/nextjs.json",
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"], // App-specific path aliases
-      "@components/*": ["./src/components/*"]
-    },
-    "baseUrl": "." // App-specific setting
-  }
-}
-```
-
-**Note:** Avoid duplicating compiler options already in the shared configs. Only add app-specific settings like paths, baseUrl, or includes.
-
-### Platform-Specific Code
-
-When needed, use file extensions or platform detection:
-
-```tsx
-// File-based: component.web.tsx / component.native.tsx
-// Runtime: Platform.OS === 'web' | 'ios' | 'android'
-```
-
-### TypeScript Configuration
-
-**Shared TypeScript Configuration (`packages/typescript-config`):**
-
-The monorepo uses a Turborepo-style TypeScript configuration with platform-specific configs. Each config is a JSON file that apps/packages extend from.
-
-**Configuration files:**
-
-1. **`base.json`** - Core compiler options shared by all projects:
-
-```json
-{
-  "compilerOptions": {
-    "strict": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "noEmit": true
-  }
-}
-```
-
-2. **`nextjs.json`** - Extends base.json, adds Next.js-specific settings:
-
-```json
-{
-  "extends": "./base.json",
-  "compilerOptions": {
-    "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "jsx": "preserve",
-    "jsxImportSource": "nativewind",
-    "incremental": true,
-    "plugins": [{ "name": "next" }]
-  }
-}
-```
-
-3. **`expo.json`** - Extends Expo's base config with our strict mode:
-
-```json
-{
-  "extends": "expo/tsconfig.base",
-  "compilerOptions": {
-    "strict": true,
-    "noEmit": true
-  }
-}
-```
-
-**How apps/packages use it:**
-
-```json
-// apps/web/tsconfig.json (Next.js app)
-{
-  "extends": "typescript-config/nextjs.json",
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts"]
-}
-
-// apps/mobile/tsconfig.json (Expo app)
-{
-  "extends": "typescript-config/expo.json",
-  "compilerOptions": {
-    "paths": { "@/*": ["./*"] }
-  },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts"]
-}
-
-// packages/components/tsconfig.json & packages/ui/tsconfig.json (React packages)
-{
-  "extends": "typescript-config/expo.json",
-  "include": ["src/**/*"]
-}
-
-// packages/database/tsconfig.json (Node.js backend package)
-{
-  "extends": "typescript-config/base.json",
-  "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "target": "ES2020"
-  },
-  "include": ["src/**/*", "drizzle.config.ts"],
-  "exclude": ["node_modules", "dist", "drizzle"]
-}
-```
-
-**Benefits:**
-
-- Platform-specific configs (Next.js vs Expo vs Node.js) clearly defined
-- Compiler options centralized - update once, applies everywhere
-- Apps/packages reduced to minimal configs (just paths and includes)
-- Backend packages (like database) extend base.json with Node.js-specific settings
-- Follows Turborepo best practices for monorepo TypeScript configs
-
-### Build Caching
-
-Turborepo caches build outputs:
-
-- Web: `.next/**` (excluding cache)
-- Task dependencies defined in `turbo.json`
-
-## Important Notes
-
-### Version Constraints
-
-Always respect the pnpm overrides in root `package.json`. These versions are locked for compatibility:
-
-- React 19 requires specific native module versions
-- NativeWind 4.x requires Tailwind 3.x
-
-### gluestack Component Conditionals
-
-Some components are commented out in `packages/components/src/index.ts`:
-
-- `accordion`, `actionsheet`: Not yet implemented
-- `bottomsheet`, `input-accessory-view`: Expo-only (no web support)
-- `select`, `table`: Currently disabled
-
-### Build Errors to Ignore
-
-`next.config.ts` has:
-
-```ts
-eslint: {
-  ignoreDuringBuilds: true;
-}
-typescript: {
-  ignoreBuildErrors: true;
-}
-```
-
-This is intentional for faster builds during development. Remove when stabilizing.
-
-### React Native Web Limitations
-
-Not all React Native components work on web. The components package selectively exports components known to work cross-platform. When adding new components, test on both platforms.
-
-## Common Issues
-
-### Module Resolution
-
-If imports fail:
-
-1. Check `pnpm-workspace.yaml` includes the package path
-2. Verify `package.json` has `"main"` and `"types"` fields pointing to entry
-3. Run `pnpm install` from root to update workspace links
-
-### Tailwind Classes Not Working
-
-1. Check if the file is in an app-specific location that needs to be added to the app's `tailwind.config.js` content array
-2. The shared packages (`components` and `ui`) are automatically included via `packages/tailwind-config/index.js`
-3. Ensure `global.css` (mobile) or `globals.css` (web) imports Tailwind directives
-4. If you modified `packages/tailwind-config/index.js`, restart the dev server to pick up changes
-5. Verify both apps have `tailwind-config: "workspace:*"` in their `devDependencies`
-
-### TypeScript Errors
-
-If TypeScript is not recognizing the shared config:
-
-1. Verify the app/package has `typescript-config: "workspace:*"` in `devDependencies`
-2. Run `pnpm install` from root to ensure workspace linking
-3. Check that `tsconfig.json` extends the correct config:
-   - Web app should extend `typescript-config/nextjs.json`
-   - Mobile app and React packages (components, ui) should extend `typescript-config/expo.json`
-   - Backend packages (database) should extend `typescript-config/base.json` with Node.js settings
-4. Restart your TypeScript server (VS Code: Cmd+Shift+P → "TypeScript: Restart TS Server")
-
-If you need to modify compiler options:
-
-- **DO NOT** add compiler options directly to app/package `tsconfig.json` files
-- **DO** update the shared config in `packages/typescript-config/`
-- Only add app-specific settings like `paths`, `baseUrl`, or `include` to individual configs
-- Backend packages can add Node.js-specific options (`module: "NodeNext"`, `moduleResolution: "NodeNext"`, etc.)
-
-### Platform-Specific Bugs
-
-Use `pnpm --filter mobile dev` to test all three platforms (iOS/Android/web) before assuming mobile-only issues.
-
-### Database Package Issues
-
-**Connection errors:**
-
-1. Verify `DATABASE_URL` is set in environment variables (`.env` file or system env)
-2. Check database is running and accessible at the connection string
-3. For production, ensure SSL is enabled (automatically enabled when `NODE_ENV=production`)
-4. Test connection with: `pnpm --filter database db:studio`
-
-**Migration errors:**
-
-1. Ensure `drizzle.config.ts` points to correct schema path (`./src/schema/index.ts`)
-2. Run `pnpm --filter database generate` after schema changes
-3. Apply migrations with `pnpm --filter database db:migrate`
-4. Check `drizzle/` directory for generated SQL files
-
-**Type errors with Drizzle/Zod:**
-
-1. Ensure `drizzle-orm`, `drizzle-zod`, and `zod` versions are compatible
-2. Run `pnpm install` from root to ensure workspace dependencies are linked
-3. Verify schema files export both Zod schemas and TypeScript types
-4. Check that `createInsertSchema` and `createSelectSchema` are imported from `drizzle-zod`
-
-**Import errors in API/lambdas:**
-
-1. Verify the consuming app has `"database": "workspace:*"` in dependencies
-2. Run `pnpm install` from root to link workspace packages
-3. Check import path is `from "database"` (not `from "@/database"` or relative paths)
-4. Ensure `packages/database/package.json` has correct `main` and `types` fields pointing to `./src/index.ts`
+Always check existing docs before making architectural changes.
