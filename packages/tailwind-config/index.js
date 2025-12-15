@@ -11,20 +11,24 @@
  * @returns {import('tailwindcss').Config}
  *
  * @example
- * // Basic usage (uses default gluestack theme)
+ * // Basic usage (uses NestQuest theme + gluestack colors with 'gs-' prefix)
  * const createTailwindConfig = require("tailwind-config");
  * module.exports = createTailwindConfig({
  *   content: ["./src/**\/*.{js,jsx,ts,tsx}"],
  *   important: "html"
  * });
+ * // Available colors:
+ * // - NestQuest semantic: bg-primary-500, text-error-600
+ * // - NestQuest brand: bg-nq-green, text-nq-bark
+ * // - Gluestack (CSS vars): bg-gs-primary-500, text-gs-error-600
  *
  * @example
  * // With custom theme preset
  * const createTailwindConfig = require("tailwind-config");
- * const sampleTheme = require("tailwind-config/themes/sample");
+ * const customTheme = require("tailwind-config/themes/default");
  * module.exports = createTailwindConfig({
  *   content: ["./src/**\/*.{js,jsx,ts,tsx}"],
- *   theme: sampleTheme,
+ *   theme: customTheme,
  *   plugins: [require('@tailwindcss/forms')]
  * });
  *
@@ -50,8 +54,9 @@ module.exports = function createTailwindConfig(options = {}) {
     ...restConfig
   } = options;
 
-  // Import default theme
-  const defaultTheme = require("./themes/default");
+  // Import both themes
+  const SampleAppTheme = require("./themes/sampleapp");
+  const gluestackTheme = require("./themes/default");
 
   // Deep merge function for theme objects
   const mergeTheme = (base, custom) => {
@@ -68,14 +73,50 @@ module.exports = function createTailwindConfig(options = {}) {
     return merged;
   };
 
-  // Merge custom theme with default theme
-  const mergedTheme = mergeTheme(defaultTheme, theme);
+  // Helper to prefix color keys
+  const prefixColors = (colors, prefix) => {
+    const prefixed = {};
+    for (const [key, value] of Object.entries(colors)) {
+      if (typeof value === "object" && !Array.isArray(value)) {
+        // Don't prefix nested objects, keep structure
+        prefixed[`${prefix}-${key}`] = value;
+      } else {
+        prefixed[`${prefix}-${key}`] = value;
+      }
+    }
+    return prefixed;
+  };
 
-  // Base safelist patterns for default theme
+  // Add gluestack colors with 'gs-' prefix to make them available alongside NestQuest
+  const gluestackPrefixedColors = prefixColors(gluestackTheme.colors, "gs");
+
+  // Merge gluestack colors into nestquest theme
+  const baseTheme = {
+    ...SampleAppTheme,
+    colors: {
+      ...SampleAppTheme.colors,
+      ...gluestackPrefixedColors,
+    },
+  };
+
+  // Merge custom theme with combined base theme
+  const mergedTheme = mergeTheme(baseTheme, theme);
+
+  // Base safelist patterns for both themes
   const baseSafelist = [
+    // SampleApp semantic colors
     {
       pattern:
         /(bg|border|text|stroke|fill)-(primary|secondary|tertiary|error|success|warning|info|typography|outline|background|indicator)-(0|50|100|200|300|400|500|600|700|800|900|950|white|gray|black|error|warning|muted|success|info|light|dark|primary)/,
+    },
+    // SampleApp brand colors
+    {
+      pattern: /(bg|border|text|stroke|fill)-(sa)-(green|yellow|blue|beige|bark|coral|teal)/,
+    },
+    // Gluestack prefixed colors
+    {
+      pattern:
+        /(bg|border|text|stroke|fill)-(gs)-(primary|secondary|tertiary|error|success|warning|info|typography|outline|background|indicator)-(0|50|100|200|300|400|500|600|700|800|900|950|white|gray|black|error|warning|muted|success|info|light|dark|primary)/,
     },
   ];
 
