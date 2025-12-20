@@ -1,6 +1,6 @@
+import { db, user, session, account, verification } from "@app/database";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db, user, session, account, verification } from "@app/database";
 
 /**
  * Better Auth configuration

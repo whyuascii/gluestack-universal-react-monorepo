@@ -1,6 +1,6 @@
+import { DashboardResponse } from "@app/service-contracts";
 import type { FastifyInstance } from "fastify";
 import { type ZodTypeProvider } from "fastify-type-provider-zod";
-import { DashboardResponse } from "@app/service-contracts";
 import { type RouteOptions } from "../models";
 
 export default (app: FastifyInstance, routeOptions: RouteOptions) => {

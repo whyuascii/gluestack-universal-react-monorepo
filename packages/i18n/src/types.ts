@@ -1,6 +1,6 @@
 import "react-i18next";
-import type commonEN from "./locales/en/common.json";
 import type authEN from "./locales/en/auth.json";
+import type commonEN from "./locales/en/common.json";
 import type validationEN from "./locales/en/validation.json";
 
 // Define the resource structure

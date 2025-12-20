@@ -1,6 +1,7 @@
 packages:
   - apps/*
   - packages/*
+  - deployment/*
 
 onlyBuiltDependencies:
   - sharp

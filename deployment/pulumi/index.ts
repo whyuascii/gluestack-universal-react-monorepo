@@ -529,7 +529,7 @@ const apiErrorAlarm = new aws.cloudwatch.MetricAlarm(`${projectName}-api-error-a
 // Outputs
 // =============================================================================
 
-export const supabaseUrl = supabaseUrl;
+export const supabaseUrlOutput = supabaseUrl;
 export const supabaseSecretArn = supabaseSecret.arn;
 
 export const apiRepositoryUrl = apiRepository.repositoryUrl;

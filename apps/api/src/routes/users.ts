@@ -1,5 +1,5 @@
-import { GetUserResponse, UserErrorResponse } from "@app/service-contracts";
 import { insertUserSchema, users, type InsertUser } from "@app/database";
+import { GetUserResponse, UserErrorResponse } from "@app/service-contracts";
 import type { FastifyInstance } from "fastify";
 import { type ZodTypeProvider } from "fastify-type-provider-zod";
 import { type RouteOptions } from "../models";

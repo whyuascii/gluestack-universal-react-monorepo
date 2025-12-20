@@ -2,8 +2,8 @@
 
 import { PostHogProvider } from "@app/analytics/web";
 import { GluestackUIProvider } from "@app/components";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import i18n from "@app/i18n/web";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Geist, Geist_Mono } from "next/font/google";
 import { useState } from "react";
 import { I18nextProvider } from "react-i18next";

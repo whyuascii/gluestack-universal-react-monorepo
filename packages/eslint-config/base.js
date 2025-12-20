@@ -1,8 +1,8 @@
-import turboConfig from "@app/eslint-config-turbo/flat";
 import js from "@eslint/js";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import prettierConfig from "eslint-config-prettier";
+import turboConfig from "eslint-config-turbo/flat";
 import importPlugin from "eslint-plugin-import";
 
 /**

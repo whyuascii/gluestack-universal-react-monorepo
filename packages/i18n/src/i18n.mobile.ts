@@ -3,12 +3,11 @@ import { initReactI18next } from "react-i18next";
 import { asyncStorageDetector } from "./detectors/asyncStorageDetector";
 
 // Import translation files
-import commonEN from "./locales/en/common.json";
 import authEN from "./locales/en/auth.json";
+import commonEN from "./locales/en/common.json";
 import validationEN from "./locales/en/validation.json";
-
-import commonES from "./locales/es/common.json";
 import authES from "./locales/es/auth.json";
+import commonES from "./locales/es/common.json";
 import validationES from "./locales/es/validation.json";
 
 // Translation resources
