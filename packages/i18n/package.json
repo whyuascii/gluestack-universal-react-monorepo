@@ -1,16 +1,37 @@
 {
-  "name": "i18n",
+  "name": "@app/i18n",
   "version": "0.0.0",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./web": "./src/web.ts",
-    "./mobile": "./src/mobile.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./web": {
+      "types": "./dist/web.d.ts",
+      "default": "./dist/web.js"
+    },
+    "./mobile": {
+      "types": "./dist/mobile.d.ts",
+      "default": "./dist/mobile.js"
+    }
   },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "sideEffects": false,
   "scripts": {
-    "check-types": "tsc --noEmit"
+    "build": "pnpm run build:swc && pnpm run build:types",
+    "build:swc": "swc src -d dist --strip-leading-paths --copy-files",
+    "build:types": "tsc --emitDeclarationOnly --outDir dist --skipLibCheck",
+    "dev": "swc src -d dist --strip-leading-paths --copy-files --watch",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "i18next": "^25.7.2",
@@ -21,9 +42,13 @@
     "expo-localization": "~16.0.0"
   },
   "devDependencies": {
+    "@swc/cli": "^0.6.0",
+    "@swc/core": "^1.10.6",
     "@types/react": "^19.0.1",
+    "eslint": "^9.18.0",
+    "@app/eslint-config": "workspace:*",
     "typescript": "^5.7.2",
-    "typescript-config": "workspace:*"
+    "@app/typescript-config": "workspace:*"
   },
   "peerDependencies": {
     "react": "^19.0.0"

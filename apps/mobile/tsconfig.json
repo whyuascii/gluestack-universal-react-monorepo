@@ -1,5 +1,5 @@
 {
-  "extends": "typescript-config/expo.json",
+  "extends": "@app/typescript-config/expo.json",
   "compilerOptions": {
     "paths": {
       "@/*": ["./*"]
@@ -10,7 +10,7 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "babel.config.js",
+    "babel.config.cjs",
     "nativewind-env.d.ts"
   ]
 }

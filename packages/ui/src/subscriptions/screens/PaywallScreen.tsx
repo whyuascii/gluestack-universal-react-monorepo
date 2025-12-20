@@ -160,7 +160,7 @@ export function PaywallScreen({
     <View className="flex-1 bg-background-0">
       {/* Header */}
       <View className="p-6 bg-primary-500">
-        <Text className="text-2xl font-bold text-white text-center mb-2">Unlock Sample App</Text>
+        <Text className="text-2xl font-bold text-white text-center mb-2">Unlock Nest Quest</Text>
         <Text className="text-white/90 text-center">Get access to all premium features</Text>
       </View>
 

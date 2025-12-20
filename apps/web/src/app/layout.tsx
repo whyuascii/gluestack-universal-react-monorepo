@@ -1,16 +1,16 @@
 "use client";
 
+import { PostHogProvider } from "@app/analytics/web";
+import { GluestackUIProvider } from "@app/components";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { GluestackUIProvider } from "components";
+import i18n from "@app/i18n/web";
 import { Geist, Geist_Mono } from "next/font/google";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useState } from "react";
 import { I18nextProvider } from "react-i18next";
-import { PostHogProvider } from "analytics/web";
-import i18n from "i18n/web";
-import { RevenueCatProvider } from "ui";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+// import { RevenueCatProvider } from '@app/ui'; // Temporarily disabled for landing page
 import "./globals.css";
 import StyledJsxRegistry from "./registry";
-import { useState } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -58,11 +58,11 @@ export default function RootLayout({
               <QueryClientProvider client={queryClient}>
                 <GluestackUIProvider>
                   <SafeAreaProvider className={` flex-1 overflow-hidden`}>
-                    <RevenueCatProvider>
-                      <div className="h-screen w-screen overflow-hidden overflow-y-scroll">
-                        {children}
-                      </div>
-                    </RevenueCatProvider>
+                    {/* <RevenueCatProvider> */}
+                    <div className="h-screen w-screen overflow-hidden overflow-y-scroll">
+                      {children}
+                    </div>
+                    {/* </RevenueCatProvider> */}
                   </SafeAreaProvider>
                 </GluestackUIProvider>
               </QueryClientProvider>

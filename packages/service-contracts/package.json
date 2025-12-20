@@ -1,5 +1,5 @@
 {
-  "name": "service-contracts",
+  "name": "@app/service-contracts",
   "version": "1.0.0",
   "description": "Zod-based service contracts for type-safe API communication between frontend and backend",
   "keywords": [
@@ -12,26 +12,39 @@
   "author": "whyuascii <eddy@whyuascii.com>",
   "license": "ISC",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "files": [
-    "src"
+    "src",
+    "dist"
   ],
   "sideEffects": false,
   "scripts": {
+    "build": "pnpm run build:swc && pnpm run build:types",
+    "build:swc": "swc src -d dist --strip-leading-paths --copy-files",
+    "build:types": "tsc --emitDeclarationOnly --outDir dist --skipLibCheck",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
-    "zod": "^4.1.3"
+    "zod": "^4.1.3",
+    "@app/utils": "workspace:*"
   },
   "devDependencies": {
+    "@swc/cli": "^0.6.0",
+    "@swc/core": "^1.10.6",
     "eslint": "^9.18.0",
-    "eslint-config": "workspace:*",
+    "@app/eslint-config": "workspace:*",
     "typescript": "^5.9.3",
-    "typescript-config": "workspace:*",
-    "utils": "workspace:*"
+    "@app/typescript-config": "workspace:*"
   },
   "engines": {
     "node": ">=18.0.0",

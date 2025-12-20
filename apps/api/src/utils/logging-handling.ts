@@ -8,7 +8,7 @@ import pino from "pino";
  * @see https://github.com/pinojs/pino-pretty
  * @see https://fastify.dev/docs/latest/Reference/Logging/#log-redaction
  */
-export const getLoggerConfig = () => {
+export const getLoggerConfig = (): pino.LoggerOptions => {
   const baseConfig = {
     level: "debug",
     serializers: {

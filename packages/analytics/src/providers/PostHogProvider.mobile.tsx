@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
 import { PostHogProvider as RNPostHogProvider } from "posthog-react-native";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { analytics } from "../config/posthog.mobile";
 import type { Analytics } from "../types";
 

@@ -25,7 +25,7 @@ Unhandled errors and promise rejections are automatically captured:
 
 ```typescript
 // apps/web/src/app/layout.tsx
-import { PostHogProvider } from "analytics/web";
+import { PostHogProvider } from "@app/analytics/web";
 
 export default function RootLayout({ children }) {
   return (
@@ -42,7 +42,7 @@ export default function RootLayout({ children }) {
 Wrap your app or specific components with ErrorBoundary to catch React errors:
 
 ```typescript
-import { ErrorBoundary } from "analytics/web";
+import { ErrorBoundary } from "@app/analytics/web";
 
 export default function RootLayout({ children }) {
   return (
@@ -80,7 +80,7 @@ export default function RootLayout({ children }) {
 ### Manual Error Capture
 
 ```typescript
-import { useAnalytics } from "analytics/web";
+import { useAnalytics } from "@app/analytics/web";
 import posthog from "posthog-js";
 
 function MyComponent() {

@@ -1,6 +1,6 @@
+import prettierConfig from "eslint-config-prettier";
 import reactPlugin from "eslint-plugin-react";
 import reactHooksPlugin from "eslint-plugin-react-hooks";
-import prettierConfig from "eslint-config-prettier";
 import baseConfig from "./base.js";
 
 /**
@@ -24,6 +24,7 @@ export default [
         process: "readonly",
         fetch: "readonly",
         console: "readonly",
+        global: "readonly",
 
         // Browser globals (available when running on web platform)
         window: "readonly",
@@ -35,6 +36,7 @@ export default [
 
         // React Native globals
         __DEV__: "readonly",
+        ErrorUtils: "readonly",
       },
     },
     plugins: {

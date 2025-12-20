@@ -5,7 +5,7 @@ import {
   AuthErrorResponse,
   SignInRequest,
   SignUpRequest,
-} from "service-contracts";
+} from "@app/service-contracts";
 import { type RouteOptions } from "../models";
 
 export default (app: FastifyInstance, routeOptions: RouteOptions) => {

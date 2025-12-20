@@ -11,7 +11,62 @@
   "navigation": {
     "home": "Inicio",
     "dashboard": "Panel",
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "features": "Características",
+    "ourStory": "Nuestra Historia",
+    "about": "Acerca de",
+    "roadmap": "Hoja de Ruta",
+    "testimonials": "Testimonios",
+    "blog": "Blog",
+    "contact": "Contacto"
+  },
+  "hero": {
+    "badge": "Próximamente 🌱",
+    "title": {
+      "part1": "Haz de tu hogar un",
+      "cozy": "nido acogedor",
+      "part2": "juntos"
+    },
+    "subtitle": "Una aplicación suave para parejas para compartir tareas, planificar juntos y fortalecer su vínculo—todo en un solo lugar.",
+    "waitlist": {
+      "placeholder": "Ingresa tu correo electrónico",
+      "button": "Unirse a la Lista",
+      "success": "🎉 ¡Estás en la lista! Te enviaremos un correo cuando lancemos.",
+      "disclaimer": "Sin spam, lo prometemos. Solo actualizaciones ocasionales."
+    }
+  },
+  "features": {
+    "title": "Todo lo que necesitas para anidar juntos",
+    "subtitle": "Herramientas simples para mantener tu vida compartida organizada y alegre",
+    "choreGarden": {
+      "title": "Jardín de Tareas",
+      "description": "Convierte las tareas del hogar en un jardín colaborativo. Rastrea quién hace qué, celebra el progreso juntos y mantén tu hogar floreciendo."
+    },
+    "calendar": {
+      "title": "Calendario Compartido",
+      "description": "Ve los horarios del otro de un vistazo. Planifica citas nocturnas, coordina mandados y asegúrate de estar siempre sincronizados."
+    },
+    "loveNotes": {
+      "title": "Notas de Amor y Chequeos",
+      "description": "Comparte pequeños momentos de gratitud, planifica chequeos semanales y mantén tu conexión emocional creciendo fuerte."
+    }
+  },
+  "cta": {
+    "title": "¿Listo para construir tu nido?",
+    "subtitle": "Únete a nuestra lista de espera y sé el primero en saber cuando lancemos. Estamos creando algo especial para parejas que quieren prosperar juntos.",
+    "waitlist": {
+      "placeholder": "Ingresa tu correo electrónico",
+      "button": "Unirse a la Lista",
+      "success": "🎉 ¡Estás dentro! Estaremos en contacto pronto.",
+      "disclaimer": "Sé de los primeros en probar TaskManager cuando lancemos."
+    }
+  },
+  "footer": {
+    "tagline": "Haciendo la vida compartida simple y alegre.",
+    "product": "Producto",
+    "company": "Compañía",
+    "connect": "Conectar",
+    "copyright": "© 2024 TaskManager. Todos los derechos reservados."
   },
   "pricing": {
     "title": "Precios",
@@ -37,12 +92,5 @@
         }
       }
     }
-  },
-  "hero": {
-    "title": "Gestión de tareas simple",
-    "subtitle": "Organiza tu trabajo y tu vida, finalmente."
-  },
-  "footer": {
-    "copyright": "© 2024 TaskManager. Todos los derechos reservados."
   }
 }

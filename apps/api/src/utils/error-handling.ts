@@ -1,13 +1,13 @@
+import { AppCustomError, InternalDocumentParseError } from "@app/errors";
+import { type TUserErrorResponse } from "@app/service-contracts";
+import { transformValidationErrorMessages } from "@app/utils";
 import HttpError from "@fastify/sensible";
-import { AppCustomError, InternalDocumentParseError } from "errors";
 import type { FastifyError, FastifyInstance, FastifyRequest } from "fastify";
 import {
   hasZodFastifySchemaValidationErrors,
   isResponseSerializationError,
   type ZodFastifySchemaValidationError,
 } from "fastify-type-provider-zod";
-import { type TUserErrorResponse } from "service-contracts";
-import { transformValidationErrorMessages } from "utils";
 import type { z } from "zod";
 
 export const globalErrorHandler = (

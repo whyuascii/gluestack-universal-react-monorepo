@@ -65,7 +65,7 @@ Write integration tests for your API:
 **Handle errors:**
 
 ```typescript
-import { ApiError } from "errors";
+import { ApiError } from "@app/errors";
 
 throw new ApiError("Resource not found", 404);
 ```

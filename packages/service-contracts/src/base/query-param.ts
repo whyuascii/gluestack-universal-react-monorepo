@@ -1,4 +1,4 @@
-import { sortStringSchema } from "utils";
+import { sortStringSchema } from "@app/utils";
 import { z } from "zod";
 
 export const BaseQueryParams = z.object({

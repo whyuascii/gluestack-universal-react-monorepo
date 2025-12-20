@@ -1,5 +1,5 @@
 {
-  "name": "components",
+  "name": "@app/components",
   "version": "0.0.0",
   "description": "Cross-platform UI components built with gluestack-v3 and NativeWind",
   "keywords": [
@@ -13,17 +13,27 @@
   "author": "whyuascii <eddy@whyuascii.com>",
   "license": "ISC",
   "private": true,
-  "type": "module",
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
   "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "files": [
-    "src"
+    "src",
+    "dist"
   ],
   "sideEffects": false,
   "scripts": {
+    "build": "pnpm run build:swc",
+    "build:swc": "swc src -d dist --strip-leading-paths --copy-files",
+    "dev": "swc src -d dist --strip-leading-paths --copy-files --watch",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@expo/html-elements": "^0.12.5",
@@ -31,14 +41,16 @@
     "@legendapp/motion": "^2.4.0",
     "tailwind-merge": "^2.4.0",
     "tailwind-variants": "^3.1.0",
-    "service-contracts": "workspace:*"
+    "@app/service-contracts": "workspace:*"
   },
   "devDependencies": {
+    "@swc/cli": "^0.6.0",
+    "@swc/core": "^1.10.6",
     "@types/react": "^19.1.0",
     "eslint": "^9.18.0",
-    "eslint-config": "workspace:*",
+    "@app/eslint-config": "workspace:*",
     "typescript": "^5.9.3",
-    "typescript-config": "workspace:*"
+    "@app/typescript-config": "workspace:*"
   },
   "peerDependencies": {
     "@gluestack-ui/core": "^3.0.10",

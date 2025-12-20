@@ -9,9 +9,9 @@ import React, { useState } from "react";
 import { Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { PremiumGate } from "./components/PremiumGate";
 import { SubscriptionStatus } from "./components/SubscriptionStatus";
-import { PaywallScreen } from "./screens/PaywallScreen";
 import { usePaywall } from "./hooks/usePaywall";
 import { useSubscription } from "./hooks/useSubscription";
+import { PaywallScreen } from "./screens/PaywallScreen";
 
 /**
  * Example 1: Simple Premium Feature Gate

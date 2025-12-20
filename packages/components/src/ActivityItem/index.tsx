@@ -1,5 +1,5 @@
+import type { TActivityItem } from "@app/service-contracts";
 import React from "react";
-import type { TActivityItem } from "service-contracts";
 import { Box } from "../box";
 import { HStack } from "../hstack";
 import { Text } from "../text";

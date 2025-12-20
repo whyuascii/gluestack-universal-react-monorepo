@@ -28,7 +28,7 @@ This package provides:
 Base class for all application errors:
 
 ```typescript
-import { AppCustomError } from "errors";
+import { AppCustomError } from "@app/errors";
 
 throw new AppCustomError({
   message: "Internal error message for logs",
@@ -56,7 +56,7 @@ throw new AppCustomError({
 For database-to-model mapping errors:
 
 ```typescript
-import { InternalDocumentParseError } from "errors";
+import { InternalDocumentParseError } from "@app/errors";
 
 throw new InternalDocumentParseError({
   message: "Failed to parse database record",
@@ -77,23 +77,23 @@ The package also exports specialized error classes:
 
 ```typescript
 // Database-related errors
-import { DbAndModelOutOfSyncError, UndefinedDocumentError } from "errors";
+import { DbAndModelOutOfSyncError, UndefinedDocumentError } from "@app/errors";
 
 // AWS-related errors
 import {
   AwsError,
   // ... other AWS errors
-} from "errors";
+} from "@app/errors";
 
 // Generic errors
-import { GenericError } from "errors";
+import { GenericError } from "@app/errors";
 ```
 
 ## Usage in API Routes
 
 ```typescript
 import type { FastifyInstance } from "fastify";
-import { AppCustomError } from "errors";
+import { AppCustomError } from "@app/errors";
 import { db, users, eq } from "database";
 
 app.route({
@@ -126,7 +126,7 @@ app.route({
 ## Usage in Services
 
 ```typescript
-import { AppCustomError } from "errors";
+import { AppCustomError } from "@app/errors";
 
 export async function processPayment(amount: number) {
   if (amount <= 0) {
@@ -194,7 +194,7 @@ interface UserErrorResponse {
 ## Testing Errors
 
 ```typescript
-import { AppCustomError } from "errors";
+import { AppCustomError } from "@app/errors";
 
 describe("User Service", () => {
   it("should throw AppCustomError when user not found", async () => {

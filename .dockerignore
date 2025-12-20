@@ -1,0 +1,105 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# Testing
+coverage
+.nyc_output
+**/__tests__
+**/*.test.ts
+**/*.test.tsx
+**/*.test.js
+**/*.test.jsx
+**/*.spec.ts
+**/*.spec.tsx
+**/*.spec.js
+**/*.spec.jsx
+vitest.config.*
+jest.config.*
+
+# Build outputs (will be rebuilt in container)
+.next
+out
+dist
+build
+*.tsbuildinfo
+
+# Turbo
+.turbo
+
+# Misc
+.DS_Store
+*.pem
+Thumbs.db
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Local env files (use build args instead)
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+
+# Vercel
+.vercel
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.editorconfig
+
+# Git
+.git
+.gitignore
+.gitattributes
+.github
+
+# CI/CD
+.husky
+.github
+.gitlab-ci.yml
+.circleci
+
+# Documentation
+docs
+*.md
+!README.md
+
+# Docker
+Dockerfile*
+.dockerignore
+docker-compose*.yml
+
+# Mobile specific
+apps/mobile/android
+apps/mobile/ios
+apps/mobile/.expo
+*.keystore
+*.p8
+*.p12
+*.mobileprovision
+
+# Database
+**/*.db
+**/*.sqlite
+**/*.sqlite3
+drizzle
+
+# Logs
+logs
+*.log

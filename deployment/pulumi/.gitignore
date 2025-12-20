@@ -1,0 +1,25 @@
+# Pulumi
+bin/
+node_modules/
+*.pyc
+.pulumi/
+
+# Pulumi state (if using local backend)
+Pulumi.*.yaml
+!Pulumi.dev.yaml.example
+
+# TypeScript
+*.js
+*.d.ts
+tsconfig.tsbuildinfo
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

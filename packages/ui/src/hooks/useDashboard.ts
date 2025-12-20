@@ -1,9 +1,9 @@
+import type { TDashboardResponse } from "@app/service-contracts";
 import { useQuery } from "@tanstack/react-query";
-import type { TDashboardResponse } from "service-contracts";
 import { useAuthStore } from "../store/authStore";
 
 const API_URL =
-  process.env.EXPO_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  process.env.EXPO_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3030";
 
 export const useDashboard = () => {
   const session = useAuthStore((state) => state.session);
@@ -26,7 +26,7 @@ export const useDashboard = () => {
         throw new Error("Failed to fetch dashboard data");
       }
 
-      return response.json();
+      return response.json() as Promise<TDashboardResponse>;
     },
     enabled: isAuthenticated,
   });

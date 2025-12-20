@@ -119,7 +119,7 @@ typescript-config/
 ```json
 // apps/web/tsconfig.json
 {
-  "extends": "typescript-config/nextjs.json",
+  "extends": "@app/typescript-config/nextjs.json",
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"]
@@ -158,7 +158,7 @@ module.exports = function createTailwindConfig(options = {}) {
 
 ```javascript
 // apps/web/tailwind.config.js
-const createTailwindConfig = require("tailwind-config");
+const createTailwindConfig = require("@app/tailwind-config");
 
 module.exports = createTailwindConfig({
   content: ["./src/**/*.{html,js,jsx,ts,tsx,mdx}"],

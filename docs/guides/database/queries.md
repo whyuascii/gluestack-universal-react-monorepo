@@ -353,7 +353,7 @@ await db.insert(users).values(input);
 ### 4. Handle Unique Constraint Violations
 
 ```typescript
-import { DatabaseError } from "errors";
+import { DatabaseError } from "@app/errors";
 
 try {
   await db.insert(users).values({ email: "existing@example.com" });

@@ -127,13 +127,13 @@ module.exports = function createTailwindConfig(options = {}) {
 
 ```javascript
 // apps/web/tailwind.config.js
-const createTailwindConfig = require("tailwind-config");
+const createTailwindConfig = require("@app/tailwind-config");
 module.exports = createTailwindConfig({
   content: ["./src/**/*.{ts,tsx}"],
 });
 
 // apps/mobile/tailwind.config.js
-const createTailwindConfig = require("tailwind-config");
+const createTailwindConfig = require("@app/tailwind-config");
 module.exports = createTailwindConfig({
   content: ["./src/**/*.{ts,tsx}"],
 });
@@ -148,7 +148,7 @@ The `ui` package contains screen implementations:
 ```tsx
 // packages/ui/src/home/HomeScreen.tsx
 import { View, Text } from "react-native";
-import { PrimaryButton } from "components";
+import { PrimaryButton } from "@app/components";
 
 export function HomeScreen() {
   const { user } = useAuth();
@@ -166,13 +166,13 @@ export function HomeScreen() {
 
 ```tsx
 // apps/web/src/app/page.tsx
-import { HomeScreen } from "ui";
+import { HomeScreen } from "@app/ui";
 export default function Page() {
   return <HomeScreen />;
 }
 
 // apps/mobile/src/app/(tabs)/index.tsx
-import { HomeScreen } from "ui";
+import { HomeScreen } from "@app/ui";
 export default function TabOneScreen() {
   return <HomeScreen />;
 }

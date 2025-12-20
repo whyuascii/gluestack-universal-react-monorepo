@@ -21,7 +21,7 @@ Already installed as a workspace dependency in your apps:
 ## Usage
 
 ```tsx
-import { Button, ButtonText, Box, Text, Input } from "components";
+import { Button, ButtonText, Box, Text, Input } from "@app/components";
 
 function MyScreen() {
   return (

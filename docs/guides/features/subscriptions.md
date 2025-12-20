@@ -72,7 +72,7 @@ The providers are already configured in both apps - just add your API key!
 ### 1. Check Subscription Status
 
 ```typescript
-import { useSubscription } from "ui";
+import { useSubscription } from "@app/ui";
 
 function MyComponent() {
   const { isPremium, isLoading, hasMonthly, hasYearly } = useSubscription();
@@ -92,7 +92,7 @@ function MyComponent() {
 ### 2. Gate Content Behind Premium
 
 ```typescript
-import { PremiumGate } from "ui";
+import { PremiumGate } from "@app/ui";
 
 function PremiumFeature() {
   return (
@@ -127,7 +127,7 @@ function PremiumFeatureWithFallback() {
 **Native (iOS/Android):**
 
 ```typescript
-import { usePaywall } from "ui";
+import { usePaywall } from "@app/ui";
 
 function MyScreen() {
   const { showPaywall, showPaywallIfNeeded } = usePaywall();
@@ -165,7 +165,7 @@ function MyScreen() {
 **Web:**
 
 ```typescript
-import { PaywallScreen } from "ui";
+import { PaywallScreen } from "@app/ui";
 
 function MyScreen() {
   const [showPaywall, setShowPaywall] = useState(false);
@@ -186,7 +186,7 @@ function MyScreen() {
 ### 4. Display Subscription Status
 
 ```typescript
-import { SubscriptionStatus } from "ui";
+import { SubscriptionStatus } from "@app/ui";
 
 function SettingsScreen() {
   const router = useRouter();
@@ -211,7 +211,7 @@ function SettingsScreen() {
 ### 5. Full Subscription Management Screen
 
 ```typescript
-import { SubscriptionScreen } from "ui";
+import { SubscriptionScreen } from "@app/ui";
 
 // Use as a screen in your navigation
 export default function ManageSubscription() {
@@ -224,7 +224,7 @@ export default function ManageSubscription() {
 For advanced use cases, you can access the SDK directly:
 
 ```typescript
-import { useRevenueCat } from "ui";
+import { useRevenueCat } from "@app/ui";
 
 function AdvancedComponent() {
   const {
@@ -275,7 +275,7 @@ function AdvancedComponent() {
 ### 7. Check Custom Entitlements
 
 ```typescript
-import { useSubscription } from "ui";
+import { useSubscription } from "@app/ui";
 
 function CustomEntitlementCheck() {
   const { hasEntitlement } = useSubscription();
@@ -293,7 +293,7 @@ function CustomEntitlementCheck() {
 ### 8. Get Subscription Details
 
 ```typescript
-import { useSubscription } from "ui";
+import { useSubscription } from "@app/ui";
 
 function SubscriptionDetails() {
   const {
@@ -322,7 +322,7 @@ Create a subscription screen in your app:
 
 ```typescript
 // apps/mobile/src/app/(app)/subscription.tsx
-import { SubscriptionScreen } from "ui";
+import { SubscriptionScreen } from "@app/ui";
 
 export default function Subscription() {
   return <SubscriptionScreen />;
@@ -335,7 +335,7 @@ export default function Subscription() {
 // apps/web/src/app/subscription/page.tsx
 "use client";
 
-import { SubscriptionScreen } from "ui";
+import { SubscriptionScreen } from "@app/ui";
 
 export default function SubscriptionPage() {
   return <SubscriptionScreen />;

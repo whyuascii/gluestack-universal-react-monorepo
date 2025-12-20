@@ -1,6 +1,6 @@
+import { SignupScreen } from "@app/ui";
 import { useRouter } from "expo-router";
 import React from "react";
-import { SignupScreen } from "ui";
 
 export default function Signup() {
   const router = useRouter();

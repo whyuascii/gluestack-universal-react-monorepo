@@ -1,4 +1,4 @@
-import { createAuthConfig } from "auth";
+import { createAuthConfig } from "@app/auth";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import fastifyPlugin from "fastify-plugin";
 

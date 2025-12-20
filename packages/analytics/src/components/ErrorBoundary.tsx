@@ -1,5 +1,5 @@
-import React, { Component, ErrorInfo, ReactNode } from "react";
 import posthog from "posthog-js";
+import { Component, type ErrorInfo, type ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
@@ -72,7 +72,7 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div style={{ padding: "20px", maxWidth: "600px", margin: "50px auto" }}>
           <h1 style={{ color: "#d32f2f" }}>Something went wrong</h1>
-          <p>We've been notified and are working to fix the issue.</p>
+          <p>We&apos;ve been notified and are working to fix the issue.</p>
           {process.env.NODE_ENV === "development" && (
             <details style={{ marginTop: "20px" }}>
               <summary style={{ cursor: "pointer", marginBottom: "10px" }}>

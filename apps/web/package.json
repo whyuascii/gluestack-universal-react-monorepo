@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "@app/web",
   "version": "1.0.0",
   "description": "Next.js web app with React Native Web, NativeWind, and gluestack components",
   "keywords": [
@@ -13,6 +13,7 @@
   "author": "whyuascii <eddy@whyuascii.com>",
   "license": "ISC",
   "private": true,
+  "type": "module",
   "files": [
     "src",
     ".next"
@@ -31,10 +32,10 @@
   "dependencies": {
     "@gluestack/ui-next-adapter": "^3.0.3",
     "@revenuecat/purchases-js": "^1.20.1",
-    "analytics": "workspace:*",
-    "components": "workspace:*",
+    "@app/analytics": "workspace:*",
+    "@app/components": "workspace:*",
     "dom-helpers": "^6.0.1",
-    "i18n": "workspace:*",
+    "@app/i18n": "workspace:*",
     "lucide-react-native": "^0.545.0",
     "nativewind": "^4.2.1",
     "next": "^15.5.0",
@@ -44,9 +45,9 @@
     "react-dom": "^19.1.0",
     "react-native-svg": "~15.12.0",
     "react-native-web": "^0.21.1",
-    "service-contracts": "workspace:*",
+    "@app/service-contracts": "workspace:*",
     "tailwindcss": "^3.4.17",
-    "ui": "workspace:*"
+    "@app/ui": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.10.2",
@@ -55,11 +56,11 @@
     "@types/react-native-web": "^0.19.2",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.18.0",
-    "eslint-config": "workspace:*",
+    "@app/eslint-config": "workspace:*",
     "postcss": "^8.5.6",
-    "tailwind-config": "workspace:*",
+    "@app/tailwind-config": "workspace:*",
     "typescript": "^5.9.3",
-    "typescript-config": "workspace:*"
+    "@app/typescript-config": "workspace:*"
   },
   "engines": {
     "node": ">=18.0.0",

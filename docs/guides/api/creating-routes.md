@@ -67,7 +67,7 @@ Best for system routes like `/health` or `/me`:
 ```typescript
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
-import { GetYourFeatureResponse, YourFeatureErrorResponse } from "service-contracts";
+import { GetYourFeatureResponse, YourFeatureErrorResponse } from "@app/service-contracts";
 
 const attachHandlers = (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route({
@@ -98,7 +98,7 @@ Best for API routes that may evolve over time:
 ```typescript
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
-import { GetYourFeatureResponse, YourFeatureErrorResponse } from "service-contracts";
+import { GetYourFeatureResponse, YourFeatureErrorResponse } from "@app/service-contracts";
 import { RouteOptions } from "../models";
 
 const attachHandlers = (app: FastifyInstance, routeOptions: RouteOptions) => {
@@ -172,7 +172,7 @@ The API has a database plugin that provides access to the Drizzle ORM instance v
 import { insertUserSchema, users, type InsertUser } from "database";
 import type { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { GetUserResponse, UserErrorResponse } from "service-contracts";
+import { GetUserResponse, UserErrorResponse } from "@app/service-contracts";
 import { RouteOptions } from "../models";
 
 export default (app: FastifyInstance, routeOptions: RouteOptions) => {
@@ -431,7 +431,7 @@ import { posts, insertPostSchema, updatePostSchema, eq, and, type InsertPost } f
 import type { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { GetPostResponse, GetPostsResponse, PostErrorResponse } from "service-contracts";
+import { GetPostResponse, GetPostsResponse, PostErrorResponse } from "@app/service-contracts";
 import { RouteOptions } from "../models";
 
 export default (app: FastifyInstance, routeOptions: RouteOptions) => {

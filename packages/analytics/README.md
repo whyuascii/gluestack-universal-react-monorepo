@@ -20,7 +20,7 @@ This package is already installed as a workspace dependency.
 ### Web (Next.js)
 
 ```tsx
-import { PostHogProvider } from "analytics/web";
+import { PostHogProvider } from "@app/analytics/web";
 
 export default function RootLayout({ children }) {
   return <PostHogProvider>{children}</PostHogProvider>;
@@ -61,7 +61,7 @@ function MyComponent() {
 Wrap your app with ErrorBoundary to catch React errors:
 
 ```tsx
-import { ErrorBoundary } from "analytics/web"; // or "analytics/mobile"
+import { ErrorBoundary } from "@app/analytics/web"; // or "analytics/mobile"
 
 function App() {
   return (
@@ -81,11 +81,11 @@ Add these to your `.env` files:
 ```bash
 # Web (.env.local)
 NEXT_PUBLIC_POSTHOG_KEY=your_posthog_key
-NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com # or your self-hosted instance
+NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com # or your self-hosted instance
 
 # Mobile (.env)
 EXPO_PUBLIC_POSTHOG_KEY=your_posthog_key
-EXPO_PUBLIC_POSTHOG_HOST=https://app.posthog.com
+EXPO_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
 ```
 
 ## API

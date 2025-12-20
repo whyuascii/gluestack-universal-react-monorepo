@@ -1,7 +1,7 @@
-import type { AuthConfig } from "auth";
+import type { AuthConfig } from "@app/auth";
+import type { db } from "@app/database";
 import type { Session, User } from "better-auth/types";
-import type { db } from "database";
-import { type FastifyReply } from "fastify";
+import "fastify";
 
 declare module "fastify" {
   export interface FastifyRequest {
@@ -27,5 +27,6 @@ declare module "fastify" {
       BETTER_AUTH_SECRET: string;
       BETTER_AUTH_URL: string;
     };
+    rateLimit: RateLimit;
   }
 }

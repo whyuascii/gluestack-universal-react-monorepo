@@ -36,7 +36,7 @@ The original gluestack-ui theme with semantic color tokens using CSS variables. 
 
 ```javascript
 // apps/web/tailwind.config.js
-const createTailwindConfig = require("tailwind-config");
+const createTailwindConfig = require("@app/tailwind-config");
 
 module.exports = createTailwindConfig({
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
@@ -62,7 +62,7 @@ This gives you access to **both** NestQuest and Gluestack colors:
 
 ```javascript
 // apps/web/tailwind.config.js
-const createTailwindConfig = require("tailwind-config");
+const createTailwindConfig = require("@app/tailwind-config");
 const originalTheme = require("tailwind-config/themes/default");
 
 module.exports = createTailwindConfig({
@@ -78,7 +78,7 @@ This replaces NestQuest colors with the original gluestack-ui theme using CSS va
 
 ```javascript
 // apps/web/tailwind.config.js
-const createTailwindConfig = require("tailwind-config");
+const createTailwindConfig = require("@app/tailwind-config");
 
 module.exports = createTailwindConfig({
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
@@ -99,7 +99,7 @@ module.exports = createTailwindConfig({
 If you want to **replace** the primary color instead of adding to it:
 
 ```javascript
-const createTailwindConfig = require("tailwind-config");
+const createTailwindConfig = require("@app/tailwind-config");
 
 module.exports = createTailwindConfig({
   content: ["./src/**/*.{js,jsx,ts,tsx}"],

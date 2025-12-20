@@ -1,9 +1,13 @@
+import type {
+  TAuthenticationResponse,
+  TSignInRequest,
+  TSignUpRequest,
+} from "@app/service-contracts";
 import { useMutation } from "@tanstack/react-query";
-import type { TSignInRequest, TSignUpRequest, TAuthenticationResponse } from "service-contracts";
 import { useAuthStore } from "../store/authStore";
 
 const API_URL =
-  process.env.EXPO_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  process.env.EXPO_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3030";
 
 export const useLogin = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
@@ -19,11 +23,11 @@ export const useLogin = () => {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = (await response.json()) as { message?: string };
         throw new Error(error.message || "Login failed");
       }
 
-      return response.json();
+      return response.json() as Promise<TAuthenticationResponse>;
     },
     onSuccess: (data) => {
       setAuth(data);
@@ -45,11 +49,11 @@ export const useSignup = () => {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = (await response.json()) as { message?: string };
         throw new Error(error.message || "Signup failed");
       }
 
-      return response.json();
+      return response.json() as Promise<TAuthenticationResponse>;
     },
     onSuccess: (data) => {
       setAuth(data);

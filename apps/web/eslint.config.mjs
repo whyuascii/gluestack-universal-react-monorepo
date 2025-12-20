@@ -1,4 +1,4 @@
-import nextjsConfig from "eslint-config/nextjs.js";
+import nextjsConfig from "@app/eslint-config/nextjs.js";
 
 /**
  * ESLint configuration for the web app

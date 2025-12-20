@@ -1,4 +1,4 @@
-import nodeConfig from "eslint-config/node.js";
+import nodeConfig from "@app/eslint-config/node.js";
 
 /**
  * ESLint configuration for the utils package

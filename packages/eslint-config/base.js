@@ -1,9 +1,9 @@
+import turboConfig from "@app/eslint-config-turbo/flat";
 import js from "@eslint/js";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
-import importPlugin from "eslint-plugin-import";
-import turboConfig from "eslint-config-turbo/flat";
 import prettierConfig from "eslint-config-prettier";
+import importPlugin from "eslint-plugin-import";
 
 /**
  * Base ESLint configuration for the monorepo
@@ -53,7 +53,8 @@ export default [
       // TypeScript recommended rules
       ...tsPlugin.configs.recommended.rules,
 
-      // Disable base rule in favor of TypeScript version
+      // Disable base rules in favor of TypeScript versions
+      "no-undef": "off", // TypeScript handles this
       "no-redeclare": "off",
       "@typescript-eslint/no-redeclare": ["error", { ignoreDeclarationMerge: true }],
 

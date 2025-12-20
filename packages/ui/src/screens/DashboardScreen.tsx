@@ -1,7 +1,7 @@
 "use client";
 
-import { VStack, HStack, Heading, Text, Box, ScrollView, Spinner } from "components";
-import { AppHeader, StatCard, ActivityItem, PrimaryButton } from "components";
+import { VStack, HStack, Heading, Text, Box, ScrollView, Spinner } from "@app/components";
+import { AppHeader, StatCard, ActivityItem, PrimaryButton } from "@app/components";
 import React from "react";
 import { useDashboard, useLogout } from "../hooks";
 import { useAuthStore } from "../store/authStore";
@@ -28,9 +28,7 @@ export const DashboardScreen: React.FC = () => {
           </Text>
           <PrimaryButton
             onPress={() => {
-              if (typeof window !== "undefined") {
-                window.location.reload();
-              }
+              (globalThis as any).window?.location?.reload();
             }}
           >
             Retry
@@ -77,9 +75,8 @@ export const DashboardScreen: React.FC = () => {
           {/* Primary Action */}
           <PrimaryButton
             onPress={() => {
-              if (typeof alert !== "undefined") {
-                alert("Create new task!");
-              }
+              // eslint-disable-next-line no-alert
+              (globalThis as any).alert?.("Create new task!");
             }}
           >
             Create New Task

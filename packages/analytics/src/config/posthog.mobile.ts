@@ -9,7 +9,7 @@ class PostHogMobile implements Analytics {
     if (this.initialized) return;
 
     const apiKey = process.env.EXPO_PUBLIC_POSTHOG_KEY;
-    const apiHost = process.env.EXPO_PUBLIC_POSTHOG_HOST || "https://app.posthog.com";
+    const apiHost = process.env.EXPO_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com";
 
     if (!apiKey) {
       console.warn("PostHog API key not found. Analytics will be disabled.");
@@ -32,7 +32,7 @@ class PostHogMobile implements Analytics {
   private setupErrorHandlers(): void {
     // Capture unhandled promise rejections
     if (typeof global !== "undefined") {
-      const originalHandler = global.Promise?.prototype.catch;
+      const _originalHandler = global.Promise?.prototype.catch;
 
       // Track unhandled rejections
       if (typeof ErrorUtils !== "undefined") {

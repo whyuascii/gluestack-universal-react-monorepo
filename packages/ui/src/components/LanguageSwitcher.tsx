@@ -1,6 +1,13 @@
-import { HStack, Button, ButtonText } from "components";
+import { HStack, Button, ButtonText } from "@app/components";
 import React from "react";
 import { useTranslation } from "react-i18next";
+
+// Type for PostHog on window object
+interface WindowWithPostHog {
+  posthog?: {
+    capture: (event: string, properties?: Record<string, unknown>) => void;
+  };
+}
 
 export const LanguageSwitcher: React.FC = () => {
   const { i18n } = useTranslation();
@@ -15,8 +22,9 @@ export const LanguageSwitcher: React.FC = () => {
     i18n.changeLanguage(langCode);
 
     // Track language change if analytics is available
-    if (typeof window !== "undefined" && (window as any).posthog) {
-      (window as any).posthog.capture("language_changed", {
+    const w = (globalThis as any).window as WindowWithPostHog | undefined;
+    if (w?.posthog) {
+      w.posthog.capture("language_changed", {
         from_language: previousLanguage,
         to_language: langCode,
       });

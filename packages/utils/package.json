@@ -1,5 +1,5 @@
 {
-  "name": "utils",
+  "name": "@app/utils",
   "version": "1.0.0",
   "description": "Isomorphic utility functions for TypeScript, Zod validation, and URL building",
   "keywords": [
@@ -12,16 +12,24 @@
   "author": "whyuascii <eddy@whyuascii.com>",
   "license": "ISC",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "files": [
     "src",
     "dist"
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "swc src -d dist --strip-leading-paths",
-    "dev": "npm run build -- --watch",
+    "build": "pnpm run build:swc && pnpm run build:types",
+    "build:swc": "swc src -d dist --strip-leading-paths --copy-files",
+    "build:types": "tsc --emitDeclarationOnly --outDir dist --skipLibCheck",
+    "dev": "pnpm run build:swc -- --watch",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "clean": "rm -rf dist",
@@ -41,10 +49,10 @@
     "@types/lodash": "^4.17.0",
     "@vitest/coverage-v8": "^4.0.15",
     "eslint": "^9.18.0",
-    "eslint-config": "workspace:*",
+    "@app/eslint-config": "workspace:*",
     "jsdom": "^27.3.0",
     "typescript": "^5.9.3",
-    "typescript-config": "workspace:*",
+    "@app/typescript-config": "workspace:*",
     "vitest": "^4.0.15"
   },
   "engines": {

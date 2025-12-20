@@ -10,8 +10,8 @@ The `analytics` package provides a unified interface for event tracking, user id
 
 **Platform Support:**
 
-- ✅ Web (Next.js) - `analytics/web`
-- ✅ Mobile (React Native) - `analytics/mobile`
+- ✅ Web (Next.js) - `@app/analytics/web`
+- ✅ Mobile (React Native) - `@app/analytics/mobile`
 - ✅ API (Node.js) - Used directly in API server
 
 ---
@@ -22,12 +22,12 @@ Already included in the monorepo. Apps import platform-specific modules:
 
 ```typescript
 // Web
-import { analytics } from "analytics/web";
-import { ErrorBoundary } from "analytics/web";
+import { analytics } from "@app/analytics/web";
+import { ErrorBoundary } from "@app/analytics/web";
 
 // Mobile
-import { analytics } from "analytics/mobile";
-import { ErrorBoundary } from "analytics/mobile";
+import { analytics } from "@app/analytics/mobile";
+import { ErrorBoundary } from @app/"analytics/mobile";
 ```
 
 ---
@@ -47,7 +47,7 @@ NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
 
 ```bash
 EXPO_PUBLIC_POSTHOG_KEY=phc_your_project_key
-EXPO_PUBLIC_POSTHOG_HOST=https://app.posthog.com
+EXPO_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
 ```
 
 **API** (`apps/api/.env`):
@@ -146,7 +146,7 @@ React component for catching and reporting errors.
 **Example:**
 
 ```typescript
-import { ErrorBoundary } from "analytics/web";
+import { ErrorBoundary } from "@app/analytics/web";
 
 function App() {
   return (
@@ -195,7 +195,7 @@ function App() {
 **Initialization:**
 
 ```typescript
-import { PostHogProvider } from "analytics/web";
+import { PostHogProvider } from "@app/analytics/web";
 
 // In app root
 <PostHogProvider>

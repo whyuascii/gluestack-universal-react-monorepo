@@ -20,6 +20,9 @@
   },
   "scripts": {
     "dev": "turbo dev",
+    "dev:web": "turbo dev --filter=@app/web...",
+    "dev:mobile": "turbo dev --filter=@app/mobile...",
+    "dev:api": "turbo dev --filter=@app/api...",
     "build": "turbo build",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",

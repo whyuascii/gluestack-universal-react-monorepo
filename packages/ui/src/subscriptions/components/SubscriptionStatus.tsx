@@ -46,7 +46,7 @@ export function SubscriptionStatus({
       <View className={`p-4 bg-background-50 rounded-lg ${className}`}>
         <Text className="text-lg font-semibold text-typography-900 mb-2">Free Plan</Text>
         <Text className="text-typography-600 mb-4">
-          Upgrade to Sample App to unlock all features
+          Upgrade to Nest Quest to unlock all features
         </Text>
         {onUpgradePress && (
           <Pressable

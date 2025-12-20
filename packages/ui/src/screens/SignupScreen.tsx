@@ -1,7 +1,7 @@
 "use client";
 
-import { VStack, Heading, Text, Link, LinkText, Box } from "components";
-import { AuthCard, FormField, PrimaryButton } from "components";
+import { VStack, Heading, Text, Link, LinkText, Box } from "@app/components";
+import { AuthCard, FormField, PrimaryButton } from "@app/components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSignup } from "../hooks";

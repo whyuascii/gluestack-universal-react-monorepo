@@ -330,12 +330,12 @@ i18next provides translation management with **English and Spanish** included:
 
 ```typescript
 // Web
-import { useTranslation } from "i18n/web";
+import { useTranslation } from "@app/i18n/web";
 const { t, i18n } = useTranslation();
 <h1>{t("common.welcome")}</h1>
 
 // Mobile
-import { useTranslation } from "i18n/mobile";
+import { useTranslation } from "@app/i18n/mobile";
 <Text>{t("auth.signIn")}</Text>
 ```
 
@@ -358,7 +358,7 @@ PostHog provides **unified analytics and error tracking** across web, mobile, an
 **Event tracking:**
 
 ```typescript
-import { analytics } from "analytics/web"; // or "analytics/mobile"
+import { analytics } from "@app/analytics/web"; // or "analytics/mobile"
 
 analytics.track("button_clicked", { button_name: "sign_up", page: "landing" });
 analytics.identify(userId, { email: user.email, plan: "premium" });
@@ -368,7 +368,7 @@ analytics.reset(); // On logout
 **Error boundary:**
 
 ```tsx
-import { ErrorBoundary } from "analytics/web"; // or "analytics/mobile"
+import { ErrorBoundary } from "@app/analytics/web"; // or "analytics/mobile"
 
 <ErrorBoundary fallback={<ErrorScreen />}>
   <YourApp />
@@ -391,7 +391,7 @@ RevenueCat handles **subscriptions and in-app purchases** across iOS, Android, a
 **Setup:**
 
 ```typescript
-import { RevenueCatProvider, useSubscription, PremiumGate } from "ui";
+import { RevenueCatProvider, useSubscription, PremiumGate } from "@app/ui";
 
 // Wrap app
 <RevenueCatProvider>

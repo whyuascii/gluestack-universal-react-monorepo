@@ -63,7 +63,7 @@ export type { CustomButtonProps } from "./custom-button";
 
 ```tsx
 // apps/web/src/app/page.tsx or apps/mobile/src/app/index.tsx
-import { CustomButton } from "components";
+import { CustomButton } from "@app/components";
 
 export default function Page() {
   return (

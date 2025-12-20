@@ -1,8 +1,8 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
+import React, { createContext, Suspense, useContext, useEffect } from "react";
 import { analytics } from "../config/posthog.web";
 import type { Analytics } from "../types";
 

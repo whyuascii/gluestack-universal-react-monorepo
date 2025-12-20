@@ -1,4 +1,4 @@
-import { HomeScreen } from "ui";
+import { HomeScreen } from "@app/ui";
 import { useRouter } from "expo-router";
 
 export default function Home() {

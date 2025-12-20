@@ -1,5 +1,5 @@
 {
-  "name": "errors",
+  "name": "@app/errors",
   "version": "1.0.0",
   "description": "Application-specific error classes for consistent error handling",
   "keywords": [
@@ -10,23 +10,37 @@
   "author": "whyuascii <eddy@whyuascii.com>",
   "license": "ISC",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "files": [
-    "src"
+    "src",
+    "dist"
   ],
   "sideEffects": false,
   "scripts": {
+    "build": "pnpm run build:swc && pnpm run build:types",
+    "build:swc": "swc src -d dist --strip-leading-paths --copy-files",
+    "build:types": "tsc --emitDeclarationOnly --outDir dist --skipLibCheck",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
+    "@swc/cli": "^0.6.0",
+    "@swc/core": "^1.10.6",
+    "@types/node": "^20.10.0",
     "eslint": "^9.18.0",
-    "eslint-config": "workspace:*",
-    "service-contracts": "workspace:*",
+    "@app/eslint-config": "workspace:*",
+    "@app/service-contracts": "workspace:*",
     "typescript": "^5.9.3",
-    "typescript-config": "workspace:*"
+    "@app/typescript-config": "workspace:*"
   },
   "engines": {
     "node": ">=18.0.0",

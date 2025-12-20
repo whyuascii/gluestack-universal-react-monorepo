@@ -1,4 +1,4 @@
-import { type TUserErrorResponse } from "service-contracts";
+import { type TUserErrorResponse } from "@app/service-contracts";
 import { AppCustomError } from "./base";
 
 export class NotFoundError extends AppCustomError {

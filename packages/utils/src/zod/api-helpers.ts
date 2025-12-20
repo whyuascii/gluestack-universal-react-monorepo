@@ -68,7 +68,7 @@ export const sortStringSchema = z
   });
 
 // Take a query param string transform it to an array of the same type.
-export const transformStringToArray = <T extends z.ZodType<any, any>>(schema: T) => {
+export const transformStringToArray = <T extends z.ZodType>(schema: T) => {
   return schema.transform((data) => {
     if (!Array.isArray(data)) {
       return [data];

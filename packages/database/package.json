@@ -1,5 +1,5 @@
 {
-  "name": "database",
+  "name": "@app/database",
   "version": "0.0.0",
   "description": "Shared database schemas and connection using Drizzle ORM and PostgreSQL",
   "keywords": [
@@ -12,37 +12,52 @@
   "author": "whyuascii <eddy@whyuascii.com>",
   "license": "ISC",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "files": [
     "src",
+    "dist",
     "drizzle"
   ],
   "sideEffects": false,
   "scripts": {
+    "build": "pnpm run build:swc && pnpm run build:types",
+    "build:swc": "swc src -d dist --strip-leading-paths --copy-files",
+    "build:types": "tsc --project tsconfig.build.json --emitDeclarationOnly --outDir dist --skipLibCheck",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
     "db:seed": "tsx scripts/seed.ts",
     "db:migrate": "tsx scripts/migrate.ts",
     "db:studio": "drizzle-kit studio",
-    "generate": "drizzle-kit generate:pg"
+    "generate": "drizzle-kit generate"
   },
   "dependencies": {
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.7",
     "drizzle-zod": "^0.7.0",
     "pg": "^8.16.3",
+    "postgres": "^3.4.7",
     "zod": "^4.1.3"
   },
   "devDependencies": {
+    "@swc/cli": "^0.6.0",
+    "@swc/core": "^1.10.6",
+    "@types/node": "^24.10.2",
     "@types/pg": "^8.15.6",
     "drizzle-kit": "^0.31.7",
     "eslint": "^9.18.0",
-    "eslint-config": "workspace:*",
+    "@app/eslint-config": "workspace:*",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
-    "typescript-config": "workspace:*"
+    "@app/typescript-config": "workspace:*"
   },
   "engines": {
     "node": ">=18.0.0",

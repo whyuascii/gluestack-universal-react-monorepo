@@ -107,7 +107,7 @@ await signIn.email({ email, password });
 ### Analytics
 
 ```typescript
-import { analytics } from "analytics/web";
+import { analytics } from "@app/analytics/web";
 
 analytics.track("button_clicked", { button_id: "signup" });
 analytics.identify(userId, { plan: "premium" });
@@ -116,7 +116,7 @@ analytics.identify(userId, { plan: "premium" });
 ### Subscriptions
 
 ```typescript
-import { useSubscription, PremiumGate } from "ui";
+import { useSubscription, PremiumGate } from "@app/ui";
 
 const { isPremium } = useSubscription();
 
@@ -128,7 +128,7 @@ const { isPremium } = useSubscription();
 ### i18n
 
 ```typescript
-import { useTranslation } from "i18n/web";
+import { useTranslation } from "@app/i18n/web";
 
 const { t, i18n } = useTranslation();
 

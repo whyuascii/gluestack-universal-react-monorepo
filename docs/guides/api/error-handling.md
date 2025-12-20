@@ -36,7 +36,7 @@ GET /items?page=invalid
 Use error classes from the `errors` package:
 
 ```typescript
-import { AppCustomError } from "errors";
+import { AppCustomError } from "@app/errors";
 
 throw new AppCustomError({
   message: "User not found", // Internal log message
@@ -87,7 +87,7 @@ export class AppCustomError extends Error {
 For database-to-model mapping errors:
 
 ```typescript
-import { InternalDocumentParseError } from "errors";
+import { InternalDocumentParseError } from "@app/errors";
 
 throw new InternalDocumentParseError({
   message: "Failed to parse user document",
@@ -190,7 +190,7 @@ Logs include:
 ## Example: Creating a Route with Error Handling
 
 ```typescript
-import { AppCustomError } from "errors";
+import { AppCustomError } from "@app/errors";
 import { db, users, eq } from "database";
 
 app.route({

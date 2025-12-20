@@ -1,12 +1,12 @@
+import { GluestackUIProvider } from "@app/components";
+import i18n from "@app/i18n/mobile";
+import { RevenueCatProvider, useAuthStore } from "@app/ui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { GluestackUIProvider } from "components";
+import { PostHogProvider } from "analytics/mobile";
 import { Slot, useRouter, useSegments } from "expo-router";
 import { useEffect, useState } from "react";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
-import { PostHogProvider } from "analytics/mobile";
-import i18n from "i18n/mobile";
-import { useAuthStore, RevenueCatProvider } from "ui";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import "../../global.css";
 
 export default function RootLayout() {

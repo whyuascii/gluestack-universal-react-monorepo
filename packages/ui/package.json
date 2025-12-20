@@ -1,5 +1,5 @@
 {
-  "name": "ui",
+  "name": "@app/ui",
   "version": "0.0.0",
   "description": "Shared UI logic including screens, hooks, state management, and utilities",
   "keywords": [
@@ -12,36 +12,52 @@
   "author": "whyuascii <eddy@whyuascii.com>",
   "license": "ISC",
   "private": true,
-  "type": "module",
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
   "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./web": {
+      "types": "./src/web.ts",
+      "default": "./dist/web.js"
+    }
+  },
   "files": [
-    "src"
+    "src",
+    "dist"
   ],
   "sideEffects": false,
   "scripts": {
+    "build": "pnpm run build:swc",
+    "build:swc": "swc src -d dist --strip-leading-paths --copy-files",
+    "dev": "swc src -d dist --strip-leading-paths --copy-files --watch",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.62.11",
     "zustand": "^5.0.2"
   },
   "devDependencies": {
+    "@swc/cli": "^0.6.0",
+    "@swc/core": "^1.10.6",
     "eslint": "^9.18.0",
-    "eslint-config": "workspace:*",
-    "tailwind-config": "workspace:*",
+    "@app/eslint-config": "workspace:*",
+    "@app/tailwind-config": "workspace:*",
     "typescript": "^5.9.3",
-    "typescript-config": "workspace:*"
+    "@app/typescript-config": "workspace:*"
   },
   "peerDependencies": {
-    "analytics": "workspace:*",
-    "components": "workspace:*",
+    "@app/analytics": "workspace:*",
+    "@app/components": "workspace:*",
     "react": "^18",
     "react-i18next": "^15",
     "react-native": "*",
-    "service-contracts": "workspace:*",
+    "@app/service-contracts": "workspace:*",
     "typescript": "^5"
   },
   "engines": {

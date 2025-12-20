@@ -214,7 +214,7 @@ When adding new error types:
 ```typescript
 // In src/payment.ts
 import { AppCustomError } from "./base";
-import { UserErrorResponse } from "service-contracts";
+import { UserErrorResponse } from "@app/service-contracts";
 
 export class PaymentFailedError extends AppCustomError {
   constructor(

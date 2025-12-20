@@ -10,7 +10,7 @@
  * 3. Add any app-specific customizations
  */
 
-const createTailwindConfig = require("tailwind-config");
+const createTailwindConfig = require("@app/tailwind-config");
 const sampleappTheme = require("tailwind-config/themes/sampleapp");
 
 module.exports = createTailwindConfig({

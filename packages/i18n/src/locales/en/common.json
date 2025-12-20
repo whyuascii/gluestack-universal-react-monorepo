@@ -11,7 +11,62 @@
   "navigation": {
     "home": "Home",
     "dashboard": "Dashboard",
-    "settings": "Settings"
+    "settings": "Settings",
+    "features": "Features",
+    "ourStory": "Our Story",
+    "about": "About",
+    "roadmap": "Roadmap",
+    "testimonials": "Testimonials",
+    "blog": "Blog",
+    "contact": "Contact"
+  },
+  "hero": {
+    "badge": "Coming Soon 🌱",
+    "title": {
+      "part1": "Make your home a",
+      "cozy": "cozy",
+      "part2": "nest together"
+    },
+    "subtitle": "A gentle app for partners to share chores, plan together, and strengthen their bond—all in one place.",
+    "waitlist": {
+      "placeholder": "Enter your email",
+      "button": "Join Waitlist",
+      "success": "🎉 You're on the list! We'll email you when we launch.",
+      "disclaimer": "No spam, promise. Just an occasional update."
+    }
+  },
+  "features": {
+    "title": "Everything you need to nest together",
+    "subtitle": "Simple tools to keep your shared life organized and joyful",
+    "choreGarden": {
+      "title": "Chore Garden",
+      "description": "Turn household tasks into a collaborative garden. Track who's doing what, celebrate progress together, and keep your home blooming."
+    },
+    "calendar": {
+      "title": "Shared Calendar",
+      "description": "See each other's schedules at a glance. Plan date nights, coordinate errands, and make sure you're always in sync."
+    },
+    "loveNotes": {
+      "title": "Love Notes & Check-ins",
+      "description": "Share little moments of gratitude, plan weekly check-ins, and keep your emotional connection growing strong."
+    }
+  },
+  "cta": {
+    "title": "Ready to build your nest?",
+    "subtitle": "Join our waitlist and be the first to know when we launch. We're crafting something special for couples who want to thrive together.",
+    "waitlist": {
+      "placeholder": "Enter your email",
+      "button": "Join Waitlist",
+      "success": "🎉 You're in! We'll be in touch soon.",
+      "disclaimer": "Be among the first to try TaskManager when we launch."
+    }
+  },
+  "footer": {
+    "tagline": "Making shared life simple and joyful.",
+    "product": "Product",
+    "company": "Company",
+    "connect": "Connect",
+    "copyright": "© 2024 TaskManager. All rights reserved."
   },
   "pricing": {
     "title": "Pricing",
@@ -37,12 +92,5 @@
         }
       }
     }
-  },
-  "hero": {
-    "title": "Simple Task Management",
-    "subtitle": "Organize your work and life, finally."
-  },
-  "footer": {
-    "copyright": "© 2024 TaskManager. All rights reserved."
   }
 }

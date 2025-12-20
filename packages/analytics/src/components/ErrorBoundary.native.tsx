@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from "react";
+import React, { Component, type ErrorInfo, type ReactNode } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { analytics } from "../config/posthog.mobile";
 
@@ -84,7 +84,7 @@ export class ErrorBoundary extends Component<Props, State> {
           <View style={styles.content}>
             <Text style={styles.title}>Something went wrong</Text>
             <Text style={styles.message}>
-              We've been notified and are working to fix the issue.
+              We&apos;ve been notified and are working to fix the issue.
             </Text>
 
             {__DEV__ && (

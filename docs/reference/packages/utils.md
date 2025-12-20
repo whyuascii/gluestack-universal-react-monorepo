@@ -27,7 +27,7 @@ Pure utility functions that work on both client and server, web and mobile.
 ## Date/Time Utilities
 
 ```typescript
-import { formatDate, parseDate, addDays, isAfter } from "utils";
+import { formatDate, parseDate, addDays, isAfter } from "@app/utils";
 
 // Format dates
 formatDate(new Date(), "yyyy-MM-dd"); // "2025-12-11"
@@ -44,7 +44,7 @@ isAfter(date1, date2); // true/false
 ## Validation Helpers
 
 ```typescript
-import { validateEmail, validateUrl } from "utils";
+import { validateEmail, validateUrl } from "@app/utils";
 
 // Email validation
 validateEmail("user@example.com"); // true
@@ -58,7 +58,7 @@ validateUrl("not-a-url"); // false
 ## String Utilities
 
 ```typescript
-import { truncate, slugify, capitalize } from "utils";
+import { truncate, slugify, capitalize } from "@app/utils";
 
 truncate("Long text here", 10); // "Long te..."
 slugify("Hello World!"); // "hello-world"
@@ -68,7 +68,7 @@ capitalize("hello"); // "Hello"
 ## Sanitization
 
 ```typescript
-import { sanitizeHtml } from "utils";
+import { sanitizeHtml } from "@app/utils";
 
 const dirty = '<script>alert("XSS")</script><p>Safe content</p>';
 const clean = sanitizeHtml(dirty);
@@ -78,7 +78,7 @@ const clean = sanitizeHtml(dirty);
 ## Lodash Re-exports
 
 ```typescript
-import { debounce, throttle, groupBy, chunk } from "utils";
+import { debounce, throttle, groupBy, chunk } from "@app/utils";
 
 const debouncedFn = debounce(() => console.log("Called"), 300);
 const grouped = groupBy(users, "role");

@@ -1,4 +1,4 @@
-import { type TUserErrorResponse } from "service-contracts";
+import { type TUserErrorResponse } from "@app/service-contracts";
 
 /**
  * Base class for application-specific errors.

@@ -32,7 +32,7 @@ Screens are complete UI implementations that apps can directly use:
 
 ```tsx
 // packages/ui/src/home/HomeScreen.tsx
-import { Box, Text, Button, ButtonText } from "components";
+import { Box, Text, Button, ButtonText } from "@app/components";
 
 export function HomeScreen() {
   return (
@@ -50,13 +50,13 @@ export function HomeScreen() {
 
 ```tsx
 // apps/web/src/app/page.tsx
-import { HomeScreen } from "ui";
+import { HomeScreen } from "@app/ui";
 export default function Page() {
   return <HomeScreen />;
 }
 
 // apps/mobile/src/app/(tabs)/index.tsx
-import { HomeScreen } from "ui";
+import { HomeScreen } from "@app/ui";
 export default function TabOne() {
   return <HomeScreen />;
 }
@@ -83,7 +83,7 @@ export function useAuth() {
 **Usage:**
 
 ```tsx
-import { useAuth } from "ui";
+import { useAuth } from "@app/ui";
 
 function MyComponent() {
   const { user, loading } = useAuth();

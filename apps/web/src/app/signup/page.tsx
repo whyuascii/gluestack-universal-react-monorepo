@@ -1,8 +1,7 @@
 "use client";
 
+import { SignupScreen } from "@app/ui";
 import { useRouter } from "next/navigation";
-import React from "react";
-import { SignupScreen } from "ui";
 
 // Disable static generation for this page
 export const dynamic = "force-dynamic";

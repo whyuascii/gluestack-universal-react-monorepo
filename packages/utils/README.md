@@ -67,7 +67,7 @@ URL building utilities for the application:
 
 ```typescript
 import { z } from "zod";
-import { transformDate, sortStringSchema } from "utils";
+import { transformDate, sortStringSchema } from "@app/utils";
 
 // Date transformation
 const schema = z.object({
@@ -85,7 +85,7 @@ const result = schema.parse({
 ### TypeScript Type Utilities
 
 ```typescript
-import type { PartiallyOptional, NestedKeyOf } from "utils";
+import type { PartiallyOptional, NestedKeyOf } from "@app/utils";
 
 interface User {
   id: string;
@@ -108,7 +108,7 @@ type UserKeys = NestedKeyOf<User, "settings">;
 ### URL Building
 
 ```typescript
-import { buildUrl } from "utils";
+import { buildUrl } from "@app/utils";
 
 const apiUrl = buildUrl({
   environmentStage: "production",

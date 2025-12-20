@@ -1,8 +1,7 @@
 "use client";
 
+import { HomeScreen } from "@app/ui";
 import { useRouter } from "next/navigation";
-import React from "react";
-import { HomeScreen } from "ui";
 
 export default function Home() {
   const router = useRouter();

@@ -213,9 +213,9 @@ Layer 5 (Apps):
 
 ```typescript
 // ✅ Good: Import from package
-import { Button } from "components";
+import { Button } from "@app/components";
 import { db } from "database";
-import { ApiError } from "errors";
+import { ApiError } from "@app/errors";
 
 // ❌ Bad: Import from nested paths
 import { Button } from "components/src/button";

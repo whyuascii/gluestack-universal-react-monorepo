@@ -1,6 +1,6 @@
-import type { TAuthenticationResponse } from "service-contracts";
+import type { TAuthenticationResponse } from "@app/service-contracts";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 export type AuthStatus = "anonymous" | "authenticated" | "loading";
 
@@ -32,7 +32,7 @@ interface AuthState {
 // Storage adapter that works on both web and React Native
 const getStorage = () => {
   // Check if we're in a browser environment
-  if (typeof window !== "undefined" && window.localStorage) {
+  if (typeof globalThis !== "undefined" && (globalThis as any).window?.localStorage) {
     return createJSONStorage(() => localStorage);
   }
 

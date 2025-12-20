@@ -234,7 +234,7 @@ EXPO_PUBLIC_API_URL=http://localhost:3030
 NEXT_PUBLIC_POSTHOG_KEY=
 NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
 EXPO_PUBLIC_POSTHOG_KEY=
-EXPO_PUBLIC_POSTHOG_HOST=https://app.posthog.com
+EXPO_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
 POSTHOG_KEY=  # For API server
 POSTHOG_HOST=
 
@@ -284,8 +284,8 @@ locales/
 
 **Usage:**
 
-- Web: `import { useTranslation } from 'i18n/web'`
-- Mobile: `import { useTranslation } from 'i18n/mobile'`
+- Web: `import { useTranslation } from '@app/i18n/web'`
+- Mobile: `import { useTranslation } from '@app/i18n/mobile'`
 
 Platform configs handle language detection and persistence differently.
 

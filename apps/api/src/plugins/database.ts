@@ -1,4 +1,4 @@
-import { db } from "database";
+import { db } from "@app/database";
 import type { FastifyInstance } from "fastify";
 import fastifyPlugin from "fastify-plugin";
 

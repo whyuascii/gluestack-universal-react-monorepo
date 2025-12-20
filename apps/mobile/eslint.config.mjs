@@ -1,4 +1,4 @@
-import expoConfig from "eslint-config/expo.js";
+import expoConfig from "@app/eslint-config/expo.js";
 
 /**
  * ESLint configuration for the mobile app

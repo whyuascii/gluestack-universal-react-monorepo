@@ -1,5 +1,5 @@
 {
-  "name": "typescript-config",
+  "name": "@app/typescript-config",
   "version": "0.0.0",
   "description": "Shared TypeScript configuration for all workspace packages",
   "keywords": [

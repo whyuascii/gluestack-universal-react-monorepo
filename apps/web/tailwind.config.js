@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-import createTailwindConfig from "tailwind-config";
+import createTailwindConfig from "@app/tailwind-config";
 
 export default createTailwindConfig({
   content: [

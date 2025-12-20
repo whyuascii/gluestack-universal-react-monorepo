@@ -185,7 +185,7 @@ EXPO_PUBLIC_API_URL="http://localhost:3030"
 
 # PostHog (mobile analytics)
 EXPO_PUBLIC_POSTHOG_KEY="your-posthog-project-key"
-EXPO_PUBLIC_POSTHOG_HOST="https://app.posthog.com"
+EXPO_PUBLIC_POSTHOG_HOST="https://us.i.posthog.com"
 
 # RevenueCat (subscriptions)
 EXPO_PUBLIC_REVENUECAT_API_KEY="your-revenuecat-mobile-key"

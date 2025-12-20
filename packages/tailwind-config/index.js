@@ -12,7 +12,7 @@
  *
  * @example
  * // Basic usage (uses NestQuest theme + gluestack colors with 'gs-' prefix)
- * const createTailwindConfig = require("tailwind-config");
+ * const createTailwindConfig = require("@app/tailwind-config");
  * module.exports = createTailwindConfig({
  *   content: ["./src/**\/*.{js,jsx,ts,tsx}"],
  *   important: "html"
@@ -24,7 +24,7 @@
  *
  * @example
  * // With custom theme preset
- * const createTailwindConfig = require("tailwind-config");
+ * const createTailwindConfig = require("@app/tailwind-config");
  * const customTheme = require("tailwind-config/themes/default");
  * module.exports = createTailwindConfig({
  *   content: ["./src/**\/*.{js,jsx,ts,tsx}"],
@@ -34,7 +34,7 @@
  *
  * @example
  * // With inline custom colors (merges with default)
- * const createTailwindConfig = require("tailwind-config");
+ * const createTailwindConfig = require("@app/tailwind-config");
  * module.exports = createTailwindConfig({
  *   content: ["./src/**\/*.{js,jsx,ts,tsx}"],
  *   theme: {

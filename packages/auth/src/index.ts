@@ -10,7 +10,7 @@
  *
  * ### In API app (apps/api):
  * ```ts
- * import { createAuthConfig } from "auth";
+ * import { createAuthConfig } from '@app/auth';
  * const auth = createAuthConfig();
  * // Mount auth routes in Fastify
  * ```

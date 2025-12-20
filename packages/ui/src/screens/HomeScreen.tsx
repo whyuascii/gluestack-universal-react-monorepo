@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, VStack, HStack, Heading, Text, Button, ButtonText, Card } from "components";
+import { Box, VStack, HStack, Heading, Text, Button, ButtonText, Card } from "@app/components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../components/LanguageSwitcher";

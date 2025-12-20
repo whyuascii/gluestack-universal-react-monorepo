@@ -1,0 +1,6 @@
+name: infrastructure
+description: AWS Infrastructure - Amplify + App Runner + RDS
+runtime:
+  name: nodejs
+  options:
+    typescript: true

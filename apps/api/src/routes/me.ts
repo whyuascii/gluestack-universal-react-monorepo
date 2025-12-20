@@ -1,6 +1,6 @@
+import { AuthErrorResponse, MeResponse } from "@app/service-contracts";
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
-import { MeResponse, AuthErrorResponse } from "service-contracts";
 
 const attachHandlers = (fastify: FastifyInstance) => {
   fastify.withTypeProvider<ZodTypeProvider>().route({

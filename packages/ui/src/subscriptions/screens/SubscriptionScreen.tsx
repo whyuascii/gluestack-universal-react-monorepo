@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  Pressable,
-  ScrollView,
   ActivityIndicator,
   Alert,
   Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
 } from "react-native";
 import { SubscriptionStatus } from "../components/SubscriptionStatus";
 import { usePaywall } from "../hooks/usePaywall";
@@ -35,7 +35,7 @@ export function SubscriptionScreen() {
       await restorePurchases();
 
       if (Platform.OS === "web") {
-        alert("Purchases restored successfully!");
+        Alert.alert("Purchases restored successfully!");
       } else {
         Alert.alert("Success", "Purchases restored successfully!");
       }
@@ -43,7 +43,7 @@ export function SubscriptionScreen() {
       const error = err as { message?: string };
       console.error(error);
       if (Platform.OS === "web") {
-        alert(error.message || "Failed to restore purchases");
+        Alert.alert(error.message || "Failed to restore purchases");
       } else {
         Alert.alert("Error", error.message || "Failed to restore purchases");
       }
@@ -60,7 +60,7 @@ export function SubscriptionScreen() {
     } else {
       // On web, direct to external management
       if (Platform.OS === "web") {
-        window.open("https://apps.apple.com/account/subscriptions", "_blank");
+        (globalThis as any).window?.open("https://apps.apple.com/account/subscriptions", "_blank");
       }
     }
   };
@@ -151,7 +151,8 @@ export function SubscriptionScreen() {
               onPress={() => {
                 // TODO: Add support link
                 if (Platform.OS === "web") {
-                  alert("Support coming soon!");
+                  // eslint-disable-next-line no-alert
+                  (globalThis as any).alert?.("Support coming soon!");
                 } else {
                   Alert.alert("Support", "Support coming soon!");
                 }

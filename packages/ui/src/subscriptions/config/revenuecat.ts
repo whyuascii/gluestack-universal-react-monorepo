@@ -48,7 +48,7 @@ function createRevenueCatConfig() {
      * Set via NEXT_PUBLIC_REVENUECAT_ENTITLEMENT_PREMIUM (web) or EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_PREMIUM (mobile)
      */
     entitlements: {
-      premium: getEnvVar("REVENUECAT_ENTITLEMENT_PREMIUM", "Sample App"),
+      premium: getEnvVar("REVENUECAT_ENTITLEMENT_PREMIUM", "Nest Quest"),
     },
 
     /**

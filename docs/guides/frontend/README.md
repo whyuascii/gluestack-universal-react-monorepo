@@ -94,7 +94,7 @@ const styles = Platform.select({
 
 ```typescript
 // Primitives from components
-import { Button, Input, Text } from "components";
+import { Button, Input, Text } from "@app/components";
 
 // Business logic from ui
 import { useAuth } from "ui/hooks";

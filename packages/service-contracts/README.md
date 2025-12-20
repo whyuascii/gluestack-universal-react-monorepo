@@ -40,7 +40,7 @@ type User = z.infer<typeof UserSchema>;
 **BaseQueryParams** - Standard query parameters for pagination and sorting:
 
 ```typescript
-import { BaseQueryParams } from "service-contracts";
+import { BaseQueryParams } from "@app/service-contracts";
 
 // Schema definition
 const BaseQueryParams = z.object({
@@ -68,7 +68,7 @@ const query: BaseQueryParams = {
 **UserErrorResponseSchema** - Structured error response for end-users:
 
 ```typescript
-import { UserErrorResponse } from "service-contracts";
+import { UserErrorResponse } from "@app/service-contracts";
 
 // Schema definition
 const UserErrorResponseSchema = z.object({
@@ -96,7 +96,7 @@ const errorResponse: UserErrorResponse = {
 **GenericSuccessResponse** - Standard success response:
 
 ```typescript
-import { GenericSuccessResponse } from "service-contracts";
+import { GenericSuccessResponse } from "@app/service-contracts";
 
 const response: GenericSuccessResponse = {
   message: "Operation completed successfully.",
@@ -106,7 +106,7 @@ const response: GenericSuccessResponse = {
 **GenericIdParams** - Standard ID parameter:
 
 ```typescript
-import { GenericIdParams } from "service-contracts";
+import { GenericIdParams } from "@app/service-contracts";
 
 const params: GenericIdParams = {
   id: "user-123",
@@ -116,7 +116,7 @@ const params: GenericIdParams = {
 **GenericNullResponse** - Null response type:
 
 ```typescript
-import { GenericNullResponse } from "service-contracts";
+import { GenericNullResponse } from "@app/service-contracts";
 
 // For endpoints that return null
 const response: null = null;
@@ -130,7 +130,7 @@ Define request and response contracts for API endpoints:
 
 ```typescript
 import { z } from "zod";
-import { BaseQueryParams } from "service-contracts";
+import { BaseQueryParams } from "@app/service-contracts";
 
 // Request contract
 export const GetUsersRequest = BaseQueryParams.extend({
@@ -163,7 +163,7 @@ export type GetUsersResponse = z.infer<typeof GetUsersResponse>;
 Use contracts to validate incoming requests:
 
 ```typescript
-import { GetUsersRequest } from "service-contracts";
+import { GetUsersRequest } from "@app/service-contracts";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -194,7 +194,7 @@ export async function GET(request: Request) {
 Use contracts for type safety on the frontend:
 
 ```typescript
-import { GetUsersRequest, GetUsersResponse } from "service-contracts";
+import { GetUsersRequest, GetUsersResponse } from "@app/service-contracts";
 
 async function fetchUsers(params: GetUsersRequest): Promise<GetUsersResponse> {
   const queryString = new URLSearchParams(
@@ -219,7 +219,7 @@ async function fetchUsers(params: GetUsersRequest): Promise<GetUsersResponse> {
 Use UserErrorResponse for consistent error handling:
 
 ```typescript
-import { UserErrorResponse, UserErrorResponseSchema } from "service-contracts";
+import { UserErrorResponse, UserErrorResponseSchema } from "@app/service-contracts";
 
 export function handleApiError(error: unknown): UserErrorResponse {
   if (error instanceof Response) {
@@ -402,7 +402,7 @@ export * from "./users";
 The service-contracts package integrates with the `utils` package for advanced functionality:
 
 ```typescript
-import { sortStringSchema } from "utils";
+import { sortStringSchema } from "@app/utils";
 
 // Use sort string parser in contracts
 const QueryWithSort = z.object({
@@ -439,7 +439,7 @@ export const UpdateUserRequest = CreateUserRequest.partial();
 ### ID Parameters
 
 ```typescript
-import { GenericIdParams } from "service-contracts";
+import { GenericIdParams } from "@app/service-contracts";
 
 // For routes like /users/:id
 export const UserIdParams = GenericIdParams;
@@ -467,7 +467,7 @@ export const UserIdParams = GenericIdParams;
 All contracts automatically generate TypeScript types:
 
 ```typescript
-import { GetUsersRequest, GetUsersResponse } from "service-contracts";
+import { GetUsersRequest, GetUsersResponse } from "@app/service-contracts";
 
 // Types are automatically inferred
 async function getUsers(params: GetUsersRequest): Promise<GetUsersResponse> {

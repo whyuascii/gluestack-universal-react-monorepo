@@ -1,6 +1,6 @@
+import { GetHealthResponse } from "@app/service-contracts";
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
-import { GetHealthResponse } from "service-contracts";
 
 const attachHandlers = (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route({
