@@ -40,7 +40,7 @@ export function setupDns(config: DnsConfig) {
     {
       // App Runner requires certificates in the same region as the service
       provider: new aws.Provider("cert-provider", {
-        region: aws.getRegion().then((r) => r.name),
+        region: aws.getRegionOutput().name as any,
       }),
     }
   );
