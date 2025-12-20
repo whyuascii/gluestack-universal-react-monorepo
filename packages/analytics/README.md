@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
 ### Mobile (Expo)
 
 ```tsx
-import { PostHogProvider } from "analytics/mobile";
+import { PostHogProvider } from "@app/analytics/mobile";
 
 export default function RootLayout() {
   return <PostHogProvider>{/* Your app */}</PostHogProvider>;
@@ -61,7 +61,7 @@ function MyComponent() {
 Wrap your app with ErrorBoundary to catch React errors:
 
 ```tsx
-import { ErrorBoundary } from "@app/analytics/web"; // or "analytics/mobile"
+import { ErrorBoundary } from "@app/analytics/web"; // or "@app/analytics/mobile"
 
 function App() {
   return (

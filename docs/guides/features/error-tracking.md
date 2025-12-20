@@ -111,7 +111,7 @@ Global error handlers automatically capture unhandled errors:
 
 ```typescript
 // apps/mobile/src/app/_layout.tsx
-import { PostHogProvider } from "analytics/mobile";
+import { PostHogProvider } from "@app/analytics/mobile";
 
 export default function RootLayout() {
   return (
@@ -128,7 +128,7 @@ export default function RootLayout() {
 Use ErrorBoundary for React Native:
 
 ```typescript
-import { ErrorBoundary } from "analytics/mobile";
+import { ErrorBoundary } from "@app/analytics/mobile";
 
 export default function RootLayout() {
   return (
@@ -164,7 +164,7 @@ import { View, Text, Button } from "react-native";
 ### Manual Error Capture
 
 ```typescript
-import { analytics } from "analytics/mobile";
+import { analytics } from "@app/analytics/mobile";
 
 const handleAction = async () => {
   try {

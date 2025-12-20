@@ -358,7 +358,7 @@ PostHog provides **unified analytics and error tracking** across web, mobile, an
 **Event tracking:**
 
 ```typescript
-import { analytics } from "@app/analytics/web"; // or "analytics/mobile"
+import { analytics } from "@app/analytics/web"; // or "@app/analytics/mobile"
 
 analytics.track("button_clicked", { button_name: "sign_up", page: "landing" });
 analytics.identify(userId, { email: user.email, plan: "premium" });
@@ -368,7 +368,7 @@ analytics.reset(); // On logout
 **Error boundary:**
 
 ```tsx
-import { ErrorBoundary } from "@app/analytics/web"; // or "analytics/mobile"
+import { ErrorBoundary } from "@app/analytics/web"; // or "@app/analytics/mobile"
 
 <ErrorBoundary fallback={<ErrorScreen />}>
   <YourApp />

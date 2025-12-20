@@ -27,7 +27,7 @@ import { ErrorBoundary } from "@app/analytics/web";
 
 // Mobile
 import { analytics } from "@app/analytics/mobile";
-import { ErrorBoundary } from @app/"analytics/mobile";
+import { ErrorBoundary } from "@app/analytics/mobile";
 ```
 
 ---
@@ -218,7 +218,7 @@ import { PostHogProvider } from "@app/analytics/web";
 **Initialization:**
 
 ```typescript
-import { PostHogProvider } from "analytics/mobile";
+import { PostHogProvider } from "@app/analytics/mobile";
 
 // In app root
 <PostHogProvider>

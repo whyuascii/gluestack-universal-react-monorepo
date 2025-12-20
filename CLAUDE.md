@@ -149,7 +149,7 @@ Layer 5 (Applications):
 - **`ui`** - Business logic layer containing screens, hooks, state management, and RevenueCat subscription logic
 - **`database`** - Drizzle ORM schemas in `src/schema/`, with auto-generated Zod validators
 - **`i18n`** - Platform-specific configs (`i18n/web`, `i18n/mobile`) with translations in `src/locales/{en,es}/`
-- **`analytics`** - PostHog integration with platform-specific configs (`analytics/web`, `analytics/mobile`) and ErrorBoundary components
+- **`analytics`** - PostHog integration with platform-specific configs (`analytics/web`, `@app/analytics/mobile`) and ErrorBoundary components
 - **`service-contracts`** - Shared TypeScript types and interfaces used across all apps
 
 ### How Code is Shared
@@ -250,7 +250,7 @@ EXPO_PUBLIC_REVENUECAT_API_KEY=
 PostHog is initialized **differently per platform**:
 
 - **Web:** `analytics/web` uses posthog-js
-- **Mobile:** `analytics/mobile` uses posthog-react-native
+- **Mobile:** `@app/analytics/mobile` uses posthog-react-native
 - **API:** Direct PostHog Node SDK in `apps/api/src/plugins/posthog-analytics.ts`
 
 **ErrorBoundary usage:** Always wrap apps with `<ErrorBoundary>` from the appropriate platform package to automatically capture and report React errors.

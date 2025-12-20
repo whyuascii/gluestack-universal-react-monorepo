@@ -1,8 +1,8 @@
+import { PostHogProvider } from "@app/analytics/mobile";
 import { GluestackUIProvider } from "@app/components";
 import i18n from "@app/i18n/mobile";
 import { RevenueCatProvider, useAuthStore } from "@app/ui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { PostHogProvider } from "analytics/mobile";
 import { Slot, useRouter, useSegments } from "expo-router";
 import { useEffect, useState } from "react";
 import { I18nextProvider } from "react-i18next";
