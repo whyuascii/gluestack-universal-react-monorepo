@@ -1,6 +1,6 @@
 /**
- * NestQuest Illustration Components
- * SVG illustrations for the landing page
+ * Generic Illustration Components
+ * Simple SVG illustrations
  */
 
 import React from "react";
@@ -10,135 +10,137 @@ type IllustrationProps = {
   className?: string;
 };
 
-export const NestIllustration = ({ className }: IllustrationProps) => (
+type BoxIllustrationProps = {
+  showItems?: boolean;
+} & IllustrationProps;
+
+export const BoxIllustration = ({ className, showItems = false }: BoxIllustrationProps) => (
   <svg viewBox="0 0 400 300" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Base Nest Structure - Woven twigs look */}
-    <path
-      d="M50 200 C50 200 80 280 200 280 C320 280 350 200 350 200"
-      stroke="#8B7355"
-      strokeWidth="8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M60 190 C60 190 90 260 200 260 C310 260 340 190 340 190"
-      stroke="#A68B6A"
-      strokeWidth="6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M70 210 C100 270 300 270 330 210"
-      stroke="#8B7355"
-      strokeWidth="6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M40 180 C80 250 320 250 360 180"
-      stroke="#8B7355"
+    {/* Simple box container */}
+    <rect
+      x="50"
+      y="150"
+      width="300"
+      height="130"
+      rx="8"
+      fill="#f3f4f6"
+      stroke="#9ca3af"
       strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      opacity="0.6"
+    />
+    <rect
+      x="60"
+      y="140"
+      width="280"
+      height="20"
+      rx="4"
+      fill="#d1d5db"
+      stroke="#9ca3af"
+      strokeWidth="2"
     />
 
-    {/* Leaves woven in */}
-    <path d="M40 180 Q20 160 40 140 Q60 160 40 180" fill="#A8CBB7" />
-    <path d="M360 180 Q380 160 360 140 Q340 160 360 180" fill="#A8CBB7" />
-    <path d="M100 250 Q80 240 90 220 Q110 230 100 250" fill="#A8CBB7" />
-    <path d="M300 250 Q320 240 310 220 Q290 230 300 250" fill="#A8CBB7" />
-
-    {/* Eggs/Cozy items inside */}
-    <ellipse
-      cx="160"
-      cy="180"
-      rx="35"
-      ry="45"
-      fill="#FFF9F0"
-      stroke="#FAD97A"
-      strokeWidth="3"
-      transform="rotate(-15 160 180)"
-    />
-    <ellipse
-      cx="240"
-      cy="180"
-      rx="35"
-      ry="45"
-      fill="#FFF9F0"
-      stroke="#A8CBB7"
-      strokeWidth="3"
-      transform="rotate(15 240 180)"
-    />
-    <ellipse cx="200" cy="170" rx="35" ry="45" fill="#FFF9F0" stroke="#FAD97A" strokeWidth="3" />
-
-    {/* Decorative hearts floating above */}
-    <path
-      d="M180 100 C180 100 170 90 160 100 C150 110 160 120 180 130 C200 120 210 110 200 100 C190 90 180 100 180 100"
-      fill="#FAD97A"
-      className="animate-bounce"
-    />
-    <path
-      d="M220 80 C220 80 210 70 200 80 C190 90 200 100 220 110 C240 100 250 90 240 80 C230 70 220 80 220 80"
-      fill="#A8CBB7"
-      className="animate-bounce"
-      style={{ animationDelay: "2s" }}
-    />
+    {showItems && (
+      <>
+        <circle cx="160" cy="200" r="20" fill="#e5e7eb" stroke="#9ca3af" strokeWidth="2" />
+        <circle cx="240" cy="200" r="20" fill="#e5e7eb" stroke="#9ca3af" strokeWidth="2" />
+        <circle cx="200" cy="190" r="20" fill="#e5e7eb" stroke="#9ca3af" strokeWidth="2" />
+      </>
+    )}
   </svg>
 );
 
-export const PlantIllustration = ({ className }: IllustrationProps) => (
+type AppIconProps = {
+  useCurrentColor?: boolean;
+} & IllustrationProps;
+
+export const AppIcon = ({ className, useCurrentColor = false }: AppIconProps) => {
+  const primary = useCurrentColor ? "currentColor" : "#6b7280";
+  const secondary = useCurrentColor ? "currentColor" : "#9ca3af";
+  const accent = useCurrentColor ? "currentColor" : "#d1d5db";
+
+  return (
+    <svg
+      viewBox="0 0 64 64"
+      className={className}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      {/* Simple geometric icon */}
+      <rect x="16" y="16" width="32" height="32" rx="4" fill={accent} opacity="0.8" />
+      <rect x="20" y="20" width="24" height="4" rx="2" fill={primary} />
+      <rect x="20" y="30" width="24" height="4" rx="2" fill={secondary} opacity="0.9" />
+      <rect x="20" y="40" width="16" height="4" rx="2" fill={secondary} opacity="0.7" />
+    </svg>
+  );
+};
+export const ListIllustration = ({ className }: IllustrationProps) => (
+  <svg viewBox="0 0 400 300" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+    {/* Simple list view */}
+    <rect
+      x="50"
+      y="80"
+      width="300"
+      height="50"
+      rx="6"
+      fill="#f3f4f6"
+      stroke="#9ca3af"
+      strokeWidth="2"
+    />
+    <rect
+      x="50"
+      y="140"
+      width="300"
+      height="50"
+      rx="6"
+      fill="#f3f4f6"
+      stroke="#9ca3af"
+      strokeWidth="2"
+    />
+    <rect
+      x="50"
+      y="200"
+      width="300"
+      height="50"
+      rx="6"
+      fill="#f3f4f6"
+      stroke="#9ca3af"
+      strokeWidth="2"
+    />
+
+    {/* Check marks */}
+    <path
+      d="M70 105 L80 115 L100 95"
+      stroke="#6b7280"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M70 165 L80 175 L100 155"
+      stroke="#6b7280"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle cx="80" cy="225" r="8" fill="#d1d5db" />
+
+    {/* Lines representing text */}
+    <rect x="120" y="100" width="180" height="10" rx="2" fill="#9ca3af" opacity="0.5" />
+    <rect x="120" y="160" width="150" height="10" rx="2" fill="#9ca3af" opacity="0.5" />
+    <rect x="120" y="220" width="200" height="10" rx="2" fill="#9ca3af" opacity="0.5" />
+  </svg>
+);
+
+export const ChartIllustration = ({ className }: IllustrationProps) => (
   <svg viewBox="0 0 200 200" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Pot */}
-    <path
-      d="M60 140 L70 180 L130 180 L140 140"
-      fill="#8B7355"
-      stroke="#4E3F30"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M50 140 L150 140"
-      stroke="#4E3F30"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+    {/* Simple bar chart */}
+    <rect x="40" y="120" width="30" height="60" rx="4" fill="#9ca3af" />
+    <rect x="85" y="90" width="30" height="90" rx="4" fill="#6b7280" />
+    <rect x="130" y="110" width="30" height="70" rx="4" fill="#9ca3af" />
 
-    {/* Stem */}
-    <path
-      d="M100 140 C100 140 100 100 100 60"
-      stroke="#A8CBB7"
-      strokeWidth="4"
-      strokeLinecap="round"
-    />
-
-    {/* Leaves Growing */}
-    <path
-      d="M100 110 Q130 100 140 80 Q120 80 100 110"
-      fill="#A8CBB7"
-      stroke="#4E3F30"
-      strokeWidth="2"
-    />
-    <path d="M100 90 Q70 80 60 60 Q90 60 100 90" fill="#A8CBB7" stroke="#4E3F30" strokeWidth="2" />
-    <path
-      d="M100 60 Q130 50 140 30 Q120 30 100 60"
-      fill="#FAD97A"
-      stroke="#4E3F30"
-      strokeWidth="2"
-    />
-
-    {/* Sparkles */}
-    <circle cx="150" cy="50" r="3" fill="#FAD97A" className="animate-pulse" />
-    <circle
-      cx="50"
-      cy="80"
-      r="2"
-      fill="#FAD97A"
-      className="animate-pulse"
-      style={{ animationDelay: "2s" }}
-    />
+    {/* Axes */}
+    <path d="M30 180 L170 180" stroke="#d1d5db" strokeWidth="2" />
+    <path d="M30 40 L30 180" stroke="#d1d5db" strokeWidth="2" />
   </svg>
 );
 
@@ -150,76 +152,55 @@ export const CalendarIllustration = ({ className }: IllustrationProps) => (
       y="40"
       width="120"
       height="130"
-      rx="10"
-      fill="#FFF9F0"
-      stroke="#8B7355"
-      strokeWidth="3"
-    />
-
-    {/* Header */}
-    <path d="M40 70 L160 70" stroke="#8B7355" strokeWidth="2" />
-    <rect x="40" y="40" width="120" height="30" rx="10" fill="#A8CBB7" fillOpacity="0.3" />
-
-    {/* Rings */}
-    <path d="M70 30 L70 50" stroke="#4E3F30" strokeWidth="3" strokeLinecap="round" />
-    <path d="M100 30 L100 50" stroke="#4E3F30" strokeWidth="3" strokeLinecap="round" />
-    <path d="M130 30 L130 50" stroke="#4E3F30" strokeWidth="3" strokeLinecap="round" />
-
-    {/* Heart Date */}
-    <path
-      d="M100 110 C100 110 90 100 80 110 C70 120 80 130 100 140 C120 130 130 120 120 110 C110 100 100 110 100 110"
-      fill="#FAD97A"
-      stroke="#8B7355"
+      rx="8"
+      fill="#f3f4f6"
+      stroke="#9ca3af"
       strokeWidth="2"
     />
 
-    {/* Scribbles */}
-    <path d="M60 90 H80" stroke="#8B7355" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
-    <path d="M120 90 H140" stroke="#8B7355" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
-    <path d="M60 150 H80" stroke="#8B7355" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
+    {/* Header */}
+    <rect x="40" y="40" width="120" height="30" rx="8" fill="#d1d5db" />
+    <path d="M40 70 L160 70" stroke="#9ca3af" strokeWidth="2" />
+
+    {/* Binding rings */}
+    <rect x="65" y="30" width="4" height="20" rx="2" fill="#6b7280" />
+    <rect x="95" y="30" width="4" height="20" rx="2" fill="#6b7280" />
+    <rect x="125" y="30" width="4" height="20" rx="2" fill="#6b7280" />
+
+    {/* Grid dots */}
+    <circle cx="60" cy="90" r="3" fill="#9ca3af" />
+    <circle cx="80" cy="90" r="3" fill="#9ca3af" />
+    <circle cx="100" cy="90" r="3" fill="#9ca3af" />
+    <circle cx="120" cy="90" r="3" fill="#9ca3af" />
+    <circle cx="140" cy="90" r="3" fill="#9ca3af" />
+
+    <circle cx="60" cy="110" r="3" fill="#6b7280" />
+    <circle cx="80" cy="110" r="3" fill="#9ca3af" />
+    <circle cx="100" cy="110" r="3" fill="#9ca3af" />
+    <circle cx="120" cy="110" r="3" fill="#9ca3af" />
   </svg>
 );
 
-export const BirdsIllustration = ({ className }: IllustrationProps) => (
+export const UsersIllustration = ({ className }: IllustrationProps) => (
   <svg viewBox="0 0 200 200" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Branch */}
-    <path
-      d="M20 160 C60 150 140 155 180 140"
-      stroke="#8B7355"
-      strokeWidth="4"
-      strokeLinecap="round"
-    />
-    <path d="M140 150 L160 170" stroke="#8B7355" strokeWidth="3" strokeLinecap="round" />
+    {/* Simple user avatars */}
+    <circle cx="70" cy="80" r="30" fill="#d1d5db" stroke="#9ca3af" strokeWidth="2" />
+    <circle cx="70" cy="70" r="12" fill="#9ca3af" />
+    <path d="M45 95 Q45 85 55 80 Q65 75 70 75 Q75 75 85 80 Q95 85 95 95" fill="#9ca3af" />
 
-    {/* Bird 1 */}
-    <path
-      d="M60 135 C50 135 40 125 40 115 C40 105 50 100 60 100 C70 100 80 105 80 115 C80 125 70 135 60 135 Z"
-      fill="#A8CBB7"
-    />
-    <path d="M80 115 L90 110" stroke="#A8CBB7" strokeWidth="3" strokeLinecap="round" />
-    <circle cx="55" cy="110" r="2" fill="#4E3F30" />
+    <circle cx="130" cy="80" r="30" fill="#d1d5db" stroke="#9ca3af" strokeWidth="2" />
+    <circle cx="130" cy="70" r="12" fill="#9ca3af" />
+    <path d="M105 95 Q105 85 115 80 Q125 75 130 75 Q135 75 145 80 Q155 85 155 95" fill="#9ca3af" />
 
-    {/* Bird 2 */}
-    <path
-      d="M110 130 C100 130 90 120 90 110 C90 100 100 95 110 95 C120 95 130 100 130 110 C130 120 120 130 110 130 Z"
-      fill="#FAD97A"
-    />
-    <path d="M90 110 L80 105" stroke="#FAD97A" strokeWidth="3" strokeLinecap="round" />
-    <circle cx="115" cy="105" r="2" fill="#4E3F30" />
-
-    {/* Heart between them */}
-    <path
-      d="M85 80 C85 80 82 75 80 80 C75 85 80 90 85 95 C90 90 95 85 90 80 C88 75 85 80 85 80"
-      fill="#F4AFA6"
-      className="animate-pulse"
-    />
+    {/* Connection line */}
+    <path d="M95 110 L105 110" stroke="#9ca3af" strokeWidth="2" strokeDasharray="4 4" />
   </svg>
 );
 
-export const LeafDecoration = ({
+export const ShapeDecoration = ({
   className,
   rotation = 0,
-  color = "#A8CBB7",
+  color = "#d1d5db",
 }: IllustrationProps & {
   rotation?: number;
   color?: string;
@@ -233,11 +214,75 @@ export const LeafDecoration = ({
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <path
-      d="M50 90 C50 90 20 60 20 40 C20 20 40 10 50 10 C60 10 80 20 80 40 C80 60 50 90 50 90 Z"
-      fill={color}
-      opacity="0.6"
+    <rect x="25" y="25" width="50" height="50" rx="8" fill={color} opacity="0.4" />
+  </svg>
+);
+
+export const SyncIllustration = ({ className }: IllustrationProps) => (
+  <svg viewBox="0 0 200 200" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+    {/* Document/Checklist */}
+    <rect
+      x="45"
+      y="40"
+      width="110"
+      height="120"
+      rx="8"
+      fill="#f3f4f6"
+      stroke="#9ca3af"
+      strokeWidth="2"
     />
-    <path d="M50 10 L50 90" stroke="#FFF" strokeWidth="1" opacity="0.5" />
+
+    {/* Check marks */}
+    <path
+      d="M60 70 L66 76 L76 64"
+      stroke="#6b7280"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <rect x="86" y="67" width="54" height="6" rx="3" fill="#d1d5db" />
+
+    <path
+      d="M60 100 L66 106 L76 94"
+      stroke="#6b7280"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <rect x="86" y="97" width="54" height="6" rx="3" fill="#d1d5db" />
+
+    <circle cx="68" cy="130" r="6" fill="#d1d5db" />
+    <rect x="86" y="127" width="44" height="6" rx="3" fill="#d1d5db" />
+
+    {/* Sync arrows */}
+    <path
+      d="M160 90 L170 100 L160 110"
+      stroke="#9ca3af"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M40 110 L30 100 L40 90"
+      stroke="#9ca3af"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export const RefreshIllustration = ({ className }: IllustrationProps) => (
+  <svg viewBox="0 0 200 200" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+    {/* Circular refresh arrows */}
+    <path d="M100 40 A60 60 0 1 1 40 100" stroke="#9ca3af" strokeWidth="8" strokeLinecap="round" />
+    <path d="M160 100 A60 60 0 1 1 100 40" stroke="#6b7280" strokeWidth="8" strokeLinecap="round" />
+
+    {/* Arrow heads */}
+    <path d="M35 90 L40 100 L50 95" fill="#9ca3af" />
+    <path d="M110 35 L100 40 L105 50" fill="#6b7280" />
+
+    {/* Center dot */}
+    <circle cx="100" cy="100" r="8" fill="#d1d5db" />
   </svg>
 );

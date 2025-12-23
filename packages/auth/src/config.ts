@@ -1,4 +1,9 @@
 import { db, user, session, account, verification } from "@app/database";
+import type {
+  BetterAuthRequest,
+  SendResetPasswordParams,
+  SendVerificationEmailParams,
+} from "@app/service-contracts";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
@@ -40,7 +45,49 @@ export function createAuthConfig() {
     baseURL: url,
     emailAndPassword: {
       enabled: true,
-      requireEmailVerification: true,
+      requireEmailVerification: false,
+      sendEmailVerificationOnSignUp: true,
+      sendResetPassword: async (
+        { user, url, token }: SendResetPasswordParams,
+        request?: BetterAuthRequest
+      ) => {
+        // TODO: Replace with actual email service (Resend, Nodemailer, SendGrid, etc.)
+        console.log(`[Better Auth] Password reset requested for ${user.email}`);
+        console.log(`Reset URL: ${url}`);
+        console.log(`Reset token: ${token}`);
+
+        // Example implementation with a real email service:
+        // await sendEmail({
+        //   to: user.email,
+        //   subject: "Reset your password",
+        //   html: `
+        //     <h2>Reset Your Password</h2>
+        //     <p>Click the link below to reset your password:</p>
+        //     <a href="${url}">Reset Password</a>
+        //     <p>This link will expire in 1 hour.</p>
+        //   `,
+        // });
+      },
+      sendVerificationEmail: async (
+        { user, url, token }: SendVerificationEmailParams,
+        request?: BetterAuthRequest
+      ) => {
+        // TODO: Replace with actual email service
+        console.log(`[Better Auth] Email verification requested for ${user.email}`);
+        console.log(`Verification URL: ${url}`);
+        console.log(`Verification token: ${token}`);
+
+        // Example implementation:
+        // await sendEmail({
+        //   to: user.email,
+        //   subject: "Verify your email",
+        //   html: `
+        //     <h2>Verify Your Email</h2>
+        //     <p>Click the link below to verify your email address:</p>
+        //     <a href="${url}">Verify Email</a>
+        //   `,
+        // });
+      },
     },
     socialProviders: {
       google: {

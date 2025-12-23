@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "TaskManager"
+    "name": "App"
   },
   "actions": {
     "login": "Iniciar sesión",
@@ -21,52 +21,52 @@
     "contact": "Contacto"
   },
   "hero": {
-    "badge": "Próximamente 🌱",
+    "badge": "Nuevo",
     "title": {
-      "part1": "Haz de tu hogar un",
-      "cozy": "nido acogedor",
-      "part2": "juntos"
+      "part1": "Gestiona tus tareas",
+      "cozy": "eficientemente",
+      "part2": "y mantente organizado"
     },
-    "subtitle": "Una aplicación suave para parejas para compartir tareas, planificar juntos y fortalecer su vínculo—todo en un solo lugar.",
+    "subtitle": "Una aplicación simple de gestión de tareas para ayudarte a mantenerte organizado y productivo.",
     "waitlist": {
       "placeholder": "Ingresa tu correo electrónico",
       "button": "Unirse a la Lista",
-      "success": "🎉 ¡Estás en la lista! Te enviaremos un correo cuando lancemos.",
-      "disclaimer": "Sin spam, lo prometemos. Solo actualizaciones ocasionales."
+      "success": "Gracias. Te enviaremos un correo cuando lancemos.",
+      "disclaimer": "Respetamos tu privacidad."
     }
   },
   "features": {
-    "title": "Todo lo que necesitas para anidar juntos",
-    "subtitle": "Herramientas simples para mantener tu vida compartida organizada y alegre",
+    "title": "Características",
+    "subtitle": "Todo lo que necesitas para gestionar tus tareas",
     "choreGarden": {
-      "title": "Jardín de Tareas",
-      "description": "Convierte las tareas del hogar en un jardín colaborativo. Rastrea quién hace qué, celebra el progreso juntos y mantén tu hogar floreciendo."
+      "title": "Gestión de Tareas",
+      "description": "Crea, organiza y rastrea tus tareas. Establece prioridades y plazos para mantenerte al tanto de tu trabajo."
     },
     "calendar": {
-      "title": "Calendario Compartido",
-      "description": "Ve los horarios del otro de un vistazo. Planifica citas nocturnas, coordina mandados y asegúrate de estar siempre sincronizados."
+      "title": "Vista de Calendario",
+      "description": "Visualiza tus tareas y plazos en formato de calendario. Planifica con anticipación y gestiona tu horario de manera efectiva."
     },
     "loveNotes": {
-      "title": "Notas de Amor y Chequeos",
-      "description": "Comparte pequeños momentos de gratitud, planifica chequeos semanales y mantén tu conexión emocional creciendo fuerte."
+      "title": "Notas y Recordatorios",
+      "description": "Agrega notas a tus tareas y establece recordatorios para asegurarte de nunca perder plazos importantes."
     }
   },
   "cta": {
-    "title": "¿Listo para construir tu nido?",
-    "subtitle": "Únete a nuestra lista de espera y sé el primero en saber cuando lancemos. Estamos creando algo especial para parejas que quieren prosperar juntos.",
+    "title": "¿Listo para comenzar?",
+    "subtitle": "Regístrate ahora y comienza a gestionar tus tareas de manera más efectiva.",
     "waitlist": {
       "placeholder": "Ingresa tu correo electrónico",
       "button": "Unirse a la Lista",
-      "success": "🎉 ¡Estás dentro! Estaremos en contacto pronto.",
-      "disclaimer": "Sé de los primeros en probar TaskManager cuando lancemos."
+      "success": "Gracias por registrarte.",
+      "disclaimer": "Sé de los primeros en probar la app cuando lancemos."
     }
   },
   "footer": {
-    "tagline": "Haciendo la vida compartida simple y alegre.",
+    "tagline": "Gestión de tareas simple.",
     "product": "Producto",
     "company": "Compañía",
     "connect": "Conectar",
-    "copyright": "© 2024 TaskManager. Todos los derechos reservados."
+    "copyright": "© 2024 App. Todos los derechos reservados."
   },
   "pricing": {
     "title": "Precios",

@@ -1,15 +1,28 @@
 "use client";
 
+import { auth, getUser, type Session } from "@app/auth";
 import { VStack, HStack, Heading, Text, Box, ScrollView, Spinner } from "@app/components";
 import { AppHeader, StatCard, ActivityItem, PrimaryButton } from "@app/components";
 import React from "react";
-import { useDashboard, useLogout } from "../hooks";
-import { useAuthStore } from "../store/authStore";
+import { useDashboard } from "../hooks";
 
-export const DashboardScreen: React.FC = () => {
-  const user = useAuthStore((state) => state.user);
-  const { data, isLoading, isError } = useDashboard();
-  const logoutMutation = useLogout();
+interface DashboardScreenProps {
+  session: Session | null;
+  onLogoutSuccess?: () => void;
+}
+
+export const DashboardScreen: React.FC<DashboardScreenProps> = ({ session, onLogoutSuccess }) => {
+  const user = getUser(session);
+  const { data, isLoading, isError } = useDashboard(session);
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      onLogoutSuccess?.();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -51,65 +64,76 @@ export const DashboardScreen: React.FC = () => {
             <Heading size="lg" className="text-typography-900">
               Overview
             </Heading>
-            <HStack space="md" className="flex-wrap">
-              <Box className="flex-1 min-w-[150px]">
-                <StatCard title="Total Tasks" value={stats.totalTasks} subtitle="All tasks" />
-              </Box>
-              <Box className="flex-1 min-w-[150px]">
-                <StatCard
-                  title="Completed"
-                  value={stats.completedTasks}
-                  subtitle={`${Math.round((stats.completedTasks / stats.totalTasks) * 100)}% done`}
-                />
-              </Box>
-              <Box className="flex-1 min-w-[150px]">
-                <StatCard
-                  title="Active Projects"
-                  value={stats.activeProjects}
-                  subtitle="In progress"
-                />
-              </Box>
-            </HStack>
+            <Text size="sm" className="text-typography-600">
+              Your nest at a glance
+            </Text>
           </VStack>
 
-          {/* Primary Action */}
-          <PrimaryButton
-            onPress={() => {
-              // eslint-disable-next-line no-alert
-              (globalThis as any).alert?.("Create new task!");
-            }}
-          >
-            Create New Task
-          </PrimaryButton>
+          <VStack space="md">
+            <Box>
+              <Heading size="md" className="text-typography-700">
+                Total Tasks
+              </Heading>
+              <Text size="2xl" className="text-primary-600 font-bold">
+                {stats.totalTasks}
+              </Text>
+            </Box>
+            <Box>
+              <Heading size="md" className="text-typography-700">
+                Completed Tasks
+              </Heading>
+              <Text size="2xl" className="text-success-600 font-bold">
+                {stats.completedTasks}
+              </Text>
+            </Box>
+            <Box>
+              <Heading size="md" className="text-typography-700">
+                Active Projects
+              </Heading>
+              <Text size="2xl" className="text-info-600 font-bold">
+                {stats.activeProjects}
+              </Text>
+            </Box>
+          </VStack>
 
           {/* Recent Activity */}
-          <VStack space="xs">
+          <VStack space="md" className="mt-4">
             <Heading size="lg" className="text-typography-900">
               Recent Activity
             </Heading>
+
             {recentActivity.length === 0 ? (
-              <Box className="p-8 items-center justify-center bg-background-50 rounded-xl">
-                <Text size="md" className="text-typography-500">
-                  No recent activity
+              <Box className="p-8 items-center">
+                <Text size="sm" className="text-typography-500 text-center">
+                  No recent activity yet
                 </Text>
               </Box>
             ) : (
-              <Box className="bg-white rounded-xl overflow-hidden">
-                {recentActivity.map((activity) => (
-                  <ActivityItem key={activity.id} activity={activity} />
+              <VStack space="sm">
+                {recentActivity.map((activity, index) => (
+                  <Box key={index} className="p-4 bg-background-50 rounded-lg">
+                    <Text className="font-semibold">{activity.type}</Text>
+                    <Text size="sm" className="text-typography-600">
+                      {activity.title}
+                    </Text>
+                    {activity.description && (
+                      <Text size="xs" className="text-typography-500">
+                        {activity.description}
+                      </Text>
+                    )}
+                    <Text size="xs" className="text-typography-400">
+                      {activity.timestamp.toLocaleString()}
+                    </Text>
+                  </Box>
                 ))}
-              </Box>
+              </VStack>
             )}
           </VStack>
 
           {/* Logout Button */}
-          <PrimaryButton
-            onPress={() => logoutMutation.mutate()}
-            isLoading={logoutMutation.isPending}
-            variant="outline"
-          >
-            Sign Out
-          </PrimaryButton>
+          <Box className="mt-4">
+            <PrimaryButton onPress={handleLogout}>Logout</PrimaryButton>
+          </Box>
         </VStack>
       </ScrollView>
     </Box>

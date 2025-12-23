@@ -1,14 +1,6 @@
-"use client";
-
-import { PostHogProvider } from "@app/analytics/web";
-import { GluestackUIProvider } from "@app/components";
-import i18n from "@app/i18n/web";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { useState } from "react";
-import { I18nextProvider } from "react-i18next";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-// import { RevenueCatProvider } from '@app/ui'; // Temporarily disabled for landing page
+import { Providers } from "./providers";
 import "./globals.css";
 import StyledJsxRegistry from "./registry";
 
@@ -22,52 +14,26 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const metadata: Metadata = {
+  title: "App - Task Management",
+  description: "A simple task management application to help you stay organized and productive.",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            retry: 1,
-            refetchOnWindowFocus: false,
-          },
-        },
-      })
-  );
-
   return (
     <html lang="en">
-      <head>
-        <title>TaskManager - Manage Your Tasks Effortlessly</title>
-        <meta
-          name="description"
-          content="The all-in-one platform for teams to collaborate, organize, and get things done faster."
-        />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         style={{ flex: 1 }}
       >
         <StyledJsxRegistry>
-          <PostHogProvider>
-            <I18nextProvider i18n={i18n}>
-              <QueryClientProvider client={queryClient}>
-                <GluestackUIProvider>
-                  <SafeAreaProvider className={` flex-1 overflow-hidden`}>
-                    {/* <RevenueCatProvider> */}
-                    <div className="h-screen w-screen overflow-hidden overflow-y-scroll">
-                      {children}
-                    </div>
-                    {/* </RevenueCatProvider> */}
-                  </SafeAreaProvider>
-                </GluestackUIProvider>
-              </QueryClientProvider>
-            </I18nextProvider>
-          </PostHogProvider>
+          <Providers>
+            <div className="h-screen w-screen overflow-hidden overflow-y-scroll">{children}</div>
+          </Providers>
         </StyledJsxRegistry>
       </body>
     </html>

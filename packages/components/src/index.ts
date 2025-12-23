@@ -59,6 +59,8 @@ export * from "./vstack";
 export * from "./ActivityItem";
 export * from "./AppHeader";
 export * from "./AuthCard";
+export * from "./ForgotPasswordModal";
 export * from "./FormField";
 export * from "./PrimaryButton";
+export * from "./SocialAuthButton";
 export * from "./StatCard";

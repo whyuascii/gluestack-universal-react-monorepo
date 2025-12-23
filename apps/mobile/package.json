@@ -39,6 +39,7 @@
     "@react-navigation/native": "^7.1.6",
     "@tanstack/react-query": "^5.62.11",
     "@app/analytics": "workspace:*",
+    "@app/auth": "workspace:*",
     "@app/components": "workspace:*",
     "expo": "~54.0.12",
     "expo-application": "~7.0.8",

@@ -1,6 +1,16 @@
-import { DashboardScreen } from "@app/ui";
-import React from "react";
+import { DashboardScreen, useSession } from "@app/ui";
+import { useRouter } from "expo-router";
 
 export default function Dashboard() {
-  return <DashboardScreen />;
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  return (
+    <DashboardScreen
+      session={session}
+      onLogoutSuccess={() => {
+        router.replace("/(auth)/login");
+      }}
+    />
+  );
 }

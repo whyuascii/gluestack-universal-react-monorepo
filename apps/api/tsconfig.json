@@ -3,7 +3,10 @@
   "compilerOptions": {
     "types": ["node"],
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "paths": {
+      "@app/auth/server": ["../../packages/auth/dist/server.d.ts"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]

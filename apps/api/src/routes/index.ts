@@ -1,11 +1,11 @@
 import type { FastifyInstance } from "fastify";
-import auth from "./auth";
 import dashboard from "./dashboard";
 import health from "./health";
 import me from "./me";
 import swagger from "./swagger";
 import users from "./users";
 import { VERSIONS } from "./versions";
+import waitlist from "./waitlist";
 
 export { VERSIONS } from "./versions";
 
@@ -14,6 +14,7 @@ const attachAllHandlers = (fastify: FastifyInstance) => {
   health(fastify);
   me(fastify);
   swagger(fastify);
+  waitlist(fastify);
 
   // Route Naming Principles:
   // - Use plural nouns to represent collections (e.g., /users, /reviews).
@@ -24,7 +25,7 @@ const attachAllHandlers = (fastify: FastifyInstance) => {
   // - Use constants for versioning to ensure consistency across the application
 
   // Versioned API routes (alphabetical order)
-  auth(fastify, { rootPath: "auth", versionPrefix: VERSIONS.V1 });
+  // Note: Auth routes are handled by Better Auth plugin at /api/auth/*
   dashboard(fastify, { rootPath: "dashboard", versionPrefix: VERSIONS.V1 });
   users(fastify, { rootPath: "users", versionPrefix: VERSIONS.V1 });
 };

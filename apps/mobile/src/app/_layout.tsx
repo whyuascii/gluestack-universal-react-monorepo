@@ -1,7 +1,7 @@
 import { PostHogProvider } from "@app/analytics/mobile";
 import { GluestackUIProvider } from "@app/components";
 import i18n from "@app/i18n/mobile";
-import { RevenueCatProvider, useAuthStore } from "@app/ui";
+import { RevenueCatProvider, useSession } from "@app/ui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Slot, useRouter, useSegments } from "expo-router";
 import { useEffect, useState } from "react";
@@ -12,7 +12,7 @@ import "../../global.css";
 export default function RootLayout() {
   const router = useRouter();
   const segments = useSegments();
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
+  const { data: session, isPending } = useSession();
 
   const [queryClient] = useState(
     () =>
@@ -27,14 +27,17 @@ export default function RootLayout() {
   );
 
   useEffect(() => {
+    if (isPending) return; // Wait for session to load
+
     const inAuthGroup = segments[0] === "(auth)";
+    const isAuthenticated = !!session;
 
     if (!isAuthenticated && !inAuthGroup) {
       router.replace("/(auth)/login");
     } else if (isAuthenticated && inAuthGroup) {
       router.replace("/(app)/dashboard");
     }
-  }, [isAuthenticated, segments]);
+  }, [session, isPending, segments]);
 
   return (
     <PostHogProvider>
@@ -42,7 +45,7 @@ export default function RootLayout() {
         <QueryClientProvider client={queryClient}>
           <GluestackUIProvider mode="light">
             <SafeAreaProvider>
-              <RevenueCatProvider>
+              <RevenueCatProvider userId={session?.user?.id}>
                 <Slot />
               </RevenueCatProvider>
             </SafeAreaProvider>

@@ -58,7 +58,7 @@ import { createAuthConfig } from "auth";
 const auth = createAuthConfig();
 
 // Mount auth routes in Fastify
-app.all("/api/auth/*", async (req, res) => {
+app.all("/auth/*", async (req, res) => {
   return auth.handler(req, res);
 });
 ```
@@ -141,25 +141,25 @@ pnpm --filter database db:migrate
 2. Create a new project or select existing
 3. Enable Google+ API
 4. Create OAuth 2.0 credentials
-5. Add authorized redirect URI: `http://localhost:3001/api/auth/callback/google`
+5. Add authorized redirect URI: `http://localhost:3001/auth/callback/google`
 6. Copy client ID and secret to `.env`
 
 ### GitHub OAuth
 
 1. Go to [GitHub Settings > Developer settings > OAuth Apps](https://github.com/settings/developers)
 2. Create a new OAuth app
-3. Set authorization callback URL: `http://localhost:3001/api/auth/callback/github`
+3. Set authorization callback URL: `http://localhost:3001/auth/callback/github`
 4. Copy client ID and secret to `.env`
 
 ## API Routes
 
 Better Auth automatically creates these routes:
 
-- `POST /api/auth/sign-up` - Register new user
-- `POST /api/auth/sign-in/email` - Sign in with email/password
-- `POST /api/auth/sign-out` - Sign out
-- `GET /api/auth/session` - Get current session
-- `GET /api/auth/callback/google` - Google OAuth callback
-- `GET /api/auth/callback/github` - GitHub OAuth callback
+- `POST /auth/sign-up` - Register new user
+- `POST /auth/sign-in/email` - Sign in with email/password
+- `POST /auth/sign-out` - Sign out
+- `GET /auth/session` - Get current session
+- `GET /auth/callback/google` - Google OAuth callback
+- `GET /auth/callback/github` - GitHub OAuth callback
 
 See [Better Auth docs](https://www.better-auth.com/docs) for full API reference.

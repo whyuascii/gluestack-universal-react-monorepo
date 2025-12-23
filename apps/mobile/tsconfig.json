@@ -10,7 +10,7 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "babel.config.cjs",
+    "babel.config.js",
     "nativewind-env.d.ts"
   ]
 }

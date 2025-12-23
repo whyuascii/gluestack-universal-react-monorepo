@@ -1,15 +1,7 @@
 "use client";
 
-import { HomeScreen } from "@app/ui";
-import { useRouter } from "next/navigation";
+import { HomeScreen } from "@app/ui/web";
 
 export default function Home() {
-  const router = useRouter();
-
-  return (
-    <HomeScreen
-      onNavigateToSignup={() => router.push("/signup")}
-      onNavigateToLogin={() => router.push("/login")}
-    />
-  );
+  return <HomeScreen />;
 }

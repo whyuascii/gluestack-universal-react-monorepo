@@ -1,4 +1,3 @@
-import type { IncomingMessage, ServerResponse } from "node:http";
 import dotenv from "dotenv";
 import type {
   FastifyBaseLogger,
@@ -6,6 +5,7 @@ import type {
   FastifyTypeProviderDefault,
   RawServerDefault,
 } from "fastify";
+import type { IncomingMessage, ServerResponse } from "node:http";
 import { build } from "./app";
 
 const start = async () => {
@@ -18,7 +18,7 @@ const start = async () => {
   >;
 
   // load env vars
-  if (process.env.NODE_ENV === "local") {
+  if (process.env.NODE_ENV !== "production" && process.env.NODE_ENV !== "test") {
     const localEnv = dotenv.config({ path: "./.env" });
 
     console.info("populated local environment: ", localEnv.parsed);

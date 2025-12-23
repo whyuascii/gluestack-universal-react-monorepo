@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "TaskManager"
+    "name": "App"
   },
   "actions": {
     "login": "Login",
@@ -21,52 +21,52 @@
     "contact": "Contact"
   },
   "hero": {
-    "badge": "Coming Soon 🌱",
+    "badge": "New",
     "title": {
-      "part1": "Make your home a",
-      "cozy": "cozy",
-      "part2": "nest together"
+      "part1": "Manage your tasks",
+      "cozy": "efficiently",
+      "part2": "and stay organized"
     },
-    "subtitle": "A gentle app for partners to share chores, plan together, and strengthen their bond—all in one place.",
+    "subtitle": "A simple task management application to help you stay organized and productive.",
     "waitlist": {
       "placeholder": "Enter your email",
       "button": "Join Waitlist",
-      "success": "🎉 You're on the list! We'll email you when we launch.",
-      "disclaimer": "No spam, promise. Just an occasional update."
+      "success": "Thank you. We'll email you when we launch.",
+      "disclaimer": "We respect your privacy."
     }
   },
   "features": {
-    "title": "Everything you need to nest together",
-    "subtitle": "Simple tools to keep your shared life organized and joyful",
+    "title": "Features",
+    "subtitle": "Everything you need to manage your tasks",
     "choreGarden": {
-      "title": "Chore Garden",
-      "description": "Turn household tasks into a collaborative garden. Track who's doing what, celebrate progress together, and keep your home blooming."
+      "title": "Task Management",
+      "description": "Create, organize, and track your tasks. Set priorities and deadlines to stay on top of your work."
     },
     "calendar": {
-      "title": "Shared Calendar",
-      "description": "See each other's schedules at a glance. Plan date nights, coordinate errands, and make sure you're always in sync."
+      "title": "Calendar View",
+      "description": "View your tasks and deadlines in a calendar format. Plan ahead and manage your schedule effectively."
     },
     "loveNotes": {
-      "title": "Love Notes & Check-ins",
-      "description": "Share little moments of gratitude, plan weekly check-ins, and keep your emotional connection growing strong."
+      "title": "Notes & Reminders",
+      "description": "Add notes to your tasks and set reminders to ensure you never miss important deadlines."
     }
   },
   "cta": {
-    "title": "Ready to build your nest?",
-    "subtitle": "Join our waitlist and be the first to know when we launch. We're crafting something special for couples who want to thrive together.",
+    "title": "Ready to get started?",
+    "subtitle": "Sign up now and start managing your tasks more effectively.",
     "waitlist": {
       "placeholder": "Enter your email",
       "button": "Join Waitlist",
-      "success": "🎉 You're in! We'll be in touch soon.",
-      "disclaimer": "Be among the first to try TaskManager when we launch."
+      "success": "Thank you for signing up.",
+      "disclaimer": "Be among the first to try the app when we launch."
     }
   },
   "footer": {
-    "tagline": "Making shared life simple and joyful.",
+    "tagline": "Simple task management.",
     "product": "Product",
     "company": "Company",
     "connect": "Connect",
-    "copyright": "© 2024 TaskManager. All rights reserved."
+    "copyright": "© 2024 App. All rights reserved."
   },
   "pricing": {
     "title": "Pricing",

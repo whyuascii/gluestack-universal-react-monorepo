@@ -2,12 +2,15 @@
 
 import { SignupScreen } from "@app/ui";
 import { useRouter } from "next/navigation";
-
-// Disable static generation for this page
-export const dynamic = "force-dynamic";
+import React from "react";
 
 export default function SignupPage() {
   const router = useRouter();
 
-  return <SignupScreen onNavigateToLogin={() => router.push("/login")} />;
+  return (
+    <SignupScreen
+      onNavigateToLogin={() => router.push("/login")}
+      onSignupSuccess={() => router.push("/dashboard")}
+    />
+  );
 }

@@ -1,42 +1,41 @@
 /**
  * Auth Package
  *
- * Shared authentication using Better Auth with:
+ * Centralized authentication using Better Auth with:
  * - Email/password authentication
  * - OAuth providers (Google, GitHub)
  * - Cross-platform client support (Next.js + Expo)
+ * - Type-safe utilities and hooks
  *
  * ## Usage
  *
- * ### In API app (apps/api):
+ * ### In API app (apps/api) - SERVER ONLY:
  * ```ts
- * import { createAuthConfig } from '@app/auth';
+ * import { createAuthConfig } from '@app/auth/server';
  * const auth = createAuthConfig();
  * // Mount auth routes in Fastify
  * ```
  *
- * ### In Web app (apps/web):
+ * ### In client components (web/mobile):
  * ```tsx
- * import { useSession, signIn, signOut } from "auth/client/react";
- * ```
+ * import { authClient, useSession } from '@app/auth';
+ * // or platform-specific:
+ * // import { authClient } from '@app/auth/client/react';
+ * // import { authClient } from '@app/auth/client/native';
  *
- * ### In Mobile app (apps/mobile):
- * ```tsx
- * import { useSession, signIn, signOut } from "auth/client/native";
+ * const { data: session } = useSession();
+ * await authClient.signOut();
  * ```
- *
- * ### In UI package (packages/ui):
- * Import client hooks to create shared auth screens/components
  */
 
-// Export auth configuration (for API app)
-export { createAuthConfig } from "./config";
-export type { AuthConfig } from "./config";
+// Export auth utilities and helpers (client-safe)
+export { auth, authClient, isAuthenticated, getUser } from "./utils";
+export type { Session, BetterAuthUser, BetterAuthSession, ExtendedAuthClient } from "./utils";
 
-// Export types
-export type { User, Session, Account } from "better-auth/types";
+// Export hooks
+export { useSession } from "./hooks";
 
-// Note: Client hooks should be imported from "auth/client/react" or "auth/client/native"
-// They are not exported from the main index to avoid bundling issues
-//
+// Re-export Better Auth types
+export type { Account, User } from "better-auth/types";
+
 // Note: Auth schemas are in the database package at "database/schema/auth"

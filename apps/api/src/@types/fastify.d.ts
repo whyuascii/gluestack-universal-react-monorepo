@@ -1,6 +1,6 @@
 import type { AuthConfig } from "@app/auth";
-import type { db } from "@app/database";
 import type { Session, User } from "better-auth/types";
+import type { db } from "@app/database";
 import "fastify";
 
 declare module "fastify" {

@@ -30,9 +30,9 @@
   ],
   "sideEffects": false,
   "scripts": {
+    "dev": "swc src -d dist --strip-leading-paths --copy-files --watch",
     "build": "pnpm run build:swc",
     "build:swc": "swc src -d dist --strip-leading-paths --copy-files",
-    "dev": "swc src -d dist --strip-leading-paths --copy-files --watch",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
@@ -53,6 +53,7 @@
   },
   "peerDependencies": {
     "@app/analytics": "workspace:*",
+    "@app/auth": "workspace:*",
     "@app/components": "workspace:*",
     "react": "^18",
     "react-i18next": "^15",

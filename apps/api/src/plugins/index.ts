@@ -4,6 +4,7 @@ import auth from "./auth";
 import config from "./config";
 import cors from "./cors";
 import database from "./database";
+import rateLimit from "./rate-limit";
 import sensible from "./sensible";
 import swagger from "./swagger";
 
@@ -19,5 +20,9 @@ export default fastifyPlugin(async (fastify: FastifyInstance) => {
   await fastify.register(auth);
 
   // All other plugins are registered in parallel
-  await Promise.all([fastify.register(cors), fastify.register(swagger)]);
+  await Promise.all([
+    fastify.register(cors),
+    fastify.register(rateLimit),
+    fastify.register(swagger),
+  ]);
 });

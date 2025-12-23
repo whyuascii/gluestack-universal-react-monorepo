@@ -5,5 +5,10 @@ import React from "react";
 export default function Login() {
   const router = useRouter();
 
-  return <LoginScreen onNavigateToSignup={() => router.push("/(auth)/signup")} />;
+  return (
+    <LoginScreen
+      onNavigateToSignup={() => router.push("/(auth)/signup")}
+      onLoginSuccess={() => router.replace("/(app)/dashboard")}
+    />
+  );
 }

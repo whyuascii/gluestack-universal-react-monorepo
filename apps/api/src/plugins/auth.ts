@@ -1,12 +1,13 @@
-import { createAuthConfig } from "@app/auth";
+import { createAuthConfig } from "@app/auth/server";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import fastifyPlugin from "fastify-plugin";
 
 /**
  * Auth plugin that:
  * 1. Initializes Better Auth with database connection
- * 2. Decorates Fastify instance with betterAuth instance
- * 3. Provides authentication verification preHandler (verifyAuth)
+ * 2. Mounts Better Auth handler at /api/auth/*
+ * 3. Decorates Fastify instance with betterAuth instance
+ * 4. Provides authentication verification preHandler (verifyAuth)
  */
 export default fastifyPlugin(
   async (fastify: FastifyInstance) => {
@@ -16,6 +17,36 @@ export default fastifyPlugin(
 
       // Decorate fastify instance with betterAuth
       fastify.decorate("betterAuth", betterAuth);
+
+      // Mount Better Auth handler at /api/auth/*
+      fastify.all("/api/auth/*", async (request, reply) => {
+        // Convert Fastify request to Web Request
+        const url = new URL(request.url, `${request.protocol}://${request.hostname}`);
+
+        const webRequest = new Request(url, {
+          method: request.method,
+          headers: request.headers as Record<string, string>,
+          body:
+            request.method !== "GET" && request.method !== "HEAD"
+              ? JSON.stringify(request.body)
+              : undefined,
+        });
+
+        // Call Better Auth handler
+        const response = await betterAuth.handler(webRequest);
+
+        // Convert Web Response to Fastify reply
+        reply.status(response.status);
+
+        // Set headers
+        response.headers.forEach((value: string, key: string) => {
+          reply.header(key, value);
+        });
+
+        // Send body
+        const body = await response.text();
+        return reply.send(body);
+      });
 
       // Decorate with verifyAuth method for protecting routes
       fastify.decorate("verifyAuth", async (request: FastifyRequest, reply: FastifyReply) => {
@@ -44,7 +75,7 @@ export default fastifyPlugin(
         }
       });
 
-      fastify.log.info("Better Auth initialized");
+      fastify.log.info("Better Auth initialized and mounted at /api/auth/*");
     } catch (err) {
       fastify.log.error({ message: "Failed to initialize Better Auth", error: err });
       throw err;

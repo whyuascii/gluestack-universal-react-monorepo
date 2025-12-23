@@ -1,6 +1,5 @@
 import { Purchases, type CustomerInfo as RCCustomerInfo } from "@revenuecat/purchases-js";
 import React, { useEffect, useRef } from "react";
-import { useAuthStore } from "../../store/authStore";
 import { REVENUECAT_CONFIG } from "../config/revenuecat";
 import {
   useSubscriptionStore,
@@ -17,6 +16,7 @@ interface PurchasesInstance {
 
 interface RevenueCatProviderProps {
   children: React.ReactNode;
+  userId?: string; // Better Auth user ID
 }
 
 /**
@@ -73,8 +73,7 @@ function convertCustomerInfo(rcInfo: RCCustomerInfo): CustomerInfo {
  * 3. Listen to customer info updates
  * 4. Populate subscription store
  */
-export function RevenueCatProvider({ children }: RevenueCatProviderProps) {
-  const user = useAuthStore((state) => state.user);
+export function RevenueCatProvider({ children, userId }: RevenueCatProviderProps) {
   const setCustomerInfo = useSubscriptionStore((state) => state.setCustomerInfo);
   const setLoading = useSubscriptionStore((state) => state.setLoading);
   const setError = useSubscriptionStore((state) => state.setError);
@@ -139,9 +138,9 @@ export function RevenueCatProvider({ children }: RevenueCatProviderProps) {
       try {
         setLoading(true);
 
-        if (user?.id) {
+        if (userId) {
           // User logged in - transfer subscription to user account
-          const { customerInfo } = await purchases.logIn({ appUserId: user.id });
+          const { customerInfo } = await purchases.logIn({ appUserId: userId });
           setCustomerInfo(convertCustomerInfo(customerInfo));
         } else {
           // User logged out - reset to anonymous
@@ -155,7 +154,7 @@ export function RevenueCatProvider({ children }: RevenueCatProviderProps) {
     }
 
     syncAuthState();
-  }, [user?.id, setCustomerInfo, setLoading, setError]);
+  }, [userId, setCustomerInfo, setLoading, setError]);
 
   return <>{children}</>;
 }
