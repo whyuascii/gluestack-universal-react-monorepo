@@ -76,6 +76,7 @@
     "react-native-webview": "~13.15.0",
     "react-native-worklets": "^0.5.1",
     "@app/service-contracts": "workspace:*",
+    "@app/subscriptions": "workspace:*",
     "@app/ui": "workspace:*"
   },
   "devDependencies": {

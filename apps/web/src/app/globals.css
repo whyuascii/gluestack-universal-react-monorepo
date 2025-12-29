@@ -1,9 +1,13 @@
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer utilities {
   .text-shadow-sm {
-    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+    text-shadow: 1px 1px 0px rgba(78, 63, 48, 0.1);
   }
 }
+
+/* Custom floating animation for leaves - defined in tailwind theme but can be customized here */

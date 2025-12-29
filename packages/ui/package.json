@@ -1,6 +1,7 @@
 {
   "name": "@app/ui",
   "version": "0.0.0",
+  "type": "module",
   "description": "Shared UI logic including screens, hooks, state management, and utilities",
   "keywords": [
     "ui",
@@ -39,7 +40,6 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.62.11",
     "zustand": "^5.0.2"
   },
   "devDependencies": {
@@ -55,10 +55,11 @@
     "@app/analytics": "workspace:*",
     "@app/auth": "workspace:*",
     "@app/components": "workspace:*",
-    "react": "^18",
+    "@app/service-contracts": "workspace:*",
+    "@tanstack/react-query": "^5",
     "react-i18next": "^15",
     "react-native": "*",
-    "@app/service-contracts": "workspace:*",
+    "react": "^18",
     "typescript": "^5"
   },
   "engines": {

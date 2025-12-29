@@ -1,0 +1,73 @@
+{
+  "name": "@app/notifications",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Cross-platform notification system with OneSignal integration for push, in-app, and transactional notifications",
+  "keywords": [
+    "notifications",
+    "push",
+    "onesignal",
+    "react",
+    "react-native"
+  ],
+  "author": "whyuascii <eddy@whyuascii.com>",
+  "license": "ISC",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./web": {
+      "types": "./dist/web.d.ts",
+      "default": "./dist/web.js"
+    },
+    "./mobile": {
+      "types": "./dist/mobile.d.ts",
+      "default": "./dist/mobile.js"
+    }
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "dev": "pnpm run dev:swc & pnpm run dev:types",
+    "dev:swc": "swc src -d dist --strip-leading-paths --copy-files --watch",
+    "dev:types": "tsc --emitDeclarationOnly --outDir dist --skipLibCheck --watch --preserveWatchOutput",
+    "build": "pnpm run build:swc && pnpm run build:types",
+    "build:swc": "swc src -d dist --strip-leading-paths --copy-files",
+    "build:types": "tsc --emitDeclarationOnly --outDir dist --skipLibCheck",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "react-onesignal": "^3.0.1",
+    "react-native-onesignal": "^5.2.6",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@swc/cli": "^0.6.0",
+    "@swc/core": "^1.10.6",
+    "@types/react": "^19.0.1",
+    "eslint": "^9.18.0",
+    "@app/eslint-config": "workspace:*",
+    "typescript": "^5.7.2",
+    "@app/typescript-config": "workspace:*"
+  },
+  "peerDependencies": {
+    "@app/components": "workspace:*",
+    "@app/i18n": "workspace:*",
+    "react": "^19.0.0",
+    "react-native": "*"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

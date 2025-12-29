@@ -155,6 +155,9 @@ importers:
       '@app/analytics':
         specifier: workspace:*
         version: link:../../packages/analytics
+      '@app/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@app/components':
         specifier: workspace:*
         version: link:../../packages/components
@@ -164,6 +167,9 @@ importers:
       '@app/service-contracts':
         specifier: workspace:*
         version: link:../../packages/service-contracts
+      '@app/subscriptions':
+        specifier: workspace:*
+        version: link:../../packages/subscriptions
       '@app/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -321,6 +327,9 @@ importers:
       '@app/analytics':
         specifier: workspace:*
         version: link:../../packages/analytics
+      '@app/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@app/components':
         specifier: workspace:*
         version: link:../../packages/components
@@ -330,6 +339,9 @@ importers:
       '@app/service-contracts':
         specifier: workspace:*
         version: link:../../packages/service-contracts
+      '@app/subscriptions':
+        specifier: workspace:*
+        version: link:../../packages/subscriptions
       '@app/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -339,6 +351,9 @@ importers:
       '@revenuecat/purchases-js':
         specifier: ^1.20.1
         version: 1.20.1
+      '@tanstack/react-query':
+        specifier: ^5.62.11
+        version: 5.90.12(react@19.1.0)
       dom-helpers:
         specifier: ^6.0.1
         version: 6.0.1
@@ -471,6 +486,12 @@ importers:
       '@app/database':
         specifier: workspace:*
         version: link:../database
+      '@app/notifications':
+        specifier: workspace:*
+        version: link:../notifications
+      '@app/service-contracts':
+        specifier: workspace:*
+        version: link:../service-contracts
       better-auth:
         specifier: ^1.1.11
         version: 1.4.6(next@15.5.7(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -741,6 +762,52 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
 
+  packages/notifications:
+    dependencies:
+      '@app/components':
+        specifier: workspace:*
+        version: link:../components
+      '@app/i18n':
+        specifier: workspace:*
+        version: link:../i18n
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-native:
+        specifier: 0.81.4
+        version: 0.81.4(@babel/core@7.28.5)(@types/react@19.1.0)(react@19.1.0)
+      react-native-onesignal:
+        specifier: ^5.2.6
+        version: 5.2.16
+      react-onesignal:
+        specifier: ^3.0.1
+        version: 3.4.4
+      zustand:
+        specifier: ^5.0.2
+        version: 5.0.9(@types/react@19.1.0)(react@19.1.0)(use-sync-external-store@1.6.0(react@19.1.0))
+    devDependencies:
+      '@app/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@app/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@swc/cli':
+        specifier: 0.6.0
+        version: 0.6.0(@swc/core@1.10.6(@swc/helpers@0.5.17))
+      '@swc/core':
+        specifier: 1.10.6
+        version: 1.10.6(@swc/helpers@0.5.17)
+      '@types/react':
+        specifier: 19.1.0
+        version: 19.1.0
+      eslint:
+        specifier: 8.57.1
+        version: 8.57.1
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+
   packages/service-contracts:
     dependencies:
       '@app/utils':
@@ -753,6 +820,55 @@ importers:
       '@app/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
+      '@app/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@swc/cli':
+        specifier: 0.6.0
+        version: 0.6.0(@swc/core@1.10.6(@swc/helpers@0.5.17))
+      '@swc/core':
+        specifier: 1.10.6
+        version: 1.10.6(@swc/helpers@0.5.17)
+      eslint:
+        specifier: 8.57.1
+        version: 8.57.1
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+
+  packages/subscriptions:
+    dependencies:
+      '@app/components':
+        specifier: workspace:*
+        version: link:../components
+      '@app/i18n':
+        specifier: workspace:*
+        version: link:../i18n
+      '@revenuecat/purchases-js':
+        specifier: ^1.23.0
+        version: 1.23.0
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-i18next:
+        specifier: ^15
+        version: 15.7.4(i18next@25.7.2(typescript@5.9.3))(react-dom@19.1.0(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)(typescript@5.9.3)
+      react-native:
+        specifier: 0.81.4
+        version: 0.81.4(@babel/core@7.28.5)(@types/react@19.1.0)(react@19.1.0)
+      react-native-purchases:
+        specifier: ^8.2.3
+        version: 8.12.0(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
+      zustand:
+        specifier: ^5.0.2
+        version: 5.0.9(@types/react@19.1.0)(react@19.1.0)(use-sync-external-store@1.6.0(react@19.1.0))
+    devDependencies:
+      '@app/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@app/tailwind-config':
+        specifier: workspace:*
+        version: link:../tailwind-config
       '@app/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
@@ -785,6 +901,9 @@ importers:
       '@app/analytics':
         specifier: workspace:*
         version: link:../analytics
+      '@app/auth':
+        specifier: workspace:*
+        version: link:../auth
       '@app/components':
         specifier: workspace:*
         version: link:../components
@@ -792,7 +911,7 @@ importers:
         specifier: workspace:*
         version: link:../service-contracts
       '@tanstack/react-query':
-        specifier: ^5.62.11
+        specifier: ^5
         version: 5.90.12(react@19.1.0)
       react:
         specifier: 19.1.0
@@ -3861,6 +3980,12 @@ packages:
 
   '@revenuecat/purchases-js@1.20.1':
     resolution: {integrity: sha512-Rm036668Noq3JHd5m2wAS5WkvgSZb5FSQmqMs954uyddK3UsdoSdMuf0BmunI/QRDk5ietjUWG9+P7C2TG9kjQ==}
+
+  '@revenuecat/purchases-js@1.23.0':
+    resolution: {integrity: sha512-CtYO0Tk/+MSI4Ea16xs269v81wZWWISdBmYPIHmxclnuCfsV5zFl7bzV1LqO2za7xKWJwLwc5tcLeQng2bsY+w==}
+
+  '@revenuecat/purchases-typescript-internal@14.3.0':
+    resolution: {integrity: sha512-P3IhlWvH4wJAM9ypv8HamdIBMQfnLdU9PbjURw+s7NxHOL8LmPGhKuyv+gBINpka27mt1CAsDoOhNHjkexJhkg==}
 
   '@revenuecat/purchases-typescript-internal@17.23.0':
     resolution: {integrity: sha512-BraZIf7iiMqIQYDe47adM8Kji4ylaG68OO9MTNzkOTdYRPmBZUyhtFaWAD72gboIUVR4uVgBCjiC54IHwbhjNQ==}
@@ -8350,6 +8475,9 @@ packages:
       react: 19.1.0
       react-native: 0.81.4
 
+  react-native-onesignal@5.2.16:
+    resolution: {integrity: sha512-KsLFhB78aitUSqwJPiOGpI1YY3SaaB2wsg2nSZELT7tiucaod0aFyQ72KHYMR/jl8+DIoDvaa3AW9XZiX75nOg==}
+
   react-native-purchases-ui@9.6.10:
     resolution: {integrity: sha512-3ksYHYczn9r4HcAaDGWYW//FAFRdOGr8unATpBY+N5oKDsqttrRL3FozPHnsIhId22+3044Xf6E58raRXkUvWA==}
     peerDependencies:
@@ -8360,6 +8488,12 @@ packages:
     peerDependenciesMeta:
       react-native-web:
         optional: true
+
+  react-native-purchases@8.12.0:
+    resolution: {integrity: sha512-0T6WtSDN96swsS6iLeTh7GEGLSedBr4FWP5JsGLnP6Ri7Rp754pf3UJ+S0+ZnT1cqUZ4W2z2oB6zTLyyfNfuKw==}
+    peerDependencies:
+      react: 19.1.0
+      react-native: 0.81.4
 
   react-native-purchases@9.6.10:
     resolution: {integrity: sha512-clQ/+qLwF1mil1W0rcqmLKHEWuzjvgSeCgJMttLeFTKEH914oka4+NVZbcQAL24RNAR63ohh6oH2PRNkTdLzPg==}
@@ -8426,6 +8560,10 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  react-onesignal@3.4.4:
+    resolution: {integrity: sha512-nV3toMnqQSmnNLrygOp5gYjK+IBUJ1mdHiCLUQtncCU7ZWdUVdlMi5WaWRJ4ndvV0xmp4j23Bt79JoG7OP+NTg==}
+    engines: {node: '>=14', npm: '>=6'}
 
   react-refresh@0.14.2:
     resolution: {integrity: sha512-jCvmsr+1IUSMUyzOkRcvnVbX3ZYC6g9TDrDbFuFmRDq7PD4yaGbLKNQL6k2jnArV8hjYxh7hVhAZB6s9HDGpZA==}
@@ -13650,6 +13788,10 @@ snapshots:
 
   '@revenuecat/purchases-js@1.20.1': {}
 
+  '@revenuecat/purchases-js@1.23.0': {}
+
+  '@revenuecat/purchases-typescript-internal@14.3.0': {}
+
   '@revenuecat/purchases-typescript-internal@17.23.0': {}
 
   '@rollup/rollup-android-arm-eabi@4.53.3':
@@ -18777,6 +18919,10 @@ snapshots:
       react: 19.1.0
       react-native: 0.81.4(@babel/core@7.28.5)(@types/react@19.1.0)(react@19.1.0)
 
+  react-native-onesignal@5.2.16:
+    dependencies:
+      invariant: 2.2.4
+
   react-native-purchases-ui@9.6.10(react-native-purchases@9.6.10(react-native-web@0.21.1(encoding@0.1.13)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native-web@0.21.1(encoding@0.1.13)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0):
     dependencies:
       '@revenuecat/purchases-typescript-internal': 17.23.0
@@ -18785,6 +18931,12 @@ snapshots:
       react-native-purchases: 9.6.10(react-native-web@0.21.1(encoding@0.1.13)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
     optionalDependencies:
       react-native-web: 0.21.1(encoding@0.1.13)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+
+  react-native-purchases@8.12.0(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0):
+    dependencies:
+      '@revenuecat/purchases-typescript-internal': 14.3.0
+      react: 19.1.0
+      react-native: 0.81.4(@babel/core@7.28.5)(@types/react@19.1.0)(react@19.1.0)
 
   react-native-purchases@9.6.10(react-native-web@0.21.1(encoding@0.1.13)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.5)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0):
     dependencies:
@@ -18912,6 +19064,8 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
+
+  react-onesignal@3.4.4: {}
 
   react-refresh@0.14.2: {}
 

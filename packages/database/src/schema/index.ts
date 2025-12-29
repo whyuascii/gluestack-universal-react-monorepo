@@ -1,6 +1,5 @@
-// Export all table schemas
-export * from "./tenants";
-export * from "./users";
+// Export waitlist schema
+export * from "./waitlist";
 
-// Export auth schemas
+// Export auth schemas (Better Auth)
 export * from "./auth";

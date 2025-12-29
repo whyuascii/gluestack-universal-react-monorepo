@@ -11,15 +11,15 @@
  * @returns {import('tailwindcss').Config}
  *
  * @example
- * // Basic usage (uses NestQuest theme + gluestack colors with 'gs-' prefix)
+ * // Basic usage (uses app theme + gluestack colors with 'gs-' prefix)
  * const createTailwindConfig = require("@app/tailwind-config");
  * module.exports = createTailwindConfig({
  *   content: ["./src/**\/*.{js,jsx,ts,tsx}"],
  *   important: "html"
  * });
  * // Available colors:
- * // - NestQuest semantic: bg-primary-500, text-error-600
- * // - NestQuest brand: bg-nq-green, text-nq-bark
+ * // - Semantic: bg-primary-500, text-error-600
+ * // - Brand: bg-sa-green, text-sa-bark
  * // - Gluestack (CSS vars): bg-gs-primary-500, text-gs-error-600
  *
  * @example
@@ -87,10 +87,10 @@ module.exports = function createTailwindConfig(options = {}) {
     return prefixed;
   };
 
-  // Add gluestack colors with 'gs-' prefix to make them available alongside NestQuest
+  // Add gluestack colors with 'gs-' prefix to make them available alongside app theme
   const gluestackPrefixedColors = prefixColors(gluestackTheme.colors, "gs");
 
-  // Merge gluestack colors into nestquest theme
+  // Merge gluestack colors into sample theme
   const baseTheme = {
     ...SampleAppTheme,
     colors: {

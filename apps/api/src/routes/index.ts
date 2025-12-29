@@ -3,7 +3,6 @@ import dashboard from "./dashboard";
 import health from "./health";
 import me from "./me";
 import swagger from "./swagger";
-import users from "./users";
 import { VERSIONS } from "./versions";
 import waitlist from "./waitlist";
 
@@ -27,7 +26,6 @@ const attachAllHandlers = (fastify: FastifyInstance) => {
   // Versioned API routes (alphabetical order)
   // Note: Auth routes are handled by Better Auth plugin at /api/auth/*
   dashboard(fastify, { rootPath: "dashboard", versionPrefix: VERSIONS.V1 });
-  users(fastify, { rootPath: "users", versionPrefix: VERSIONS.V1 });
 };
 
 export default attachAllHandlers;

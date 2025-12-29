@@ -1,6 +1,7 @@
 {
   "name": "@app/i18n",
   "version": "0.0.0",
+  "type": "module",
   "private": true,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -24,10 +25,12 @@
   ],
   "sideEffects": false,
   "scripts": {
+    "dev": "pnpm run dev:swc & pnpm run dev:types",
+    "dev:swc": "swc src -d dist --strip-leading-paths --copy-files --watch",
+    "dev:types": "tsc --emitDeclarationOnly --outDir dist --skipLibCheck --watch --preserveWatchOutput",
     "build": "pnpm run build:swc && pnpm run build:types",
     "build:swc": "swc src -d dist --strip-leading-paths --copy-files",
     "build:types": "tsc --emitDeclarationOnly --outDir dist --skipLibCheck",
-    "dev": "swc src -d dist --strip-leading-paths --copy-files --watch",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",

@@ -1,0 +1,12 @@
+{
+  "extends": "@app/typescript-config/expo.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "outDir": "dist",
+    "rootDir": "src",
+    "declaration": false,
+    "declarationMap": false
+  },
+  "include": ["src/**/*", "nativewind-env.d.ts"],
+  "exclude": ["node_modules", "dist"]
+}

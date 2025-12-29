@@ -18,5 +18,17 @@ export const WaitlistSignupResponse = z.object({
   email: z.string().email(),
 });
 
+/**
+ * Error responses for waitlist operations
+ */
+export const WaitlistErrorResponse = z.object({
+  success: z.literal(false),
+  error: z.object({
+    code: z.enum(["DUPLICATE_EMAIL", "VALIDATION_ERROR", "SERVER_ERROR"]),
+    message: z.string(),
+  }),
+});
+
 export type TWaitlistSignupRequest = z.infer<typeof WaitlistSignupRequest>;
 export type TWaitlistSignupResponse = z.infer<typeof WaitlistSignupResponse>;
+export type TWaitlistErrorResponse = z.infer<typeof WaitlistErrorResponse>;

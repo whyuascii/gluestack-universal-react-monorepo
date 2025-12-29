@@ -4,7 +4,7 @@ This directory contains theme presets that can be used with the shared Tailwind 
 
 ## Available Themes
 
-### `nestquest.js` (Default)
+### `sampleapp.js` (Default)
 
 The NestQuest theme - a warm, cozy design for couples and families. This is the **base theme** used across all apps.
 

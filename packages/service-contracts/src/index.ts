@@ -10,5 +10,4 @@ export * from "./generic";
 export * from "./auth";
 export * from "./dashboard";
 export * from "./health";
-export * from "./users";
 export * from "./waitlist";

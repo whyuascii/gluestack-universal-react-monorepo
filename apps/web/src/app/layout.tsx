@@ -15,8 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "App - Task Management",
-  description: "A simple task management application to help you stay organized and productive.",
+  title: "TwigQuest - Build Your Cozy Nest Together",
+  description:
+    "The shared space for couples to grow, plan, and nurture their life together. Simple, warm, and designed for two.",
 };
 
 export default function RootLayout({

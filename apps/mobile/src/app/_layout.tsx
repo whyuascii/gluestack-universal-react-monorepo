@@ -1,7 +1,8 @@
 import { PostHogProvider } from "@app/analytics/mobile";
 import { GluestackUIProvider } from "@app/components";
 import i18n from "@app/i18n/mobile";
-import { RevenueCatProvider, useSession } from "@app/ui";
+import { RevenueCatProvider } from "@app/subscriptions";
+import { useSession } from "@app/ui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Slot, useRouter, useSegments } from "expo-router";
 import { useEffect, useState } from "react";

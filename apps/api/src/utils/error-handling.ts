@@ -13,7 +13,7 @@ import type { z } from "zod";
 export const globalErrorHandler = (
   fastify: FastifyInstance,
   error: FastifyError,
-  request: FastifyRequest
+  _request: FastifyRequest
 ): { statusCode: number; response: TUserErrorResponse } => {
   let statusCode = error.statusCode || 500;
   let response: TUserErrorResponse = {

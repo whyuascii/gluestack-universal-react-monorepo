@@ -5,10 +5,30 @@ import fastifyPlugin from "fastify-plugin";
 export default fastifyPlugin(
   async (fastify: FastifyInstance) => {
     await fastify.register(fastifyCors, {
-      // Decided to allow all origins since this is a public API that any company can use
-      origin: "*",
+      // When credentials: true, origin cannot be "*"
+      // Use a function to allow all origins while supporting credentials
+      origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps, Postman, curl)
+        if (!origin) {
+          callback(null, true);
+          return;
+        }
+
+        // In production, check against allowed origins
+        if (process.env.NODE_ENV === "production") {
+          const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
+          if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+          } else {
+            callback(new Error("Not allowed by CORS"), false);
+          }
+        } else {
+          // In development, allow all origins
+          callback(null, true);
+        }
+      },
       credentials: true,
-      allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"],
+      allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
       methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     });
   },

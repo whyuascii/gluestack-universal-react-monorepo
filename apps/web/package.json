@@ -32,6 +32,7 @@
   "dependencies": {
     "@gluestack/ui-next-adapter": "^3.0.3",
     "@revenuecat/purchases-js": "^1.20.1",
+    "@tanstack/react-query": "^5.62.11",
     "@app/analytics": "workspace:*",
     "@app/auth": "workspace:*",
     "@app/components": "workspace:*",
@@ -47,6 +48,7 @@
     "react-native-svg": "~15.12.0",
     "react-native-web": "^0.21.1",
     "@app/service-contracts": "workspace:*",
+    "@app/subscriptions": "workspace:*",
     "tailwindcss": "^3.4.17",
     "@app/ui": "workspace:*"
   },

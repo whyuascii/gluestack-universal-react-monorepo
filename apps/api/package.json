@@ -1,6 +1,7 @@
 {
   "name": "@app/api",
   "version": "1.0.0",
+  "type": "module",
   "description": "Fastify API server with Zod validation and PostgreSQL database",
   "keywords": [
     "api",

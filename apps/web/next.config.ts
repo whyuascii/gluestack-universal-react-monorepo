@@ -9,9 +9,12 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   transpilePackages: [
-    "ui",
-    "i18n",
-    "analytics",
+    "@app/ui",
+    "@app/i18n",
+    "@app/analytics",
+    "@app/components",
+    "@app/auth",
+    "@app/subscriptions",
     "nativewind",
     "@gluestack-ui/core",
     "@gluestack-ui/utils",
@@ -20,7 +23,7 @@ const nextConfig: NextConfig = {
     "react-native-reanimated",
     "react-native-safe-area-context",
   ],
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
       // Transform all direct `react-native` imports to `react-native-web`
@@ -33,6 +36,12 @@ const nextConfig: NextConfig = {
       ".web.tsx",
       ...config.resolve.extensions,
     ];
+
+    // Ensure single instance of React Query across all packages
+    if (!isServer) {
+      config.resolve.alias["@tanstack/react-query"] = require.resolve("@tanstack/react-query");
+    }
+
     return config;
   },
 };

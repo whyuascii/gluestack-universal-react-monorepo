@@ -57,6 +57,7 @@
   "dependencies": {
     "better-auth": "^1.1.11",
     "@app/database": "workspace:*",
+    "@app/notifications": "workspace:*",
     "@app/service-contracts": "workspace:*",
     "zod": "^4.1.3"
   },

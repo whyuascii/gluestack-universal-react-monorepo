@@ -1,0 +1,65 @@
+{
+  "name": "@app/subscriptions",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "RevenueCat subscription and monetization management for web and mobile",
+  "keywords": [
+    "subscriptions",
+    "revenuecat",
+    "monetization",
+    "paywall",
+    "react",
+    "react-native"
+  ],
+  "author": "whyuascii <eddy@whyuascii.com>",
+  "license": "ISC",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "dev": "swc src -d dist --strip-leading-paths --copy-files --watch",
+    "build": "pnpm run build:swc",
+    "build:swc": "swc src -d dist --strip-leading-paths --copy-files",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@revenuecat/purchases-js": "^1.23.0",
+    "react-native-purchases": "^8.2.3",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@swc/cli": "^0.6.0",
+    "@swc/core": "^1.10.6",
+    "eslint": "^9.18.0",
+    "@app/eslint-config": "workspace:*",
+    "@app/tailwind-config": "workspace:*",
+    "typescript": "^5.9.3",
+    "@app/typescript-config": "workspace:*"
+  },
+  "peerDependencies": {
+    "@app/components": "workspace:*",
+    "@app/i18n": "workspace:*",
+    "react-i18next": "^15",
+    "react-native": "*",
+    "react": "^18",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

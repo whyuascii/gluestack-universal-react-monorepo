@@ -1,4 +1,5 @@
 import { db, user, session, account, verification } from "@app/database";
+import { transactionalNotificationService } from "@app/notifications";
 import type {
   BetterAuthRequest,
   SendResetPasswordParams,
@@ -43,50 +44,43 @@ export function createAuthConfig() {
     }),
     secret,
     baseURL: url,
+    trustedOrigins:
+      process.env.NODE_ENV === "production"
+        ? process.env.TRUSTED_ORIGINS?.split(",") || []
+        : [
+            "http://localhost:3000", // Next.js web app
+            "http://localhost:8081", // Expo mobile app
+            "http://localhost:19006", // Expo web
+          ],
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: false,
       sendEmailVerificationOnSignUp: true,
       sendResetPassword: async (
         { user, url, token }: SendResetPasswordParams,
-        request?: BetterAuthRequest
+        _request?: BetterAuthRequest
       ) => {
-        // TODO: Replace with actual email service (Resend, Nodemailer, SendGrid, etc.)
-        console.log(`[Better Auth] Password reset requested for ${user.email}`);
-        console.log(`Reset URL: ${url}`);
-        console.log(`Reset token: ${token}`);
-
-        // Example implementation with a real email service:
-        // await sendEmail({
-        //   to: user.email,
-        //   subject: "Reset your password",
-        //   html: `
-        //     <h2>Reset Your Password</h2>
-        //     <p>Click the link below to reset your password:</p>
-        //     <a href="${url}">Reset Password</a>
-        //     <p>This link will expire in 1 hour.</p>
-        //   `,
-        // });
+        try {
+          // Send password reset notification via transactional notification service
+          await transactionalNotificationService.sendPasswordReset(user.email, token);
+          console.log(`[Better Auth] Password reset email sent to ${user.email}`);
+        } catch (error) {
+          console.error(`[Better Auth] Failed to send password reset email:`, error);
+          throw error;
+        }
       },
       sendVerificationEmail: async (
         { user, url, token }: SendVerificationEmailParams,
-        request?: BetterAuthRequest
+        _request?: BetterAuthRequest
       ) => {
-        // TODO: Replace with actual email service
-        console.log(`[Better Auth] Email verification requested for ${user.email}`);
-        console.log(`Verification URL: ${url}`);
-        console.log(`Verification token: ${token}`);
-
-        // Example implementation:
-        // await sendEmail({
-        //   to: user.email,
-        //   subject: "Verify your email",
-        //   html: `
-        //     <h2>Verify Your Email</h2>
-        //     <p>Click the link below to verify your email address:</p>
-        //     <a href="${url}">Verify Email</a>
-        //   `,
-        // });
+        try {
+          // Send email verification notification via transactional notification service
+          await transactionalNotificationService.sendEmailVerification(user.email, token);
+          console.log(`[Better Auth] Verification email sent to ${user.email}`);
+        } catch (error) {
+          console.error(`[Better Auth] Failed to send verification email:`, error);
+          throw error;
+        }
       },
     },
     socialProviders: {

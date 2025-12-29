@@ -2,23 +2,15 @@
   "app": {
     "name": "App"
   },
-  "actions": {
-    "login": "Login",
-    "signup": "Sign Up",
-    "getStarted": "Get Started",
-    "getStartedFree": "Get Started Free"
-  },
   "navigation": {
-    "home": "Home",
-    "dashboard": "Dashboard",
-    "settings": "Settings",
     "features": "Features",
     "ourStory": "Our Story",
-    "about": "About",
-    "roadmap": "Roadmap",
-    "testimonials": "Testimonials",
+    "pricing": "Pricing",
+    "about": "About Us",
     "blog": "Blog",
-    "contact": "Contact"
+    "contact": "Contact",
+    "roadmap": "Roadmap",
+    "testimonials": "Testimonials"
   },
   "hero": {
     "badge": "New",
@@ -31,8 +23,9 @@
     "waitlist": {
       "placeholder": "Enter your email",
       "button": "Join Waitlist",
-      "success": "Thank you. We'll email you when we launch.",
-      "disclaimer": "We respect your privacy."
+      "submitting": "Joining...",
+      "success": "Thank you. We'll be in touch soon.",
+      "disclaimer": "We respect your privacy"
     }
   },
   "features": {
@@ -40,25 +33,89 @@
     "subtitle": "Everything you need to manage your tasks",
     "choreGarden": {
       "title": "Task Management",
-      "description": "Create, organize, and track your tasks. Set priorities and deadlines to stay on top of your work."
+      "description": "Create, organize, and track your tasks. Set priorities and deadlines.",
+      "extra": "Simple task organization and tracking"
+    },
+    "checkins": {
+      "title": "Regular Reviews",
+      "description": "Schedule regular check-ins to review your progress and update your goals.",
+      "extra": "Track your progress over time"
     },
     "calendar": {
       "title": "Calendar View",
-      "description": "View your tasks and deadlines in a calendar format. Plan ahead and manage your schedule effectively."
+      "description": "View your tasks and deadlines in a calendar format.",
+      "extra": "See your schedule at a glance"
     },
     "loveNotes": {
-      "title": "Notes & Reminders",
-      "description": "Add notes to your tasks and set reminders to ensure you never miss important deadlines."
+      "title": "Notes",
+      "description": "Add notes and reminders to your tasks.",
+      "extra": "Keep track of important details"
+    },
+    "stayInSync": {
+      "title": "Sync Across Devices",
+      "description": "Access your tasks from any device with automatic syncing.",
+      "extra": "Available on iOS, Android, and web"
+    }
+  },
+  "about": {
+    "title": "About",
+    "subtitle": "A simple task management application",
+    "intro": {
+      "paragraph1": "This is a task management application that helps you organize your work and personal tasks.",
+      "paragraph2": "We built this application to provide a simple and effective way to manage tasks across multiple devices."
+    },
+    "whyWeMadeIt": {
+      "title": "Why we made it",
+      "paragraph1": "We needed a simple way to track tasks and stay organized.",
+      "paragraph2": "Many task management apps are overly complex. We wanted something straightforward:",
+      "checkInIssues": {
+        "item1": "easy to add tasks",
+        "item2": "simple to track progress",
+        "item3": "quick to review what needs to be done"
+      },
+      "paragraph3": "We also wanted to handle various types of information:",
+      "tinyDetails": {
+        "item1": "Daily tasks",
+        "item2": "Important deadlines",
+        "item3": "Notes and reminders",
+        "item4": "Recurring tasks"
+      },
+      "conclusion": "So we created a simple task manager."
+    },
+    "whatItHelps": {
+      "title": "What this app helps with",
+      "stayInSync": {
+        "title": "Stay organized",
+        "description": "Task lists and notes that sync across devices"
+      },
+      "keepNestClean": {
+        "title": "Track tasks",
+        "description": "Simple task tracking and completion"
+      },
+      "monthlyCheckIns": {
+        "title": "Regular reviews",
+        "description": "Review your progress and update your tasks regularly"
+      },
+      "littleMoments": {
+        "title": "Quick notes",
+        "description": "Add notes and reminders as needed"
+      }
+    },
+    "ourVibe": {
+      "title": "Our approach",
+      "paragraph1": "This app focuses on simplicity.",
+      "paragraph2": "It provides basic task management features without unnecessary complexity.",
+      "conclusion": "Simple task management for everyone."
     }
   },
   "cta": {
     "title": "Ready to get started?",
-    "subtitle": "Sign up now and start managing your tasks more effectively.",
+    "subtitle": "Join the waitlist to get early access when we launch.",
     "waitlist": {
       "placeholder": "Enter your email",
       "button": "Join Waitlist",
-      "success": "Thank you for signing up.",
-      "disclaimer": "Be among the first to try the app when we launch."
+      "success": "Thank you. We'll reach out soon.",
+      "disclaimer": "No credit card required"
     }
   },
   "footer": {
@@ -66,31 +123,6 @@
     "product": "Product",
     "company": "Company",
     "connect": "Connect",
-    "copyright": "© 2024 App. All rights reserved."
-  },
-  "pricing": {
-    "title": "Pricing",
-    "perMonth": "/month",
-    "tiers": {
-      "free": {
-        "name": "Free",
-        "price": "$0",
-        "features": {
-          "tasks": "Up to 10 tasks",
-          "collaboration": "Basic collaboration",
-          "support": "Email support"
-        }
-      },
-      "pro": {
-        "name": "Pro",
-        "price": "$12",
-        "features": {
-          "tasks": "Unlimited tasks",
-          "collaboration": "Advanced collaboration",
-          "support": "Priority support",
-          "analytics": "Analytics"
-        }
-      }
-    }
+    "copyright": "© 2025 App. All rights reserved."
   }
 }
