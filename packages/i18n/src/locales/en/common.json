@@ -1,128 +1,258 @@
 {
   "app": {
-    "name": "App"
+    "name": "App Name",
+    "tagline": "Your app tagline here"
+  },
+  "dashboard": {
+    "greeting": "Welcome back, {{name}}",
+    "welcomeTitle": "Welcome to your dashboard!",
+    "welcomeSubtitle": "Your workspace is ready. Let's get started.",
+    "newItem": "New Item",
+    "search": "Search..."
   },
   "navigation": {
     "features": "Features",
-    "ourStory": "Our Story",
     "pricing": "Pricing",
-    "about": "About Us",
+    "about": "About",
     "blog": "Blog",
     "contact": "Contact",
-    "roadmap": "Roadmap",
-    "testimonials": "Testimonials"
+    "docs": "Documentation",
+    "dashboard": "Dashboard",
+    "todos": "Todos",
+    "groups": "Groups",
+    "settings": "Settings",
+    "profile": "Profile",
+    "notifications": "Notifications",
+    "logout": "Log Out"
   },
   "hero": {
-    "badge": "New",
+    "badge": "Welcome",
     "title": {
-      "part1": "Manage your tasks",
-      "cozy": "efficiently",
-      "part2": "and stay organized"
+      "line1": "Build something",
+      "highlight": "amazing",
+      "line2": "together."
     },
-    "subtitle": "A simple task management application to help you stay organized and productive.",
+    "subtitle": "A production-ready template for building cross-platform web and mobile applications. Start building features, not boilerplate.",
     "waitlist": {
       "placeholder": "Enter your email",
       "button": "Join Waitlist",
       "submitting": "Joining...",
-      "success": "Thank you. We'll be in touch soon.",
-      "disclaimer": "We respect your privacy"
+      "success": "You're on the list! We'll be in touch soon.",
+      "disclaimer": "Be among the first to get access. No spam, ever."
     }
   },
   "features": {
     "title": "Features",
-    "subtitle": "Everything you need to manage your tasks",
-    "choreGarden": {
-      "title": "Task Management",
-      "description": "Create, organize, and track your tasks. Set priorities and deadlines.",
-      "extra": "Simple task organization and tracking"
+    "subtitle": "Everything you need to build and ship your app",
+    "auth": {
+      "title": "Authentication",
+      "description": "Email/password and OAuth authentication with Better Auth. Includes email verification and password reset."
     },
-    "checkins": {
-      "title": "Regular Reviews",
-      "description": "Schedule regular check-ins to review your progress and update your goals.",
-      "extra": "Track your progress over time"
+    "database": {
+      "title": "Database",
+      "description": "PostgreSQL with Drizzle ORM. Type-safe queries with auto-generated Zod validators."
     },
-    "calendar": {
-      "title": "Calendar View",
-      "description": "View your tasks and deadlines in a calendar format.",
-      "extra": "See your schedule at a glance"
+    "crossPlatform": {
+      "title": "Cross-Platform",
+      "description": "Web and mobile from a single codebase with 80%+ code sharing using React Native and Next.js."
     },
-    "loveNotes": {
-      "title": "Notes",
-      "description": "Add notes and reminders to your tasks.",
-      "extra": "Keep track of important details"
+    "analytics": {
+      "title": "Analytics",
+      "description": "PostHog integration for product analytics, feature flags, and session recording."
     },
-    "stayInSync": {
-      "title": "Sync Across Devices",
-      "description": "Access your tasks from any device with automatic syncing.",
-      "extra": "Available on iOS, Android, and web"
+    "subscriptions": {
+      "title": "Subscriptions",
+      "description": "RevenueCat integration for subscription management across web and mobile."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Novu for in-app inbox and Expo Push for mobile notifications."
+    }
+  },
+  "pricing": {
+    "title": "Simple Pricing",
+    "subtitle": "Choose the plan that's right for you",
+    "free": {
+      "title": "Free",
+      "price": "$0",
+      "period": "forever",
+      "description": "Perfect for getting started",
+      "features": ["Basic features", "Up to 3 members", "Community support"],
+      "cta": "Get Started"
+    },
+    "pro": {
+      "title": "Pro",
+      "price": "$9",
+      "period": "per month",
+      "description": "For growing teams",
+      "features": [
+        "All Free features",
+        "Unlimited members",
+        "Priority support",
+        "Advanced analytics"
+      ],
+      "cta": "Start Free Trial"
+    },
+    "enterprise": {
+      "title": "Enterprise",
+      "price": "Custom",
+      "period": "",
+      "description": "For large organizations",
+      "features": ["All Pro features", "Custom integrations", "Dedicated support", "SLA guarantee"],
+      "cta": "Contact Sales"
     }
   },
   "about": {
     "title": "About",
-    "subtitle": "A simple task management application",
+    "subtitle": "Building great applications together",
     "intro": {
-      "paragraph1": "This is a task management application that helps you organize your work and personal tasks.",
-      "paragraph2": "We built this application to provide a simple and effective way to manage tasks across multiple devices."
+      "paragraph1": "This is a cross-platform boilerplate for building production-ready web and mobile applications.",
+      "paragraph2": "It includes authentication, database, analytics, subscriptions, and more so you can focus on building features."
     },
-    "whyWeMadeIt": {
-      "title": "Why we made it",
-      "paragraph1": "We needed a simple way to track tasks and stay organized.",
-      "paragraph2": "Many task management apps are overly complex. We wanted something straightforward:",
-      "checkInIssues": {
-        "item1": "easy to add tasks",
-        "item2": "simple to track progress",
-        "item3": "quick to review what needs to be done"
+    "benefits": {
+      "title": "What's Included",
+      "crossPlatform": {
+        "title": "Cross-Platform",
+        "description": "Web and mobile from a single codebase with 80%+ code sharing"
       },
-      "paragraph3": "We also wanted to handle various types of information:",
-      "tinyDetails": {
-        "item1": "Daily tasks",
-        "item2": "Important deadlines",
-        "item3": "Notes and reminders",
-        "item4": "Recurring tasks"
+      "productionReady": {
+        "title": "Production-Ready",
+        "description": "Auth, database, analytics, and more already configured"
       },
-      "conclusion": "So we created a simple task manager."
-    },
-    "whatItHelps": {
-      "title": "What this app helps with",
-      "stayInSync": {
-        "title": "Stay organized",
-        "description": "Task lists and notes that sync across devices"
+      "typeSafe": {
+        "title": "Type-Safe",
+        "description": "TypeScript end-to-end with auto-generated validators"
       },
-      "keepNestClean": {
-        "title": "Track tasks",
-        "description": "Simple task tracking and completion"
-      },
-      "monthlyCheckIns": {
-        "title": "Regular reviews",
-        "description": "Review your progress and update your tasks regularly"
-      },
-      "littleMoments": {
-        "title": "Quick notes",
-        "description": "Add notes and reminders as needed"
+      "documented": {
+        "title": "Well-Documented",
+        "description": "Comprehensive guides and API documentation"
       }
-    },
-    "ourVibe": {
-      "title": "Our approach",
-      "paragraph1": "This app focuses on simplicity.",
-      "paragraph2": "It provides basic task management features without unnecessary complexity.",
-      "conclusion": "Simple task management for everyone."
     }
   },
   "cta": {
     "title": "Ready to get started?",
-    "subtitle": "Join the waitlist to get early access when we launch.",
+    "subtitle": "Join the waitlist and be among the first to get access.",
     "waitlist": {
       "placeholder": "Enter your email",
       "button": "Join Waitlist",
-      "success": "Thank you. We'll reach out soon.",
+      "success": "Thanks! We'll reach out soon.",
       "disclaimer": "No credit card required"
     }
   },
   "footer": {
-    "tagline": "Simple task management.",
+    "tagline": "Building the future, one feature at a time.",
     "product": "Product",
     "company": "Company",
-    "connect": "Connect",
-    "copyright": "© 2025 App. All rights reserved."
+    "resources": "Resources",
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "copyright": "{{year}} Your Company. All rights reserved."
+  },
+  "actions": {
+    "login": "Log in",
+    "signup": "Sign up",
+    "getStarted": "Get Started",
+    "getStartedFree": "Get Started Free",
+    "learnMore": "Learn More",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "submit": "Submit",
+    "loading": "Loading...",
+    "retry": "Retry",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "close": "Close",
+    "confirm": "Confirm",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "refresh": "Refresh",
+    "logout": "Log Out"
+  },
+  "profile": {
+    "title": "Profile",
+    "name": "Name",
+    "email": "Email",
+    "edit": "Edit Profile",
+    "changePassword": "Change Password",
+    "logout": "Log Out"
+  },
+  "status": {
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Info",
+    "loading": "Loading",
+    "empty": "No items found",
+    "offline": "You're offline",
+    "online": "Back online"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "loading": "Loading...",
+    "empty": "No notifications yet",
+    "markAllRead": "Mark all as read",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago"
+  },
+  "admin": {
+    "portal": {
+      "title": "Admin Portal",
+      "dashboard": "Dashboard",
+      "users": "Users",
+      "tenants": "Workspaces",
+      "admins": "Admin Users",
+      "settings": "Settings",
+      "auditLog": "Audit Log"
+    },
+    "createAdmin": {
+      "title": "Create Admin User",
+      "subtitle": "Invite a new team member to the admin portal",
+      "email": "Email Address",
+      "emailPlaceholder": "admin@company.com",
+      "name": "Name",
+      "namePlaceholder": "Full name",
+      "role": "Admin Role",
+      "roleDescription": "Select the level of access for this admin",
+      "roleReadOnly": "Read Only",
+      "roleReadOnlyDesc": "Can view data but cannot make changes",
+      "roleSupportRW": "Support",
+      "roleSupportRWDesc": "Can view and modify data, handle support",
+      "roleSuperAdmin": "Super Admin",
+      "roleSuperAdminDesc": "Full access including managing other admins",
+      "submit": "Send Invitation",
+      "submitting": "Sending invitation...",
+      "success": "Invitation sent successfully!",
+      "successMessage": "An email has been sent to {{email}} with instructions to complete setup.",
+      "failed": "Failed to send invitation",
+      "userExists": "A user with this email already exists",
+      "cancel": "Cancel"
+    },
+    "adminList": {
+      "title": "Admin Users",
+      "empty": "No admin users found",
+      "status": "Status",
+      "role": "Role",
+      "lastLogin": "Last Login",
+      "created": "Created",
+      "actions": "Actions",
+      "statusActive": "Active",
+      "statusPending": "Pending",
+      "statusSuspended": "Suspended",
+      "resendInvite": "Resend Invitation",
+      "revokeAccess": "Revoke Access"
+    },
+    "roles": {
+      "readOnly": "Read Only",
+      "supportRW": "Support",
+      "superAdmin": "Super Admin"
+    }
   }
 }

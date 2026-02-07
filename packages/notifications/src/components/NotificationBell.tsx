@@ -1,62 +1,56 @@
+/**
+ * Notification Bell Component
+ *
+ * Displays notification icon with unread count badge.
+ * Uses the notification hooks from @app/ui for data fetching.
+ */
+
 import React from "react";
-import { useNotifications } from "../hooks/useNotifications";
+import { Pressable, View, Text } from "react-native";
+import { Icon, BellIcon } from "@app/components";
 
 export interface NotificationBellProps {
+  /** Number of unread notifications (pass from parent using useUnreadCount hook) */
+  unreadCount?: number;
+  /** Callback when bell is pressed */
   onPress?: () => void;
-  size?: number;
-  color?: string;
-  badgeColor?: string;
-  showBadge?: boolean;
+  /** Additional className for styling */
+  className?: string;
+  /** Size of the bell icon */
+  size?: "sm" | "md" | "lg";
 }
 
 /**
- * NotificationBell component
- * Displays a bell icon with an optional badge showing unread count
+ * NotificationBell displays a bell icon with an optional unread count badge.
  *
- * Note: This is a basic implementation. You should customize it to match your design system
- * or use components from @app/components
+ * Usage:
+ *   import { useUnreadCount } from "@app/ui";
+ *   const { data } = useUnreadCount();
+ *   <NotificationBell unreadCount={data?.count} onPress={openNotifications} />
  */
-export const NotificationBell: React.FC<NotificationBellProps> = ({
+export function NotificationBell({
+  unreadCount = 0,
   onPress,
-  size = 24,
-  color = "#374151",
-  badgeColor = "#EF4444",
-  showBadge = true,
-}) => {
-  const { unreadCount } = useNotifications();
+  className,
+  size = "md",
+}: NotificationBellProps) {
+  const iconSize = size === "sm" ? "md" : size === "md" ? "lg" : "xl";
+  const hasUnread = unreadCount > 0;
+  const displayCount = unreadCount > 99 ? "99+" : unreadCount.toString();
 
   return (
-    <button
-      onClick={onPress}
-      className="relative inline-flex items-center justify-center p-2 rounded-full hover:bg-gray-100 transition-colors"
-      aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ""}`}
+    <Pressable
+      onPress={onPress}
+      className={`relative p-2 ${className ?? ""}`}
+      accessibilityLabel={hasUnread ? `${unreadCount} unread notifications` : "Notifications"}
+      accessibilityRole="button"
     >
-      {/* Bell Icon - Using a simple SVG */}
-      <svg
-        width={size}
-        height={size}
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M15 17H20L18.5951 15.5951C18.2141 15.2141 18 14.6973 18 14.1585V11C18 8.38757 16.3304 6.16509 14 5.34142V5C14 3.89543 13.1046 3 12 3C10.8954 3 10 3.89543 10 5V5.34142C7.66962 6.16509 6 8.38757 6 11V14.1585C6 14.6973 5.78595 15.2141 5.40493 15.5951L4 17H9M15 17V18C15 19.6569 13.6569 21 12 21C10.3431 21 9 19.6569 9 18V17M15 17H9"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-
-      {/* Badge */}
-      {showBadge && unreadCount > 0 && (
-        <span
-          className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 rounded-full"
-          style={{ backgroundColor: badgeColor }}
-        >
-          {unreadCount > 99 ? "99+" : unreadCount}
-        </span>
+      <Icon as={BellIcon} size={iconSize} className="text-typography-700" />
+      {hasUnread && (
+        <View className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-error-500 rounded-full items-center justify-center px-1">
+          <Text className="text-white text-2xs font-semibold">{displayCount}</Text>
+        </View>
       )}
-    </button>
+    </Pressable>
   );
-};
+}

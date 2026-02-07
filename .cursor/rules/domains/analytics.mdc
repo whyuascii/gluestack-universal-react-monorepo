@@ -1,0 +1,282 @@
+---
+description: PostHog analytics and OTEL logging patterns
+globs:
+  - 'packages/analytics/**/*.ts'
+  - 'apps/*/src/**/*.ts'
+  - 'apps/*/src/**/*.tsx'
+alwaysApply: false
+priority: medium
+---
+
+# Analytics & Logging
+
+## Objective
+Track user behavior and application health with PostHog analytics and OTEL logging.
+
+## Context
+- PostHog for product analytics
+- Platform-specific SDKs (web, mobile, node)
+- OpenTelemetry for structured logging
+- WARN/ERROR logs sent to PostHog
+
+## Rules
+
+### Event Naming
+
+Use consistent event naming:
+
+```typescript
+// ✅ Good - snake_case, noun_verb format
+posthog.capture("user_signed_up", { method: "email" });
+posthog.capture("feature_used", { feature: "dark_mode" });
+posthog.capture("subscription_purchased", { plan: "premium" });
+posthog.capture("error_occurred", { type: "network", code: 500 });
+
+// ❌ Avoid - Inconsistent naming
+posthog.capture("UserSignedUp");        // PascalCase
+posthog.capture("signed-up");           // kebab-case
+posthog.capture("user signup");         // spaces
+```
+
+### User Identification
+
+Identify users consistently across platforms:
+
+```typescript
+// ✅ Good - Identify on login
+// packages/ui/src/hooks/auth/useAuthAnalytics.ts
+export function useAuthAnalytics() {
+  const posthog = usePostHog();
+
+  const identifyUser = (user: User) => {
+    posthog.identify(user.id, {
+      email: user.email,
+      name: user.name,
+      created_at: user.createdAt,
+    });
+  };
+
+  const resetOnLogout = () => {
+    posthog.reset();
+  };
+
+  return { identifyUser, resetOnLogout };
+}
+```
+
+### Platform-Specific Setup
+
+**Web** (`apps/web/src/app/providers.tsx`):
+
+```typescript
+import { PostHogProvider } from "posthog-js/react";
+
+export function Providers({ children }) {
+  return (
+    <PostHogProvider
+      apiKey={process.env.NEXT_PUBLIC_POSTHOG_KEY}
+      options={{
+        api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+        capture_pageview: true,
+        capture_pageleave: true,
+      }}
+    >
+      {children}
+    </PostHogProvider>
+  );
+}
+```
+
+**Mobile** (`apps/mobile/src/app/_layout.tsx`):
+
+```typescript
+import { PostHogProvider } from "posthog-react-native";
+
+export default function RootLayout() {
+  return (
+    <PostHogProvider
+      apiKey={process.env.EXPO_PUBLIC_POSTHOG_KEY}
+      options={{
+        host: process.env.EXPO_PUBLIC_POSTHOG_HOST,
+      }}
+    >
+      {/* ... */}
+    </PostHogProvider>
+  );
+}
+```
+
+**API** (`apps/api/src/plugins/analytics.ts`):
+
+```typescript
+import { PostHog } from "posthog-node";
+
+export const analyticsPlugin = fp(async (fastify) => {
+  const posthog = new PostHog(process.env.POSTHOG_KEY!, {
+    host: process.env.POSTHOG_HOST,
+    flushAt: 20,
+    flushInterval: 10000,
+  });
+
+  fastify.decorate("posthog", posthog);
+
+  // Track API requests
+  fastify.addHook("onResponse", async (request, reply) => {
+    posthog.capture({
+      distinctId: request.user?.id || "anonymous",
+      event: "api_request",
+      properties: {
+        method: request.method,
+        path: request.routerPath,
+        status: reply.statusCode,
+        duration: reply.getResponseTime(),
+      },
+    });
+  });
+});
+```
+
+### Event Properties
+
+Include relevant context with events:
+
+```typescript
+// ✅ Good - Rich event properties
+posthog.capture("subscription_purchased", {
+  plan: "premium",
+  billing_period: "yearly",
+  price: 99.99,
+  currency: "USD",
+  source: "paywall_screen",
+  trial_used: true,
+});
+
+posthog.capture("feature_interaction", {
+  feature: "notification_settings",
+  action: "toggle",
+  enabled: true,
+  platform: Platform.OS,
+});
+
+// ❌ Avoid - Minimal properties
+posthog.capture("subscription_purchased");
+```
+
+### OTEL Logging
+
+Use structured logging for errors:
+
+```typescript
+// ✅ Good - Structured logging
+// apps/api/src/utils/logging-handling.ts
+import { getAppLogger } from "@app/analytics/server";
+
+const logger = getAppLogger();
+
+// INFO - console only in development
+logger.info("Processing request", { userId, traceId });
+
+// WARN - goes to PostHog
+logger.warn("Rate limit approaching", { userId, remaining: 5 });
+
+// ERROR - goes to PostHog with context
+logger.error("Database connection failed", {
+  error: err.message,
+  stack: err.stack,
+  connectionString: "***", // Redact sensitive data
+});
+```
+
+### Log Correlation
+
+Include correlation IDs for tracing:
+
+```typescript
+// ✅ Good - Correlated logs
+// oRPC client sends headers automatically
+const headers = {
+  "x-trace-id": generateTraceId(),
+  "x-posthog-distinct-id": posthog.getDistinctId(),
+  "x-posthog-session-id": posthog.getSessionId(),
+};
+
+// API logs include these IDs
+logger.info("Request received", {
+  traceId: request.headers["x-trace-id"],
+  posthogDistinctId: request.headers["x-posthog-distinct-id"],
+  posthogSessionId: request.headers["x-posthog-session-id"],
+});
+```
+
+### Error Tracking
+
+Capture errors with context:
+
+```typescript
+// ✅ Good - Error tracking
+try {
+  await processPayment(paymentData);
+} catch (error) {
+  // Log error with context
+  logger.error("Payment processing failed", {
+    error: error.message,
+    paymentId: paymentData.id,
+    amount: paymentData.amount,
+    userId: user.id,
+  });
+
+  // Track in analytics
+  posthog.capture("error_occurred", {
+    type: "payment",
+    error_message: error.message,
+    payment_id: paymentData.id,
+  });
+
+  throw error;
+}
+```
+
+### Feature Flags
+
+Use PostHog feature flags:
+
+```typescript
+// ✅ Good - Feature flag check
+import { useFeatureFlag } from "@app/analytics/web";
+
+export function NewFeature() {
+  const isEnabled = useFeatureFlag("new_checkout_flow");
+
+  if (!isEnabled) {
+    return <OldCheckout />;
+  }
+
+  return <NewCheckout />;
+}
+
+// Server-side
+const isEnabled = await posthog.isFeatureEnabled(
+  "new_checkout_flow",
+  userId
+);
+```
+
+### RevenueCat Integration
+
+Link RevenueCat events to PostHog:
+
+```typescript
+// ✅ Good - Link subscription events
+// packages/ui/src/subscriptions/SubscriptionSync.tsx
+await setUserAttributes({
+  $email: user.email,
+  $displayName: user.name,
+  $posthogUserId: user.id, // Links to PostHog
+});
+```
+
+## Exceptions
+
+- Development/test environments may disable tracking
+- GDPR compliance may require consent
+- Internal tools may have reduced tracking

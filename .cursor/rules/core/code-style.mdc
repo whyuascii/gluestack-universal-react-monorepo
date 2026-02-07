@@ -1,0 +1,169 @@
+---
+description: Code formatting, naming conventions, and style guidelines for the monorepo
+globs:
+  - '**/*.ts'
+  - '**/*.tsx'
+  - '**/*.js'
+  - '**/*.jsx'
+alwaysApply: true
+priority: high
+---
+
+# Code Style & Naming Conventions
+
+## Objective
+Maintain consistent code style across all apps and packages in the monorepo.
+
+## Context
+- TypeScript-first codebase with strict typing
+- Prettier for formatting, ESLint for linting
+- Pre-commit hooks enforce style via lint-staged
+
+## Rules
+
+### Naming Conventions
+
+**Files & Directories:**
+- Components: PascalCase (`UserProfile.tsx`, `PrimaryButton.tsx`)
+- Hooks: camelCase with `use` prefix (`useAuth.ts`, `useDashboard.ts`)
+- Utilities: camelCase (`formatDate.ts`, `parseError.ts`)
+- Constants: camelCase for files, SCREAMING_SNAKE_CASE for values
+- Schemas: camelCase with descriptive suffix (`userSchema.ts`, `authContract.ts`)
+
+```typescript
+// ✅ Good
+components/UserProfile.tsx
+hooks/useNotificationStream.ts
+utils/format-date-field.ts
+constants/routes.ts
+
+// ❌ Avoid
+components/user-profile.tsx
+hooks/NotificationStream.ts
+utils/FormatDate.ts
+```
+
+**Variables & Functions:**
+- Variables: camelCase (`userName`, `isLoading`)
+- Functions: camelCase, verb-first (`getUserById`, `handleSubmit`)
+- Boolean: `is`, `has`, `should` prefix (`isActive`, `hasPermission`)
+- Event handlers: `handle` or `on` prefix (`handleClick`, `onSubmit`)
+
+**Types & Interfaces:**
+- Types/Interfaces: PascalCase (`User`, `AuthSession`, `CreateUserInput`)
+- Enums: PascalCase with PascalCase members
+- Generic types: Single uppercase letter or descriptive (`T`, `TData`, `TError`)
+
+```typescript
+// ✅ Good
+interface UserProfile {
+  id: string;
+  email: string;
+  isVerified: boolean;
+}
+
+type CreateUserInput = z.infer<typeof createUserSchema>;
+
+// ❌ Avoid
+interface userProfile { }
+type create_user_input = { }
+```
+
+### Formatting (Prettier)
+
+Enforced via `.prettierrc.json`:
+- Semicolons: Always
+- Quotes: Double quotes
+- Print width: 100 characters
+- Trailing commas: ES5
+- Tab width: 2 spaces
+- Arrow parens: Always
+
+```typescript
+// ✅ Follows Prettier config
+const handleSubmit = async (data: FormData): Promise<void> => {
+  const result = await submitForm(data);
+  console.log(result);
+};
+
+// ❌ Violates config
+const handleSubmit = async (data: FormData): Promise<void> =>
+{
+    const result = await submitForm(data)
+    console.log(result)
+}
+```
+
+### Import Organization
+
+Imports should be organized in this order (enforced by ESLint):
+1. React/React Native imports
+2. External libraries (alphabetical)
+3. Internal packages (`@app/*`)
+4. Relative imports (parent, then sibling, then child)
+5. Type imports (last)
+
+```typescript
+// ✅ Good
+import React, { useState, useEffect } from "react";
+import { View, Text } from "react-native";
+import { useQuery } from "@tanstack/react-query";
+import { z } from "zod";
+
+import { orpc } from "@app/ui/api";
+import { useSession } from "@app/auth/client/native";
+import { PrimaryButton } from "@app/components";
+
+import { formatDate } from "../utils/format";
+import { UserCard } from "./UserCard";
+
+import type { User } from "@app/database";
+```
+
+### Code Organization
+
+**Function length:** Keep functions under 50 lines
+**File length:** Keep files under 300 lines
+**Single responsibility:** One component/hook/utility per file
+
+```typescript
+// ✅ Good - Single responsibility
+// hooks/useUserProfile.ts
+export function useUserProfile(userId: string) {
+  return useQuery(orpc.users.getById.queryOptions({ id: userId }));
+}
+
+// ❌ Avoid - Multiple unrelated exports
+// hooks/useUserStuff.ts
+export function useUserProfile() { }
+export function useUserSettings() { }
+export function formatUserName() { }
+```
+
+### Comments
+
+- Use JSDoc for public APIs and complex functions
+- Avoid obvious comments
+- Use `// TODO:` for planned work
+- Use `// FIXME:` for known issues
+
+```typescript
+// ✅ Good - Explains non-obvious behavior
+/**
+ * Validates user email against organization domain.
+ * Returns true if email domain matches any allowed org domain.
+ */
+function validateOrgEmail(email: string, orgDomains: string[]): boolean {
+  // ...
+}
+
+// ❌ Avoid - Obvious comment
+// Get the user
+const user = getUser();
+```
+
+## Exceptions
+
+- Generated files (Drizzle migrations, OpenAPI specs)
+- Third-party configuration files
+- Legacy code being actively migrated

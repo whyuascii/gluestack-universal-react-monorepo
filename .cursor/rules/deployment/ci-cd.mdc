@@ -1,0 +1,335 @@
+---
+description: CI/CD patterns and GitHub Actions best practices
+globs:
+  - '.github/workflows/**/*.yml'
+  - '.github/**/*.yml'
+alwaysApply: false
+priority: medium
+---
+
+# CI/CD & GitHub Actions
+
+## Objective
+Maintain reliable, fast CI/CD pipelines for the monorepo.
+
+## Context
+- GitHub Actions for CI/CD
+- Turborepo for task orchestration
+- pnpm for package management
+- EAS Build for mobile deployment
+
+## Rules
+
+### Workflow Structure
+
+Organize workflows by purpose:
+
+```
+.github/workflows/
+├── ci.yml              # Main CI (lint, typecheck, build, test)
+├── pr-check.yml        # PR validation
+├── test-coverage.yml   # Coverage reports
+├── dependency-review.yml # Security scanning
+├── deploy-api.yml      # API deployment
+├── deploy-web.yml      # Web deployment
+├── stale.yml           # Issue/PR management
+└── release.yml         # Release automation
+```
+
+### Caching Strategy
+
+Use multi-level caching:
+
+```yaml
+# ✅ Good - Comprehensive caching
+jobs:
+  setup:
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      # pnpm store cache
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      # Turbo cache
+      - uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - run: pnpm install --frozen-lockfile
+
+      # Share node_modules across jobs
+      - uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-nodemodules-${{ hashFiles('**/pnpm-lock.yaml') }}
+```
+
+### Job Dependencies
+
+Run independent jobs in parallel:
+
+```yaml
+# ✅ Good - Parallel after setup
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps: [...]
+
+  lint:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps: [...]
+
+  typecheck:
+    needs: [setup, build]  # Depends on build artifacts
+    runs-on: ubuntu-latest
+    steps: [...]
+
+  build:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps: [...]
+
+  test:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps: [...]
+
+# Visualization:
+# setup → lint
+#       → build → typecheck
+#       → test
+```
+
+### Environment Variables
+
+Handle secrets securely:
+
+```yaml
+# ✅ Good - Use GitHub secrets
+jobs:
+  deploy:
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+
+    steps:
+      - name: Build with env
+        run: pnpm build
+        env:
+          # Public vars can be in workflow
+          NEXT_PUBLIC_API_URL: https://api.example.com
+
+# ❌ Avoid - Hardcoded secrets
+env:
+  API_KEY: "sk_live_123456"  # Never do this
+```
+
+### Concurrency Control
+
+Cancel outdated runs:
+
+```yaml
+# ✅ Good - Cancel previous runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+```
+
+### Pull Request Checks
+
+Validate PRs thoroughly:
+
+```yaml
+# ✅ Good - PR check workflow
+name: PR Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR title
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.changes.outputs.api }}
+      web: ${{ steps.changes.outputs.web }}
+      packages: ${{ steps.changes.outputs.packages }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            api:
+              - 'apps/api/**'
+            web:
+              - 'apps/web/**'
+            packages:
+              - 'packages/**'
+
+  lint:
+    needs: changes
+    if: needs.changes.outputs.packages == 'true'
+    runs-on: ubuntu-latest
+    steps: [...]
+```
+
+### Database in CI
+
+Use service containers for tests:
+
+```yaml
+# ✅ Good - PostgreSQL service
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Run tests
+        run: pnpm test
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
+```
+
+### Deployment Workflows
+
+Deploy with environment protection:
+
+```yaml
+# ✅ Good - Production deployment
+name: Deploy API
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/api/**'
+      - 'packages/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production  # Requires approval
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to production
+        run: |
+          # Deploy script
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+```
+
+### Mobile Builds (EAS)
+
+Trigger EAS builds from CI:
+
+```yaml
+# ✅ Good - EAS build trigger
+name: Mobile Build
+
+on:
+  push:
+    tags:
+      - 'mobile-v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build iOS
+        run: eas build --platform ios --profile production --non-interactive
+        working-directory: apps/mobile
+
+      - name: Build Android
+        run: eas build --platform android --profile production --non-interactive
+        working-directory: apps/mobile
+```
+
+### Release Automation
+
+Automate releases:
+
+```yaml
+# ✅ Good - Release workflow
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Generate from commits
+          git log --pretty=format:"- %s" $(git describe --tags --abbrev=0 HEAD^)..HEAD > CHANGELOG.md
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          body_path: CHANGELOG.md
+          generate_release_notes: true
+```
+
+## Exceptions
+
+- Manual deployments for hotfixes
+- Preview deployments may skip some checks
+- Scheduled workflows have different triggers

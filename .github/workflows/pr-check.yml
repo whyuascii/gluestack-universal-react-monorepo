@@ -115,7 +115,8 @@ jobs:
             api:
               - 'apps/api/**'
               - 'packages/database/**'
-              - 'packages/errors/**'
+              - 'packages/auth/**'
+              - 'packages/core-contract/**'
             web:
               - 'apps/web/**'
               - 'packages/components/**'

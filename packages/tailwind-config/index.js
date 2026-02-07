@@ -11,21 +11,21 @@
  * @returns {import('tailwindcss').Config}
  *
  * @example
- * // Basic usage (uses app theme + gluestack colors with 'gs-' prefix)
+ * // Basic usage (uses starter theme + gluestack colors with 'gs-' prefix)
  * const createTailwindConfig = require("@app/tailwind-config");
  * module.exports = createTailwindConfig({
  *   content: ["./src/**\/*.{js,jsx,ts,tsx}"],
  *   important: "html"
  * });
  * // Available colors:
- * // - Semantic: bg-primary-500, text-error-600
- * // - Brand: bg-sa-green, text-sa-bark
+ * // - Semantic: bg-primary-500, text-error-600, bg-secondary-300
+ * // - Accent: bg-accent-500, text-accent-700
  * // - Gluestack (CSS vars): bg-gs-primary-500, text-gs-error-600
  *
  * @example
  * // With custom theme preset
  * const createTailwindConfig = require("@app/tailwind-config");
- * const customTheme = require("tailwind-config/themes/default");
+ * const customTheme = require("@app/tailwind-config/themes/starter");
  * module.exports = createTailwindConfig({
  *   content: ["./src/**\/*.{js,jsx,ts,tsx}"],
  *   theme: customTheme,
@@ -54,8 +54,8 @@ module.exports = function createTailwindConfig(options = {}) {
     ...restConfig
   } = options;
 
-  // Import both themes
-  const SampleAppTheme = require("./themes/sampleapp");
+  // Import themes
+  const starterTheme = require("./themes/starter");
   const gluestackTheme = require("./themes/default");
 
   // Deep merge function for theme objects
@@ -87,14 +87,14 @@ module.exports = function createTailwindConfig(options = {}) {
     return prefixed;
   };
 
-  // Add gluestack colors with 'gs-' prefix to make them available alongside app theme
+  // Add gluestack colors with 'gs-' prefix to make them available alongside starter theme
   const gluestackPrefixedColors = prefixColors(gluestackTheme.colors, "gs");
 
-  // Merge gluestack colors into sample theme
+  // Merge gluestack colors into starter theme
   const baseTheme = {
-    ...SampleAppTheme,
+    ...starterTheme,
     colors: {
-      ...SampleAppTheme.colors,
+      ...starterTheme.colors,
       ...gluestackPrefixedColors,
     },
   };
@@ -102,16 +102,27 @@ module.exports = function createTailwindConfig(options = {}) {
   // Merge custom theme with combined base theme
   const mergedTheme = mergeTheme(baseTheme, theme);
 
-  // Base safelist patterns for both themes
+  // Base safelist patterns for starter theme
   const baseSafelist = [
-    // SampleApp semantic colors
+    // Semantic surface tokens (hierarchy-driven)
+    {
+      pattern: /(bg|border)-(surface)-(canvas|elevated|sunken|overlay|inverse)/,
+    },
+    // Semantic content tokens (text hierarchy)
+    {
+      pattern: /(text)-(content)-(muted|emphasis|inverse|link|link-hover)/,
+    },
+    {
+      pattern: /(text)-(content)/,
+    },
+    // State semantic shortcuts (bg, border, text, icon)
+    {
+      pattern: /(bg|border|text)-(success|warning|error|info)-(bg|border|text|icon)/,
+    },
+    // Brand and standard color scales
     {
       pattern:
-        /(bg|border|text|stroke|fill)-(primary|secondary|tertiary|error|success|warning|info|typography|outline|background|indicator)-(0|50|100|200|300|400|500|600|700|800|900|950|white|gray|black|error|warning|muted|success|info|light|dark|primary)/,
-    },
-    // SampleApp brand colors
-    {
-      pattern: /(bg|border|text|stroke|fill)-(sa)-(green|yellow|blue|beige|bark|coral|teal)/,
+        /(bg|border|text|stroke|fill)-(primary|secondary|tertiary|error|success|warning|info|typography|outline|background|indicator|accent)-(0|50|100|200|300|400|500|600|700|800|900|950|white|gray|black|error|warning|muted|success|info|light|dark|primary)/,
     },
     // Gluestack prefixed colors
     {

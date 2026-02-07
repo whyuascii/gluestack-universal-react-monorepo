@@ -1,0 +1,79 @@
+{
+  "cli": {
+    "appVersionSource": "local"
+  },
+  "submit": {
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./serviceaccount.json",
+        "track": "production",
+        "releaseStatus": "completed"
+      }
+    }
+  },
+  "build": {
+    "base": {
+      "node": "20.18.1",
+      "android": {
+        "image": "auto"
+      },
+      "ios": {
+        "image": "auto"
+      }
+    },
+    "development": {
+      "extends": "base",
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "ENVIRONMENT": "development"
+      },
+      "android": {
+        "distribution": "internal",
+        "withoutCredentials": true
+      },
+      "ios": {
+        "simulator": true
+      }
+    },
+    "preview": {
+      "extends": "base",
+      "distribution": "internal",
+      "env": {
+        "ENVIRONMENT": "preview"
+      }
+    },
+    "staging": {
+      "extends": "base",
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "ENVIRONMENT": "staging"
+      }
+    },
+    "production": {
+      "extends": "base",
+      "android": {
+        "buildType": "app-bundle",
+        "resourceClass": "medium"
+      },
+      "ios": {
+        "simulator": false,
+        "resourceClass": "large"
+      },
+      "env": {
+        "ENVIRONMENT": "production"
+      }
+    },
+    "development-simulator": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      },
+      "environment": "development"
+    }
+  }
+}

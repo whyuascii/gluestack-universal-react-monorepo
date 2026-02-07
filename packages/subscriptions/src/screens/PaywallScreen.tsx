@@ -8,6 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import { usePaywall } from "../hooks/usePaywall";
 import { useRevenueCat } from "../hooks/useRevenueCat";
 import { useSubscription } from "../hooks/useSubscription";
@@ -61,6 +62,7 @@ export function PaywallScreen({
   onDismiss,
   asModal = Platform.OS === "web",
 }: PaywallScreenProps) {
+  const { t } = useTranslation("subscriptions");
   const [packages, setPackages] = useState<Package[]>([]);
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -95,7 +97,7 @@ export function PaywallScreen({
           }
         }
       } catch (err) {
-        setError("Failed to load subscription plans");
+        setError(t("paywall.loadError"));
         console.error(err);
       } finally {
         setIsLoading(false);
@@ -134,7 +136,7 @@ export function PaywallScreen({
       }
 
       // Purchase error
-      setError(error.message || "Purchase failed. Please try again.");
+      setError(error.message || t("paywall.purchaseError"));
       console.error(error);
     } finally {
       setIsPurchasing(false);
@@ -160,33 +162,37 @@ export function PaywallScreen({
     <View className="flex-1 bg-background-0">
       {/* Header */}
       <View className="p-6 bg-primary-500">
-        <Text className="text-2xl font-bold text-white text-center mb-2">Unlock Premium</Text>
-        <Text className="text-white/90 text-center">Get access to all premium features</Text>
+        <Text className="text-2xl font-bold text-white text-center mb-2">{t("paywall.title")}</Text>
+        <Text className="text-white/90 text-center">{t("paywall.subtitle")}</Text>
       </View>
 
       <ScrollView className="flex-1 p-6">
         {/* Features */}
         <View className="mb-6">
-          <Text className="text-lg font-semibold text-typography-900 mb-3">Premium Features</Text>
-          <FeatureItem text="Unlimited access to all features" />
-          <FeatureItem text="Priority customer support" />
-          <FeatureItem text="Advanced analytics and insights" />
-          <FeatureItem text="Ad-free experience" />
+          <Text className="text-lg font-semibold text-typography-900 mb-3">
+            {t("paywall.featuresTitle")}
+          </Text>
+          <FeatureItem text={t("paywall.features.unlimited")} />
+          <FeatureItem text={t("paywall.features.support")} />
+          <FeatureItem text={t("paywall.features.analytics")} />
+          <FeatureItem text={t("paywall.features.adFree")} />
         </View>
 
         {/* Packages */}
         {isLoading ? (
           <View className="py-8">
             <ActivityIndicator size="large" />
-            <Text className="text-center mt-4 text-typography-500">Loading plans...</Text>
+            <Text className="text-center mt-4 text-typography-500">{t("paywall.loading")}</Text>
           </View>
         ) : packages.length === 0 ? (
           <View className="py-8">
-            <Text className="text-center text-typography-600">No subscription plans available</Text>
+            <Text className="text-center text-typography-600">{t("paywall.noPlans")}</Text>
           </View>
         ) : (
           <View className="mb-6">
-            <Text className="text-lg font-semibold text-typography-900 mb-3">Choose Your Plan</Text>
+            <Text className="text-lg font-semibold text-typography-900 mb-3">
+              {t("paywall.choosePlan")}
+            </Text>
             {packages.map((pkg) => (
               <PackageCard
                 key={pkg.identifier}
@@ -218,12 +224,14 @@ export function PaywallScreen({
           {isPurchasing ? (
             <ActivityIndicator color="white" />
           ) : (
-            <Text className="text-white text-center font-semibold text-lg">Subscribe Now</Text>
+            <Text className="text-white text-center font-semibold text-lg">
+              {t("paywall.subscribe")}
+            </Text>
           )}
         </Pressable>
 
         <Pressable onPress={handleClose} className="py-3 px-6 active:opacity-60">
-          <Text className="text-typography-600 text-center">Maybe Later</Text>
+          <Text className="text-typography-600 text-center">{t("paywall.maybeLater")}</Text>
         </Pressable>
       </View>
     </View>
@@ -262,6 +270,7 @@ function PackageCard({
   isSelected: boolean;
   onSelect: () => void;
 }) {
+  const { t } = useTranslation("subscriptions");
   const isPopular = pkg.packageType === "ANNUAL" || pkg.packageType === "YEARLY";
 
   return (
@@ -278,7 +287,7 @@ function PackageCard({
         </View>
         {isPopular && (
           <View className="bg-success-500 py-1 px-2 rounded">
-            <Text className="text-white text-xs font-semibold">POPULAR</Text>
+            <Text className="text-white text-xs font-semibold">{t("paywall.popular")}</Text>
           </View>
         )}
       </View>

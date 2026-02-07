@@ -1,6 +1,6 @@
 # Infrastructure Deployment with Pulumi
 
-Deploy your application to AWS using Pulumi Infrastructure-as-Code with Amplify (web), App Runner (API), and RDS (database).
+Deploy your application to AWS using Pulumi Infrastructure-as-Code with Amplify (web), App Runner (API), and Supabase (database).
 
 ## Architecture
 
@@ -13,11 +13,16 @@ Deploy your application to AWS using Pulumi Infrastructure-as-Code with Amplify 
 │   CloudFront    │ (CDN + WAF)
 └──────┬──────────┘
        │
-┌──────▼──────────┐         ┌─────────────┐         ┌──────────────┐
-│  Amplify Host   │────────▶│  App Runner │────────▶│   Supabase   │
-│  (Next.js)      │         │    (API)    │         │  PostgreSQL  │
-└─────────────────┘         └─────────────┘         │   (Managed)  │
-                                                     └──────────────┘
+┌──────▼──────────┐         ┌─────────────┐
+│  Amplify Host   │────────▶│  App Runner │ (API)
+│  (Next.js)      │         └──────┬──────┘
+└─────────────────┘                │
+                                   │ (VPC Connector)
+                                   │
+                          ┌────────▼────────┐
+                          │  Supabase PostgreSQL │
+                          │  (VPC Private)  │
+                          └─────────────────┘
 ```
 
 ## Resources Created
@@ -25,42 +30,43 @@ Deploy your application to AWS using Pulumi Infrastructure-as-Code with Amplify 
 ### Compute
 
 - **AWS Amplify**: Next.js web application with auto-deploy from GitHub
-  - Platform: WEB_COMPUTE (Next.js SSR support)
-  - Framework: Next.js - SSR
 - **App Runner**: Fastify API with auto-scaling (1-2 GB RAM, 1 vCPU)
-  - Dual-stack networking (IPv4 + IPv6 support)
-  - Public internet egress (for Supabase connectivity)
-  - Auto-deploy from ECR on image push
-- **ECR Repository**: Stores API Docker images with lifecycle policies
+- **ECR Repository**: Stores API Docker images
 
 ### Database
 
-- **Supabase**: Managed PostgreSQL database (configured externally)
-  - Automatic backups
-  - Connection pooling
-  - Built-in Auth, Storage, and Real-time capabilities
-  - Dashboard for database management
-  - Row Level Security (RLS) support
+- **Supabase PostgreSQL 16**: db.t4g.micro instance with 20GB storage
+  - Encrypted at rest
+  - 7-day automated backups
+  - Performance Insights enabled
+  - CloudWatch logs enabled
+
+### Networking
+
+- **VPC**: 10.0.0.0/16 with 2 availability zones
+- **Public Subnets**: For VPC endpoints
+- **Private Subnets**: For database
+- **Security Groups**: Minimal access (DB only from VPC connector)
+- **VPC Connector**: Allows App Runner to access Supabase
 
 ### Security
 
 - **WAF Web ACL**: CloudFront protection with AWS Managed Rules
-- **Secrets Manager**: Supabase credentials and auth secrets
+- **Secrets Manager**: Database credentials and auth secrets
 - **IAM Roles**: Least privilege for App Runner and ECR access
 
 ### Monitoring
 
 - **CloudWatch Log Groups**: API logs with 30-day retention
-- **CloudWatch Alarms**: API error rate monitoring
+- **CloudWatch Alarms**: API errors, database CPU, and storage
 
 ## Prerequisites
 
 1. **AWS Account** with appropriate permissions
-2. **Supabase Account** and project ([Sign up](https://supabase.com))
-3. **Pulumi CLI** installed ([Install Guide](https://www.pulumi.com/docs/get-started/install/))
-4. **Node.js 20+** and **pnpm** installed
-5. **AWS CLI** configured with credentials
-6. **Docker** installed (for building and pushing images)
+2. **Pulumi CLI** installed ([Install Guide](https://www.pulumi.com/docs/get-started/install/))
+3. **Node.js 20+** and **pnpm** installed
+4. **AWS CLI** configured with credentials
+5. **Docker** installed (for building and pushing images)
 
 ## Quick Start (5 Minutes)
 
@@ -76,10 +82,8 @@ This interactive script will:
 - Check prerequisites
 - Configure Pulumi backend
 - Create/select a stack
-- Set all required configuration values (including Supabase credentials)
-- Generate secure auth secrets
-
-**Note**: You'll need Supabase credentials ready. Create a project at https://supabase.com/dashboard first.
+- Set all required configuration values
+- Generate secure passwords and secrets
 
 ### 2. Deploy Infrastructure
 
@@ -120,21 +124,14 @@ cd deployment/pulumi
 ```bash
 # Get database URL from Secrets Manager
 export DATABASE_URL=$(aws secretsmanager get-secret-value \
-  --secret-id $(pulumi config get projectName || echo "app")/$(pulumi stack --show-name)/supabase/credentials \
-  --query SecretString --output text | jq -r .databaseUrl)
+  --secret-id $(pulumi config get projectName || echo "app")/$(pulumi stack --show-name)/database/credentials \
+  --query SecretString --output text | jq -r .url)
 
 # Run migrations
 pnpm --filter database db:migrate
 
 # Optional: Seed database
 pnpm --filter database db:seed
-```
-
-**Alternative**: Use the Supabase connection string directly from your Pulumi config:
-
-```bash
-export DATABASE_URL=$(pulumi config get --show-secrets databaseUrl)
-pnpm --filter database db:migrate
 ```
 
 ### 5. Deploy Web Application
@@ -159,13 +156,8 @@ pulumi stack output amplifyBranchUrl
 All configuration is managed through Pulumi config:
 
 ```bash
-# Supabase (create project first at https://supabase.com/dashboard)
-pulumi config set supabaseUrl https://xxxxx.supabase.co
-pulumi config set --secret databaseUrl "postgresql://postgres.[ref]:[PASSWORD]@db.xxxxx.supabase.com:5432/postgres"
-pulumi config set --secret supabaseAnonKey "eyJxxx..."
-pulumi config set --secret supabaseServiceRoleKey "eyJxxx..."
-
-# Auth secret (auto-generated by setup.sh)
+# Required secrets (auto-generated by setup.sh)
+pulumi config set --secret dbPassword "$(openssl rand -base64 32)"
 pulumi config set --secret betterAuthSecret "$(openssl rand -base64 32)"
 
 # GitHub repository settings
@@ -176,14 +168,6 @@ pulumi config set githubBranch main
 # AWS region
 pulumi config set aws:region us-east-1
 ```
-
-**Getting Supabase Credentials**:
-
-1. Create project at https://supabase.com/dashboard
-2. Go to Project Settings → API
-3. Copy Project URL, anon key, and service_role key
-4. Go to Project Settings → Database → Connection String
-5. Copy the connection string (use "Connection Pooling" for production)
 
 ### Optional Configuration
 
@@ -257,17 +241,16 @@ aws logs tail /aws/rds/instance/$(pulumi config get projectName || echo "app")-d
 ### Database Operations
 
 ```bash
-# Get Supabase credentials
+# Get connection string
 aws secretsmanager get-secret-value \
-  --secret-id $(pulumi stack output supabaseSecretArn) \
+  --secret-id $(pulumi stack output dbSecretArn) \
   --query SecretString --output text | jq
 
 # Open Drizzle Studio
-export DATABASE_URL=$(pulumi config get --show-secrets databaseUrl)
+export DATABASE_URL=$(aws secretsmanager get-secret-value \
+  --secret-id $(pulumi stack output dbSecretArn) \
+  --query SecretString --output text | jq -r .url)
 pnpm --filter database db:studio
-
-# Or use Supabase Dashboard
-open https://supabase.com/dashboard/project/$(pulumi config get supabaseUrl | cut -d'/' -f3 | cut -d'.' -f1)
 ```
 
 ## Custom Domain Setup
@@ -378,29 +361,25 @@ pulumi stack ls
 
 ### Estimated Monthly Costs (Low Traffic)
 
-- **Supabase Free Tier**: $0 (500MB database, 1GB file storage, 2GB bandwidth)
-- **Supabase Pro** (optional): $25/month (8GB database, 100GB file storage, 250GB bandwidth)
+- **Supabase db.t4g.micro**: ~$15-18
 - **App Runner**: ~$15-25 (with auto-scaling)
 - **Amplify**: ~$5-10 (100GB served, few builds)
 - **WAF**: ~$5-8
 - **Data Transfer**: ~$5-10
 - **CloudWatch**: ~$2-5
-- **Total (Free Supabase)**: **~$32-58/month**
-- **Total (Pro Supabase)**: **~$57-83/month**
-
-**Note**: Supabase Free tier is generous for development and small projects. Upgrade to Pro only when needed.
+- **Total**: **~$47-76/month**
 
 ### Cost Management
 
 ```bash
-# Pause non-production App Runner services
+# Pause non-production services
 aws apprunner pause-service --service-arn $(pulumi stack output apiServiceArn)
 
-# Resume App Runner service
-aws apprunner resume-service --service-arn $(pulumi stack output apiServiceArn)
+# Stop Supabase instance (non-prod only)
+aws rds stop-db-instance --db-instance-identifier $(pulumi config get projectName || echo "app")-db-$(pulumi stack --show-name)
 
-# Supabase: Pause project (via dashboard for Free tier)
-# Go to https://supabase.com/dashboard → Project Settings → General → Pause Project
+# Start Supabase instance
+aws rds start-db-instance --db-instance-identifier $(pulumi config get projectName || echo "app")-db-$(pulumi stack --show-name)
 
 # Set up billing alarms
 aws cloudwatch put-metric-alarm \
@@ -418,30 +397,17 @@ aws cloudwatch put-metric-alarm \
 
 ## Troubleshooting
 
-### App Runner Can't Connect to Supabase
-
-Supabase is accessible over the internet, so connection issues are usually related to:
+### App Runner Can't Connect to Database
 
 ```bash
-# Check if DATABASE_URL is correctly set in App Runner
-aws apprunner describe-service \
-  --service-arn $(pulumi stack output apiServiceArn) | \
-  jq '.Service.SourceConfiguration.ImageRepository.ImageConfiguration.RuntimeEnvironmentSecrets'
+# Check VPC Connector
+aws apprunner describe-vpc-connector \
+  --vpc-connector-arn $(pulumi stack output -j | jq -r '.vpcConnectorArn')
 
-# Verify Supabase connection string locally
-export DATABASE_URL=$(pulumi config get --show-secrets databaseUrl)
-psql $DATABASE_URL -c "SELECT version();"
-
-# Check Supabase project status
-# Go to https://supabase.com/dashboard and verify project is active
+# Check Security Groups
+aws ec2 describe-security-groups \
+  --filters "Name=tag:Name,Values=$(pulumi config get projectName || echo "app")-db-sg"
 ```
-
-**Common Issues**:
-
-- Database password in connection string is incorrect
-- Supabase project is paused
-- Connection pooling URL (port 6543) vs direct connection (port 5432)
-- Network restrictions in Supabase project settings
 
 ### Amplify Build Fails
 
@@ -488,11 +454,13 @@ pulumi destroy --preview
 pulumi destroy
 ```
 
-**Note:** This will NOT delete your Supabase project. If you want to delete it:
+**Note:** If deletion protection is enabled on Supabase, disable it first:
 
-1. Go to https://supabase.com/dashboard
-2. Select your project
-3. Go to Settings → General → Delete Project
+```bash
+aws rds modify-db-instance \
+  --db-instance-identifier $(pulumi config get projectName || echo "app")-db-$(pulumi stack --show-name) \
+  --no-deletion-protection
+```
 
 ### Remove Stack
 
@@ -549,94 +517,31 @@ jobs:
 ### Implemented
 
 - ✅ Secrets stored in AWS Secrets Manager
-- ✅ Supabase manages database encryption and backups
+- ✅ Database encrypted at rest
+- ✅ VPC isolation for database
 - ✅ WAF with managed rule sets
 - ✅ Rate limiting
+- ✅ Security groups with minimal access
 - ✅ IAM roles with least privilege
 - ✅ CloudWatch monitoring and alarms
-- ✅ Row Level Security (RLS) available in Supabase
-- ✅ Supabase automatic backups (daily on Pro tier)
-- ✅ Dual-stack networking (IPv4 + IPv6) on App Runner
-- ✅ Public endpoints with HTTPS encryption
+- ✅ Performance Insights enabled
+- ✅ Automated backups (7 days)
 
 ### Recommended
 
-**AWS**:
-
 - Enable AWS GuardDuty for threat detection
 - Set up AWS Config for compliance
+- Enable VPC Flow Logs
+- Use AWS Systems Manager Session Manager
+- Implement AWS Backup for cross-region backups
 - Enable MFA for AWS root account
 - Use AWS Organizations for multi-account setup
-
-**Supabase**:
-
-- Enable Row Level Security (RLS) on all tables
-- Use separate Supabase projects for dev/staging/prod
-- Enable 2FA on Supabase account
-- Set up IP restrictions in Supabase (Pro tier)
-- Monitor database performance in Supabase dashboard
-- Enable Point-in-Time Recovery (PITR) for production (Pro tier)
-
-## Amplify Configuration for Next.js SSR
-
-AWS Amplify requires specific configuration to properly support Next.js 15 with Server-Side Rendering (App Router):
-
-### Required Settings
-
-- **Platform**: `WEB_COMPUTE` (required for SSR)
-- **Framework**: `Next.js - SSR` (on the branch)
-
-### Automatic Configuration (New Deployments)
-
-When deploying with Pulumi, these settings are automatically configured in `index.ts`.
-
-### Manual Configuration (Existing Apps)
-
-If you have an existing Amplify app that needs to be updated, use the configuration script:
-
-```bash
-cd deployment/pulumi
-
-# Use Pulumi output for app ID (automatic)
-./configure-amplify.sh
-
-# Or specify app ID explicitly
-AMPLIFY_APP_ID=<APP_ID> ./configure-amplify.sh
-
-# Or with custom branch
-AMPLIFY_APP_ID=<APP_ID> AMPLIFY_BRANCH=main ./configure-amplify.sh
-
-# Or specify all parameters
-AMPLIFY_APP_ID=<APP_ID> AWS_REGION=us-east-1 AMPLIFY_BRANCH=main ./configure-amplify.sh
-```
-
-The script will:
-
-1. Update the app platform to `WEB_COMPUTE`
-2. Update the branch framework to `Next.js - SSR`
-3. Verify the configuration
-4. Display next steps
-
-### Verification
-
-To verify your Amplify configuration manually:
-
-```bash
-# Check app platform
-aws amplify get-app --app-id YOUR_APP_ID --region us-east-1 | jq -r '.app.platform'
-# Should output: WEB_COMPUTE
-
-# Check branch framework
-aws amplify get-branch --app-id YOUR_APP_ID --branch-name main --region us-east-1 | jq -r '.branch.framework'
-# Should output: Next.js - SSR
-```
 
 ## Helper Scripts
 
 - **`setup.sh`**: Interactive setup wizard for initial configuration
 - **`push-api.sh`**: Build and push API Docker image to ECR
 - **`setup-dns.sh`**: Display DNS configuration instructions
-- **`configure-amplify.sh`**: Configure Amplify for Next.js SSR (platform and framework settings)
 
 ## Support
 
@@ -650,5 +555,5 @@ For issues specific to:
 - [Pulumi AWS Documentation](https://www.pulumi.com/docs/clouds/aws/)
 - [AWS App Runner Documentation](https://docs.aws.amazon.com/apprunner/)
 - [AWS Amplify Hosting Documentation](https://docs.aws.amazon.com/amplify/)
-- [AWS RDS Best Practices](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.html)
+- [AWS Supabase Best Practices](https://docs.aws.amazon.com/AmazonSupabase/latest/UserGuide/CHAP_BestPractices.html)
 - [AWS WAF Documentation](https://docs.aws.amazon.com/waf/)

@@ -91,15 +91,26 @@ const radioLabelStyle = tva({
 });
 
 type IRadioProps = Omit<React.ComponentProps<typeof UIRadio>, "context"> &
-  VariantProps<typeof radioStyle>;
+  VariantProps<typeof radioStyle> & {
+    accessibilityLabel?: string;
+    accessibilityHint?: string;
+  };
+
 const Radio = React.forwardRef<React.ComponentRef<typeof UIRadio>, IRadioProps>(function Radio(
-  { className, size = "md", ...props },
+  { className, size = "md", accessibilityLabel, accessibilityHint, isDisabled, ...props },
   ref
 ) {
   return (
     <UIRadio
       className={radioStyle({ class: className, size })}
       {...props}
+      isDisabled={isDisabled}
+      accessibilityRole="radio"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
+      accessibilityState={{
+        disabled: isDisabled ?? false,
+      }}
       ref={ref}
       context={{ size }}
     />

@@ -1,0 +1,349 @@
+---
+description: TanStack Form and Table patterns
+globs:
+  - 'packages/ui/src/forms/**/*.ts'
+  - 'packages/ui/src/tables/**/*.ts'
+  - 'packages/ui/src/screens/**/*.tsx'
+alwaysApply: false
+priority: medium
+---
+
+# TanStack Form & Table
+
+## Objective
+Build type-safe, validated forms and data tables using TanStack libraries.
+
+## Context
+- TanStack Form for form management
+- TanStack Table for data grids
+- Zod for validation schemas
+- Integration with oRPC contracts
+
+## Rules
+
+### Form Setup
+
+Create forms with Zod validation:
+
+```typescript
+// ✅ Good - Form with Zod schema
+// packages/ui/src/forms/loginForm.ts
+import { useAppForm } from "@app/ui/forms";
+import { loginSchema } from "@app/core-contract";
+
+export function useLoginForm({ onSubmit }: { onSubmit: (data: LoginInput) => void }) {
+  return useAppForm({
+    schema: loginSchema,
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    onSubmit: async (data) => {
+      await onSubmit(data);
+    },
+  });
+}
+```
+
+### Form Fields
+
+Use consistent field components:
+
+```tsx
+// ✅ Good - Form field usage
+import { AppFormField } from "@app/ui/forms";
+
+export function LoginForm() {
+  const form = useLoginForm({ onSubmit: handleLogin });
+
+  return (
+    <VStack space="md">
+      <form.Field name="email">
+        {(field) => (
+          <AppFormField
+            field={field}
+            label={t("auth.email")}
+            placeholder={t("auth.emailPlaceholder")}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoComplete="email"
+          />
+        )}
+      </form.Field>
+
+      <form.Field name="password">
+        {(field) => (
+          <AppFormField
+            field={field}
+            label={t("auth.password")}
+            placeholder={t("auth.passwordPlaceholder")}
+            secureTextEntry
+            autoComplete="password"
+          />
+        )}
+      </form.Field>
+
+      <form.Subscribe selector={(state) => state.isSubmitting}>
+        {(isSubmitting) => (
+          <PrimaryButton
+            onPress={form.handleSubmit}
+            isLoading={isSubmitting}
+          >
+            {t("auth.signIn")}
+          </PrimaryButton>
+        )}
+      </form.Subscribe>
+    </VStack>
+  );
+}
+```
+
+### Async Validation
+
+Handle server-side validation:
+
+```typescript
+// ✅ Good - Async validation
+export function useSignupForm({ onSubmit }) {
+  return useAppForm({
+    schema: signupSchema,
+    defaultValues: { email: "", password: "", name: "" },
+    onSubmit,
+    onValidateAsync: async (data) => {
+      // Check if email exists
+      const exists = await checkEmailExists(data.email);
+      if (exists) {
+        return { email: t("errors.emailTaken") };
+      }
+      return undefined;
+    },
+  });
+}
+```
+
+### Form State
+
+Track form state for UI:
+
+```tsx
+// ✅ Good - State-aware UI
+<form.Subscribe
+  selector={(state) => ({
+    isSubmitting: state.isSubmitting,
+    isValid: state.isValid,
+    isDirty: state.isDirty,
+    errors: state.errors,
+  })}
+>
+  {({ isSubmitting, isValid, isDirty, errors }) => (
+    <>
+      {Object.keys(errors).length > 0 && (
+        <Alert status="error">
+          <AlertText>{t("form.hasErrors")}</AlertText>
+        </Alert>
+      )}
+
+      <HStack space="md">
+        <Button
+          variant="outline"
+          onPress={form.reset}
+          isDisabled={!isDirty}
+        >
+          <ButtonText>{t("actions.reset")}</ButtonText>
+        </Button>
+
+        <PrimaryButton
+          onPress={form.handleSubmit}
+          isLoading={isSubmitting}
+          isDisabled={!isValid}
+        >
+          {t("actions.submit")}
+        </PrimaryButton>
+      </HStack>
+    </>
+  )}
+</form.Subscribe>
+```
+
+### Table Setup
+
+Create tables with type-safe columns:
+
+```typescript
+// ✅ Good - Table definition
+// packages/ui/src/tables/usersTable.ts
+import { createColumnHelper, useDataTable } from "@app/ui/tables";
+import type { User } from "@app/database";
+
+const columnHelper = createColumnHelper<User>();
+
+export const userColumns = [
+  columnHelper.accessor("name", {
+    header: "Name",
+    cell: (info) => info.getValue(),
+  }),
+
+  columnHelper.accessor("email", {
+    header: "Email",
+    cell: (info) => (
+      <Text className="text-gray-600">{info.getValue()}</Text>
+    ),
+  }),
+
+  columnHelper.accessor("role", {
+    header: "Role",
+    cell: (info) => (
+      <Badge variant={info.getValue() === "admin" ? "solid" : "outline"}>
+        {info.getValue()}
+      </Badge>
+    ),
+  }),
+
+  columnHelper.accessor("createdAt", {
+    header: "Joined",
+    cell: (info) => formatDate(info.getValue()),
+  }),
+
+  columnHelper.display({
+    id: "actions",
+    header: "",
+    cell: ({ row }) => (
+      <RowActions user={row.original} />
+    ),
+  }),
+];
+```
+
+### Table Usage
+
+Render tables with features:
+
+```tsx
+// ✅ Good - Table component
+import { DataTable, TablePagination, TableSearch } from "@app/ui/tables";
+import { userColumns } from "./usersTable";
+
+export function UsersTable({ users }: { users: User[] }) {
+  const { table, globalFilter, setGlobalFilter } = useDataTable({
+    data: users,
+    columns: userColumns,
+    enableSorting: true,
+    enableFiltering: true,
+    enablePagination: true,
+    pageSize: 20,
+  });
+
+  return (
+    <VStack space="md">
+      <TableSearch
+        value={globalFilter}
+        onChange={setGlobalFilter}
+        placeholder={t("users.searchPlaceholder")}
+      />
+
+      <DataTable
+        table={table}
+        isLoading={isLoading}
+        emptyMessage={t("users.empty")}
+      />
+
+      <TablePagination table={table} />
+    </VStack>
+  );
+}
+```
+
+### Row Selection
+
+Handle selectable rows:
+
+```tsx
+// ✅ Good - Row selection
+const { table, selectedRows } = useDataTable({
+  data: users,
+  columns: userColumns,
+  enableRowSelection: true,
+  onRowSelectionChange: (selection) => {
+    console.log("Selected:", Object.keys(selection));
+  },
+});
+
+// Bulk actions
+<HStack>
+  <Text>{selectedRows.length} selected</Text>
+  <Button
+    onPress={() => handleBulkDelete(selectedRows)}
+    isDisabled={selectedRows.length === 0}
+  >
+    <ButtonText>Delete Selected</ButtonText>
+  </Button>
+</HStack>
+```
+
+### Server-Side Features
+
+Handle server-side pagination:
+
+```tsx
+// ✅ Good - Server-side pagination
+export function UsersTableServerSide() {
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 20,
+  });
+
+  const { data, isLoading } = useUsers({
+    limit: pagination.pageSize,
+    offset: pagination.pageIndex * pagination.pageSize,
+  });
+
+  const { table } = useDataTable({
+    data: data?.items ?? [],
+    columns: userColumns,
+    pageCount: Math.ceil((data?.total ?? 0) / pagination.pageSize),
+    manualPagination: true,
+    onPaginationChange: setPagination,
+    state: { pagination },
+  });
+
+  return (
+    <>
+      <DataTable table={table} isLoading={isLoading} />
+      <TablePagination table={table} />
+    </>
+  );
+}
+```
+
+### Editable Cells
+
+Create inline editing:
+
+```tsx
+// ✅ Good - Editable cell
+columnHelper.accessor("name", {
+  header: "Name",
+  cell: ({ getValue, row, column, table }) => {
+    const initialValue = getValue();
+    const [value, setValue] = useState(initialValue);
+
+    const onBlur = () => {
+      table.options.meta?.updateData(row.index, column.id, value);
+    };
+
+    return (
+      <Input
+        value={value}
+        onChangeText={setValue}
+        onBlur={onBlur}
+      />
+    );
+  },
+});
+```
+
+## Exceptions
+
+- Simple forms may not need TanStack Form
+- Read-only data may use simpler list components
+- Mobile may prefer FlatList for large datasets

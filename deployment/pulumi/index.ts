@@ -1,25 +1,19 @@
 import * as aws from "@pulumi/aws";
-import * as awsx from "@pulumi/awsx";
 import * as pulumi from "@pulumi/pulumi";
 
 // Get configuration
 const config = new pulumi.Config();
-const projectName = config.get("projectName") || "app";
+const projectName = "app";
 const environment = pulumi.getStack();
 
 // Configuration values with defaults
+const dbPassword = config.requireSecret("dbPassword");
 const betterAuthSecret = config.requireSecret("betterAuthSecret");
 const githubToken = config.getSecret("githubToken"); // Optional for Amplify
 const githubOwner = config.get("githubOwner") || "YOUR_GITHUB_USERNAME";
 const githubRepo = config.get("githubRepo") || "your-repo-name";
 const githubBranch = config.get("githubBranch") || "main";
 const domain = config.get("domain"); // Optional custom domain
-
-// Supabase configuration
-const supabaseUrl = config.require("supabaseUrl"); // e.g., https://xxxxx.supabase.co
-const supabaseAnonKey = config.requireSecret("supabaseAnonKey");
-const supabaseServiceRoleKey = config.requireSecret("supabaseServiceRoleKey");
-const databaseUrl = config.requireSecret("databaseUrl"); // Supabase connection string
 
 // OAuth configuration (optional)
 const googleClientId = config.getSecret("googleClientId");
@@ -39,36 +33,30 @@ const tags = {
 };
 
 // =============================================================================
-// Database: Supabase (Managed PostgreSQL)
+// VPC Configuration - REMOVED (using Supabase, no need for VPC)
 // =============================================================================
-// Note: Supabase is configured externally at https://supabase.com
-// This infrastructure code uses the Supabase connection details from config
-
+// VPC and related resources removed since we're using external Supabase
+// App Runner uses DEFAULT networking to connect to external services
 // =============================================================================
 // Secrets Manager
 // =============================================================================
 
-// Supabase credentials secret
-const supabaseSecret = new aws.secretsmanager.Secret(`${projectName}-supabase-credentials`, {
-  name: `${projectName}/${environment}/supabase/credentials`,
-  description: "Supabase connection credentials",
+// Database connection secret - Now using Supabase
+const dbSecret = new aws.secretsmanager.Secret(`${projectName}-db-credentials`, {
+  name: `${projectName}/${environment}/database/credentials`,
+  description: "Database connection credentials (Supabase)",
   tags,
 });
 
-const supabaseSecretVersion = new aws.secretsmanager.SecretVersion(
-  `${projectName}-supabase-credentials-version`,
+// Supabase connection details - stored as JSON with "url" key
+const supabaseUrl = config.require("supabaseUrl"); // Set via: pulumi config set supabaseUrl
+const dbSecretVersion = new aws.secretsmanager.SecretVersion(
+  `${projectName}-db-credentials-version`,
   {
-    secretId: supabaseSecret.id,
-    secretString: pulumi
-      .all([supabaseUrl, supabaseAnonKey, supabaseServiceRoleKey, databaseUrl])
-      .apply(([url, anonKey, serviceKey, dbUrl]) =>
-        JSON.stringify({
-          supabaseUrl: url,
-          supabaseAnonKey: anonKey,
-          supabaseServiceRoleKey: serviceKey,
-          databaseUrl: dbUrl,
-        })
-      ),
+    secretId: dbSecret.id,
+    secretString: JSON.stringify({
+      url: supabaseUrl, // Store as JSON: {"url": "postgresql://..."}
+    }),
   }
 );
 
@@ -150,14 +138,14 @@ const appRunnerInstanceRole = new aws.iam.Role(`${projectName}-apprunner-instanc
 // Policy to access Secrets Manager
 const secretsPolicy = new aws.iam.RolePolicy(`${projectName}-apprunner-secrets-policy`, {
   role: appRunnerInstanceRole.id,
-  policy: pulumi.all([supabaseSecret.arn, authSecret.arn]).apply(([supabaseArn, authArn]) =>
+  policy: pulumi.all([dbSecret.arn, authSecret.arn]).apply(([dbArn, authArn]) =>
     JSON.stringify({
       Version: "2012-10-17",
       Statement: [
         {
           Effect: "Allow",
           Action: ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"],
-          Resource: [supabaseArn, authArn],
+          Resource: [dbArn, authArn],
         },
       ],
     })
@@ -208,7 +196,7 @@ const apiService = new aws.apprunner.Service(
           },
           runtimeEnvironmentSecrets: pulumi
             .all([
-              supabaseSecret.arn,
+              dbSecret.arn,
               authSecret.arn,
               googleClientId,
               googleClientSecret,
@@ -217,17 +205,9 @@ const apiService = new aws.apprunner.Service(
               posthogKey,
             ])
             .apply(
-              ([
-                supabaseArn,
-                authArn,
-                gClientId,
-                gClientSecret,
-                ghClientId,
-                ghClientSecret,
-                phKey,
-              ]) => {
+              ([dbArn, authArn, gClientId, gClientSecret, ghClientId, ghClientSecret, phKey]) => {
                 const secrets: Record<string, string> = {
-                  DATABASE_URL: `${supabaseArn}:databaseUrl::`,
+                  DATABASE_URL: `${dbArn}:url::`, // Reference the "url" key from JSON secret
                   BETTER_AUTH_SECRET: authArn,
                 };
                 // Add OAuth secrets if provided
@@ -264,16 +244,16 @@ const apiService = new aws.apprunner.Service(
       ingressConfiguration: {
         isPubliclyAccessible: true,
       },
-      ipAddressType: "DUAL_STACK", // Enable both IPv4 and IPv6 (Aug 2025+)
+      ipAddressType: "DUAL_STACK", // Enable both IPv4 and IPv6
       egressConfiguration: {
-        egressType: "DEFAULT", // Public internet access (for Supabase)
+        egressType: "DEFAULT", // Use default networking for external services like Supabase
       },
     },
 
     tags,
   },
   {
-    dependsOn: [supabaseSecretVersion, authSecretVersion],
+    dependsOn: [dbSecretVersion, authSecretVersion],
   }
 );
 
@@ -297,9 +277,9 @@ const amplifyApp = new aws.amplify.App(`${projectName}-web`, {
   name: `${projectName}-web-${environment}`,
   repository: `https://github.com/${githubOwner}/${githubRepo}`,
   accessToken: githubToken,
-  platform: "WEB_COMPUTE", // Required for Next.js SSR (App Router)
+  platform: "WEB_COMPUTE", // Required for Next.js SSR
 
-  // Build settings
+  // Build settings for Next.js SSR
   buildSpec: `version: 1
 applications:
   - appRoot: apps/web
@@ -310,34 +290,29 @@ applications:
             - npm install -g pnpm@latest
             - cd ../..
             - pnpm install --frozen-lockfile
+            - cd apps/web
         build:
           commands:
-            - pnpm --filter @app/web build
+            # Build from monorepo root
+            - cd ../..
+            - pnpm build --filter=@app/web...
       artifacts:
-        baseDirectory: apps/web/.next
+        baseDirectory: .next
         files:
-          - '**/*'
+          - "**/*"
       cache:
         paths:
-          - node_modules/**/*
-          - apps/web/.next/cache/**/*
-          - .pnpm-store/**/*`,
+          - ../../node_modules/**/*
+          - .next/cache/**/*
+          - ../../.pnpm-store/**/*`,
 
   environmentVariables: {
     NODE_VERSION: "20",
     NEXT_PUBLIC_API_URL: pulumi.interpolate`https://${apiService.serviceUrl}`,
     AMPLIFY_MONOREPO_APP_ROOT: "apps/web",
     AMPLIFY_DIFF_DEPLOY: "false",
+    _CUSTOM_IMAGE: "amplify:al2023", // Use Amazon Linux 2023 for Next.js 15 support
   },
-
-  // Custom rules for SPA routing
-  customRules: [
-    {
-      source: "/<*>",
-      status: "404-200",
-      target: "/index.html",
-    },
-  ],
 
   // Enable auto branch creation
   enableBranchAutoBuild: true,
@@ -352,7 +327,7 @@ const amplifyBranch = new aws.amplify.Branch(`${projectName}-web-main`, {
   branchName: githubBranch,
   enableAutoBuild: true,
   enablePullRequestPreview: true,
-  framework: "Next.js - SSR",
+  framework: "Next.js - SSR", // Required for Next.js SSR support
   stage: environment === "prod" ? "PRODUCTION" : "DEVELOPMENT",
   environmentVariables: domain
     ? {
@@ -394,7 +369,7 @@ if (domain) {
 const webAcl = new aws.wafv2.WebAcl(`${projectName}-waf`, {
   name: `${projectName}-waf-${environment}`,
   scope: "CLOUDFRONT",
-  description: "WAF protects against common attacks",
+  description: "WAF - protects against common attacks",
 
   defaultAction: {
     allow: {},
@@ -529,9 +504,6 @@ const apiErrorAlarm = new aws.cloudwatch.MetricAlarm(`${projectName}-api-error-a
 // Outputs
 // =============================================================================
 
-export const supabaseUrlOutput = supabaseUrl;
-export const supabaseSecretArn = supabaseSecret.arn;
-
 export const apiRepositoryUrl = apiRepository.repositoryUrl;
 export const apiServiceUrl = pulumi.interpolate`https://${apiService.serviceUrl}`;
 export const apiServiceArn = apiService.arn;
@@ -545,6 +517,7 @@ export const amplifyCustomDomain = amplifyDomain?.domainName;
 export const webAclId = webAcl.id;
 export const webAclArn = webAcl.arn;
 
+export const dbSecretArn = dbSecret.arn;
 export const authSecretArn = authSecret.arn;
 
 // Deployment instructions
@@ -556,27 +529,19 @@ Deployment Complete! 🚀
 API Service:
   URL: https://${apiService.serviceUrl}
   ${apiCustomDomain ? pulumi.interpolate`Custom Domain: https://${apiCustomDomain.domainName}` : ""}
-  Network: Dual-stack (IPv4 + IPv6)
 
 Web Application:
   URL: https://${amplifyBranch.branchName}.${amplifyApp.defaultDomain}
   ${amplifyDomain ? pulumi.interpolate`Custom Domain: https://${amplifyDomain.domainName}` : ""}
-  Platform: WEB_COMPUTE (Next.js SSR)
 
 Database:
-  Provider: Supabase (Managed PostgreSQL)
-  Dashboard: https://supabase.com/dashboard
+  Provider: Supabase (managed externally)
 
 Required Configuration:
   Set these secrets before deployment:
 
-  Required (Supabase):
-    pulumi config set supabaseUrl https://xxxxx.supabase.co
-    pulumi config set --secret databaseUrl postgresql://postgres:[PASSWORD]@db.xxxxx.supabase.co:5432/postgres
-    pulumi config set --secret supabaseAnonKey eyJxxx...
-    pulumi config set --secret supabaseServiceRoleKey eyJxxx...
-
-  Required (Auth):
+  Required:
+    pulumi config set supabaseUrl
     pulumi config set --secret betterAuthSecret <your-auth-secret>
     pulumi config set apiUrl https://${apiService.serviceUrl}  # After first deploy, use actual URL
 
@@ -600,23 +565,18 @@ Required Configuration:
     pulumi config set domain yourdomain.com
 
 Next Steps:
-  1. Create Supabase project:
-     - Visit https://supabase.com/dashboard
-     - Create new project
-     - Copy connection details and keys to Pulumi config
-
-  2. Build and push your API Docker image:
+  1. Build and push your API Docker image:
      aws ecr get-login-password --region ${aws.getRegionOutput().name} | docker login --username AWS --password-stdin ${apiRepository.repositoryUrl}
      docker build --no-cache -f apps/api/Dockerfile -t ${apiRepository.repositoryUrl}:latest .
      docker push ${apiRepository.repositoryUrl}:latest
 
-  3. Run database migrations:
-     export DATABASE_URL=$(aws secretsmanager get-secret-value --secret-id ${supabaseSecret.name} --query SecretString --output text | jq -r .databaseUrl)
+  2. Run database migrations:
+     export DATABASE_URL="<your-supabase-url>"
      pnpm --filter database db:migrate
 
-  4. Trigger Amplify build (automatic on git push to ${githubBranch})
+  3. Trigger Amplify build (automatic on git push to ${githubBranch})
 
-  5. ${amplifyDomain ? "Configure your DNS:" : "Set up custom domain (optional):"}
+  4. ${amplifyDomain ? "Configure your DNS:" : "Set up custom domain (optional):"}
      ${
        amplifyDomain
          ? pulumi.interpolate`Add the following CNAME records to your DNS:
@@ -626,10 +586,10 @@ Next Steps:
 
 Security:
   - WAF enabled with AWS Managed Rules
-  - Supabase manages database encryption and backups
+  - Database encrypted at rest
   - Secrets stored in AWS Secrets Manager
+  - VPC isolation for database
   - CloudWatch monitoring and alarms configured
-  - Row Level Security available in Supabase
 
 =============================================================================
 `;

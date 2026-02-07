@@ -22,12 +22,32 @@ const switchStyle = tva({
   },
 });
 
-type ISwitchProps = React.ComponentProps<typeof UISwitch> & VariantProps<typeof switchStyle>;
+type ISwitchProps = React.ComponentProps<typeof UISwitch> &
+  VariantProps<typeof switchStyle> & {
+    accessibilityLabel?: string;
+    accessibilityHint?: string;
+  };
+
 const Switch = React.forwardRef<React.ComponentRef<typeof UISwitch>, ISwitchProps>(function Switch(
-  { className, size = "md", ...props },
+  { className, size = "md", accessibilityLabel, accessibilityHint, value, disabled, ...props },
   ref
 ) {
-  return <UISwitch ref={ref} {...props} className={switchStyle({ size, class: className })} />;
+  return (
+    <UISwitch
+      ref={ref}
+      {...props}
+      value={value}
+      disabled={disabled}
+      accessibilityRole="switch"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
+      accessibilityState={{
+        checked: value ?? false,
+        disabled: disabled ?? false,
+      }}
+      className={switchStyle({ size, class: className })}
+    />
+  );
 });
 
 Switch.displayName = "Switch";

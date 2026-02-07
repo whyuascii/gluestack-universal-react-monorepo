@@ -270,14 +270,37 @@ const buttonGroupStyle = tva({
 });
 
 type IButtonProps = Omit<React.ComponentPropsWithoutRef<typeof UIButton>, "context"> &
-  VariantProps<typeof buttonStyle> & { className?: string };
+  VariantProps<typeof buttonStyle> & {
+    className?: string;
+    accessibilityLabel?: string;
+    accessibilityHint?: string;
+  };
 
 const Button = React.forwardRef<React.ElementRef<typeof UIButton>, IButtonProps>(
-  ({ className, variant = "solid", size = "md", action = "primary", ...props }, ref) => {
+  (
+    {
+      className,
+      variant = "solid",
+      size = "md",
+      action = "primary",
+      accessibilityLabel,
+      accessibilityHint,
+      isDisabled,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <UIButton
         ref={ref}
         {...props}
+        isDisabled={isDisabled}
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
+        accessibilityState={{
+          disabled: isDisabled ?? false,
+        }}
         className={buttonStyle({ variant, size, action, class: className })}
         context={{ variant, size, action }}
       />

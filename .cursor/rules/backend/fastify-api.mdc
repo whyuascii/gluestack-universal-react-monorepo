@@ -1,0 +1,308 @@
+---
+description: Fastify 5 API patterns and best practices
+globs:
+  - 'apps/api/**/*.ts'
+alwaysApply: false
+priority: high
+---
+
+# Fastify API Development
+
+## Objective
+Build performant, type-safe APIs with Fastify 5 and oRPC.
+
+## Context
+- Fastify 5 as the HTTP framework
+- oRPC for type-safe RPC endpoints
+- Better Auth for authentication
+- Drizzle ORM for database access
+
+## Rules
+
+### Plugin Architecture
+
+Register plugins in order of dependency:
+
+```typescript
+// ✅ Good - Plugin registration order
+// apps/api/src/app.ts
+import Fastify from "fastify";
+import { configPlugin } from "./plugins/config";
+import { analyticsPlugin } from "./plugins/analytics";
+import { authPlugin } from "./plugins/auth";
+import { rateLimitPlugin } from "./plugins/rate-limit";
+import { corsPlugin } from "./plugins/cors";
+
+export async function buildApp() {
+  const app = Fastify({ logger: true });
+
+  // 1. Configuration (no dependencies)
+  await app.register(configPlugin);
+
+  // 2. Infrastructure plugins
+  await app.register(analyticsPlugin);
+  await app.register(rateLimitPlugin);
+  await app.register(corsPlugin);
+
+  // 3. Auth plugin (depends on database)
+  await app.register(authPlugin);
+
+  // 4. Routes (depend on all plugins)
+  await app.register(routes);
+
+  return app;
+}
+```
+
+### Plugin Pattern
+
+Create self-contained plugins:
+
+```typescript
+// ✅ Good - Self-contained plugin
+// apps/api/src/plugins/analytics.ts
+import fp from "fastify-plugin";
+import { PostHog } from "posthog-node";
+
+declare module "fastify" {
+  interface FastifyInstance {
+    posthog: PostHog;
+  }
+}
+
+export const analyticsPlugin = fp(async (fastify) => {
+  const posthog = new PostHog(process.env.POSTHOG_KEY!, {
+    host: process.env.POSTHOG_HOST,
+  });
+
+  fastify.decorate("posthog", posthog);
+
+  // Cleanup on shutdown
+  fastify.addHook("onClose", async () => {
+    await posthog.shutdown();
+  });
+});
+```
+
+### Route Structure
+
+Use oRPC for type-safe routes:
+
+```typescript
+// ✅ Good - oRPC route definition
+// apps/api/src/orpc-routes/index.ts
+import { initORPC } from "@orpc/server";
+import { z } from "zod";
+
+const orpc = initORPC.context<Context>();
+
+export const router = orpc.router({
+  users: {
+    list: orpc
+      .input(z.object({
+        limit: z.number().min(1).max(100).default(20),
+        offset: z.number().min(0).default(0),
+      }))
+      .handler(async ({ input, context }) => {
+        return context.actions.users.list(input);
+      }),
+
+    create: orpc
+      .input(createUserSchema)
+      .use(requireAuth)  // Middleware
+      .handler(async ({ input, context }) => {
+        return context.actions.users.create(input, context.user!);
+      }),
+  },
+});
+```
+
+### Actions Pattern
+
+Separate business logic into action classes:
+
+```typescript
+// ✅ Good - Action class
+// apps/api/src/actions/users.ts
+import { db } from "@app/database";
+import { users } from "@app/database/schema";
+import { emit } from "../lib/events";
+
+export class UsersActions {
+  constructor(private db: typeof db) {}
+
+  async list({ limit, offset }: ListParams) {
+    return this.db.query.users.findMany({
+      limit,
+      offset,
+      orderBy: [desc(users.createdAt)],
+    });
+  }
+
+  async create(input: CreateUserInput, actor: User) {
+    const [user] = await this.db
+      .insert(users)
+      .values(input)
+      .returning();
+
+    // Emit event for side effects
+    emit("user.created", {
+      userId: user.id,
+      actorId: actor.id,
+    });
+
+    return user;
+  }
+}
+```
+
+### Middleware
+
+Create reusable middleware:
+
+```typescript
+// ✅ Good - Auth middleware
+// apps/api/src/middleware/auth.ts
+import { ORPCError } from "@orpc/server";
+
+export const requireAuth = orpc.middleware(async ({ context, next }) => {
+  if (!context.user) {
+    throw new ORPCError("UNAUTHORIZED", "Authentication required");
+  }
+
+  return next({
+    context: {
+      ...context,
+      user: context.user, // Now typed as User (not null)
+    },
+  });
+});
+
+export const requireRole = (role: string) =>
+  orpc.middleware(async ({ context, next }) => {
+    if (context.user?.role !== role) {
+      throw new ORPCError("FORBIDDEN", `Role ${role} required`);
+    }
+    return next();
+  });
+```
+
+### Error Handling
+
+Use typed errors consistently:
+
+```typescript
+// ✅ Good - Typed errors
+// apps/api/src/lib/errors.ts
+import { ORPCError } from "@orpc/server";
+
+export function throwError(
+  code: "BAD_REQUEST" | "UNAUTHORIZED" | "FORBIDDEN" | "NOT_FOUND" | "CONFLICT",
+  message: string,
+  details?: Record<string, unknown>
+): never {
+  throw new ORPCError(code, message, details);
+}
+
+// Usage in actions
+export class UsersActions {
+  async getById(id: string) {
+    const user = await this.db.query.users.findFirst({
+      where: eq(users.id, id),
+    });
+
+    if (!user) {
+      throwError("NOT_FOUND", "errors.user.notFound");
+    }
+
+    return user;
+  }
+}
+```
+
+### Request Context
+
+Build context for each request:
+
+```typescript
+// ✅ Good - Request context
+// apps/api/src/orpc-routes/context.ts
+import type { FastifyRequest } from "fastify";
+
+export interface Context {
+  user: User | null;
+  session: Session | null;
+  db: Database;
+  actions: Actions;
+  request: FastifyRequest;
+}
+
+export function createContext(request: FastifyRequest): Context {
+  return {
+    user: request.user,
+    session: request.session,
+    db: request.server.db,
+    actions: request.server.actions,
+    request,
+  };
+}
+```
+
+### Request Lifecycle Hooks
+
+Use Fastify hooks for cross-cutting concerns:
+
+```typescript
+// ✅ Good - Request hooks
+fastify.addHook("onRequest", async (request) => {
+  request.startTime = Date.now();
+});
+
+fastify.addHook("onResponse", async (request, reply) => {
+  const duration = Date.now() - request.startTime;
+
+  fastify.posthog.capture({
+    distinctId: request.user?.id || "anonymous",
+    event: "api_request",
+    properties: {
+      method: request.method,
+      url: request.url,
+      statusCode: reply.statusCode,
+      duration,
+    },
+  });
+});
+```
+
+### Health Checks
+
+Implement comprehensive health checks:
+
+```typescript
+// ✅ Good - Health check
+// apps/api/src/routes/health.ts
+fastify.get("/health", async () => {
+  const checks = await Promise.allSettled([
+    db.execute(sql`SELECT 1`),
+    redis.ping(),
+  ]);
+
+  const dbHealthy = checks[0].status === "fulfilled";
+  const redisHealthy = checks[1].status === "fulfilled";
+
+  return {
+    status: dbHealthy && redisHealthy ? "healthy" : "degraded",
+    timestamp: new Date().toISOString(),
+    checks: {
+      database: dbHealthy ? "ok" : "error",
+      redis: redisHealthy ? "ok" : "error",
+    },
+  };
+});
+```
+
+## Exceptions
+
+- Webhook routes may bypass oRPC
+- Better Auth routes have their own patterns
+- Legacy REST endpoints during migration

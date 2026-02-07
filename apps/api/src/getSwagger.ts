@@ -1,23 +1,21 @@
 import fs from "node:fs";
-import { build } from "./app";
+import { generateOpenAPISpec } from "./lib/openapi";
 
+/**
+ * Generate OpenAPI specification to file
+ *
+ * Usage: pnpm --filter api swagger
+ */
 const main = async () => {
   try {
-    const fastify = await build();
-    console.info("getting swagger");
-
-    await fastify.after();
-    console.info("ready");
-
-    await fastify.ready();
-    console.info("swagger");
-
-    const output = fastify.swagger();
-    console.info(output);
-
-    fs.writeFileSync("swagger.json", JSON.stringify(output, null, 4));
+    console.info("Generating OpenAPI specification...");
+    const spec = await generateOpenAPISpec();
+    console.info("Writing to openapi.json...");
+    fs.writeFileSync("openapi.json", JSON.stringify(spec, null, 2));
+    console.info("Done! OpenAPI spec written to openapi.json");
   } catch (e) {
-    console.error(e);
+    console.error("Failed to generate OpenAPI spec:", e);
+    process.exit(1);
   }
 };
 

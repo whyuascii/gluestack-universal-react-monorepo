@@ -1,7 +1,6 @@
 {
   "name": "@app/i18n",
   "version": "0.0.0",
-  "type": "module",
   "private": true,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -50,10 +49,10 @@
     "@types/react": "^19.0.1",
     "eslint": "^9.18.0",
     "@app/eslint-config": "workspace:*",
-    "typescript": "^5.7.2",
+    "typescript": "^5.9.3",
     "@app/typescript-config": "workspace:*"
   },
   "peerDependencies": {
-    "react": "^19.0.0"
+    "react": "^19.1.0"
   }
 }

@@ -1,5 +1,6 @@
 "use client";
 import { createModal } from "@gluestack-ui/core/modal/creator";
+import { FocusScope } from "@gluestack-ui/utils/aria";
 import { tva } from "@gluestack-ui/utils/nativewind-utils";
 import { withStyleContext, useStyleContext } from "@gluestack-ui/utils/nativewind-utils";
 import type { VariantProps } from "@gluestack-ui/utils/nativewind-utils";
@@ -10,8 +11,8 @@ import {
   type MotionComponentProps,
 } from "@legendapp/motion";
 import { cssInterop } from "nativewind";
-import React from "react";
-import { Pressable, View, ScrollView, type ViewStyle } from "react-native";
+import React, { useId } from "react";
+import { Pressable, View, ScrollView, Platform, type ViewStyle } from "react-native";
 
 type IAnimatedPressableProps = React.ComponentProps<typeof Pressable> &
   MotionComponentProps<typeof Pressable, ViewStyle, unknown, unknown, unknown>;
@@ -87,16 +88,26 @@ const modalFooterStyle = tva({
 });
 
 type IModalProps = React.ComponentProps<typeof UIModal> &
-  VariantProps<typeof modalStyle> & { className?: string };
+  VariantProps<typeof modalStyle> & {
+    className?: string;
+    "aria-labelledby"?: string;
+    onClose?: () => void;
+  };
 
 type IModalBackdropProps = React.ComponentProps<typeof UIModal.Backdrop> &
   VariantProps<typeof modalBackdropStyle> & { className?: string };
 
 type IModalContentProps = React.ComponentProps<typeof UIModal.Content> &
-  VariantProps<typeof modalContentStyle> & { className?: string };
+  VariantProps<typeof modalContentStyle> & {
+    className?: string;
+    onClose?: () => void;
+  };
 
 type IModalHeaderProps = React.ComponentProps<typeof UIModal.Header> &
-  VariantProps<typeof modalHeaderStyle> & { className?: string };
+  VariantProps<typeof modalHeaderStyle> & {
+    className?: string;
+    nativeID?: string;
+  };
 
 type IModalBodyProps = React.ComponentProps<typeof UIModal.Body> &
   VariantProps<typeof modalBodyStyle> & { className?: string };
@@ -105,18 +116,30 @@ type IModalFooterProps = React.ComponentProps<typeof UIModal.Footer> &
   VariantProps<typeof modalFooterStyle> & { className?: string };
 
 type IModalCloseButtonProps = React.ComponentProps<typeof UIModal.CloseButton> &
-  VariantProps<typeof modalCloseButtonStyle> & { className?: string };
+  VariantProps<typeof modalCloseButtonStyle> & {
+    className?: string;
+    accessibilityLabel?: string;
+  };
 
 const Modal = React.forwardRef<React.ComponentRef<typeof UIModal>, IModalProps>(
-  ({ className, size = "md", ...props }, ref) => (
-    <UIModal
-      ref={ref}
-      {...props}
-      pointerEvents="box-none"
-      className={modalStyle({ size, class: className })}
-      context={{ size }}
-    />
-  )
+  ({ className, size = "md", "aria-labelledby": ariaLabelledBy, ...props }, ref) => {
+    const modalId = useId();
+    const labelId = ariaLabelledBy ?? `modal-title-${modalId}`;
+
+    return (
+      <UIModal
+        ref={ref}
+        {...props}
+        pointerEvents="box-none"
+        accessibilityRole="none"
+        accessibilityViewIsModal={true}
+        aria-modal={true}
+        aria-labelledby={labelId}
+        className={modalStyle({ size, class: className })}
+        context={{ size, labelId }}
+      />
+    );
+  }
 );
 
 const ModalBackdrop = React.forwardRef<
@@ -155,51 +178,68 @@ const ModalBackdrop = React.forwardRef<
 const ModalContent = React.forwardRef<
   React.ComponentRef<typeof UIModal.Content>,
   IModalContentProps
->(function ModalContent({ className, size, ...props }, ref) {
+>(function ModalContent({ className, size, onClose, ...props }, ref) {
   const { size: parentSize } = useStyleContext(SCOPE);
 
+  // Handle Escape key to close modal
+  const handleKeyDown = React.useCallback(
+    (e: React.KeyboardEvent) => {
+      if (Platform.OS === "web" && e.key === "Escape" && onClose) {
+        e.preventDefault();
+        onClose();
+      }
+    },
+    [onClose]
+  );
+
   return (
-    <UIModal.Content
-      ref={ref}
-      initial={{
-        opacity: 0,
-        scale: 0.9,
-      }}
-      animate={{
-        opacity: 1,
-        scale: 1,
-      }}
-      exit={{
-        opacity: 0,
-      }}
-      transition={{
-        type: "spring",
-        damping: 18,
-        stiffness: 250,
-        opacity: {
-          type: "timing",
-          duration: 250,
-        },
-      }}
-      {...props}
-      className={modalContentStyle({
-        parentVariants: {
-          size: parentSize,
-        },
-        size,
-        class: className,
-      })}
-      pointerEvents="auto"
-    />
+    <FocusScope contain autoFocus restoreFocus>
+      <UIModal.Content
+        ref={ref}
+        initial={{
+          opacity: 0,
+          scale: 0.9,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
+        transition={{
+          type: "spring",
+          damping: 18,
+          stiffness: 250,
+          opacity: {
+            type: "timing",
+            duration: 250,
+          },
+        }}
+        {...props}
+        {...(Platform.OS === "web" && { onKeyDown: handleKeyDown })}
+        className={modalContentStyle({
+          parentVariants: {
+            size: parentSize,
+          },
+          size,
+          class: className,
+        })}
+        pointerEvents="auto"
+      />
+    </FocusScope>
   );
 });
 
 const ModalHeader = React.forwardRef<React.ComponentRef<typeof UIModal.Header>, IModalHeaderProps>(
-  function ModalHeader({ className, ...props }, ref) {
+  function ModalHeader({ className, nativeID, ...props }, ref) {
+    const { labelId } = useStyleContext(SCOPE);
+
     return (
       <UIModal.Header
         ref={ref}
         {...props}
+        nativeID={nativeID ?? labelId}
         className={modalHeaderStyle({
           class: className,
         })}
@@ -239,11 +279,13 @@ const ModalFooter = React.forwardRef<React.ComponentRef<typeof UIModal.Footer>, 
 const ModalCloseButton = React.forwardRef<
   React.ComponentRef<typeof UIModal.CloseButton>,
   IModalCloseButtonProps
->(function ModalCloseButton({ className, ...props }, ref) {
+>(function ModalCloseButton({ className, accessibilityLabel = "Close modal", ...props }, ref) {
   return (
     <UIModal.CloseButton
       ref={ref}
       {...props}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
       className={modalCloseButtonStyle({
         class: className,
       })}

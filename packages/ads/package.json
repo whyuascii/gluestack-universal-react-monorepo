@@ -1,0 +1,59 @@
+{
+  "name": "@app/ads",
+  "version": "0.0.0",
+  "description": "Cross-platform advertising with Google AdMob (mobile) and AdSense (web)",
+  "keywords": [
+    "ads",
+    "admob",
+    "adsense",
+    "advertising",
+    "monetization"
+  ],
+  "license": "ISC",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./mobile": "./src/mobile/index.ts",
+    "./web": "./src/web/index.ts",
+    "./config": "./src/config/index.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@app/eslint-config": "workspace:*",
+    "@app/typescript-config": "workspace:*",
+    "@types/react": "^19.1.0",
+    "eslint": "^9.18.0",
+    "react": "^19.1.0",
+    "react-native": "0.81.4",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-native": ">=0.72.0",
+    "react-native-google-mobile-ads": ">=14.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    },
+    "react-native-google-mobile-ads": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

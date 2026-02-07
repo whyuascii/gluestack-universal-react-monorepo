@@ -1,0 +1,303 @@
+---
+description: Better Auth patterns for authentication and session management
+globs:
+  - 'packages/auth/**/*.ts'
+  - 'apps/api/src/plugins/auth.ts'
+  - 'apps/*/src/app/(auth)/**/*.tsx'
+  - 'packages/ui/src/screens/auth/**/*.tsx'
+alwaysApply: false
+priority: high
+---
+
+# Authentication with Better Auth
+
+## Objective
+Implement secure authentication with email/password, verification, and session management.
+
+## Context
+- Better Auth for authentication
+- Drizzle adapter for database
+- Email verification via Resend
+- Session management with refresh tokens
+
+## Rules
+
+### Auth Configuration
+
+Server config in `packages/auth/src/config.ts`:
+
+```typescript
+// ✅ Good - Server configuration
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+
+export const auth = betterAuth({
+  database: drizzleAdapter(db, {
+    provider: "pg",
+  }),
+  emailAndPassword: {
+    enabled: true,
+    requireEmailVerification: process.env.NODE_ENV === "production",
+    sendResetPassword: async ({ user, url }) => {
+      await sendTemplateEmail("authResetPassword", {
+        to: user.email,
+        locale: "en",
+        data: { name: user.name, resetLink: url },
+      });
+    },
+  },
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendTemplateEmail("authVerifyEmail", {
+        to: user.email,
+        locale: "en",
+        data: { name: user.name, verificationLink: url },
+      });
+    },
+  },
+  session: {
+    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    updateAge: 60 * 60 * 24, // Update session every 24 hours
+  },
+});
+```
+
+### Platform-Specific Clients
+
+**Web client** (`packages/auth/src/client/react.ts`):
+
+```typescript
+// ✅ Good - Web client
+import { createAuthClient } from "better-auth/react";
+
+export const authClient = createAuthClient({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+});
+
+export const {
+  signIn,
+  signUp,
+  signOut,
+  useSession,
+  getSession,
+} = authClient;
+```
+
+**Mobile client** (`packages/auth/src/client/native.ts`):
+
+```typescript
+// ✅ Good - Mobile client with custom fetch
+import { createAuthClient } from "better-auth/react";
+import * as SecureStore from "expo-secure-store";
+
+export const authClient = createAuthClient({
+  baseURL: process.env.EXPO_PUBLIC_API_URL,
+  fetchOptions: {
+    // Custom storage for tokens
+    onSuccess: async (response) => {
+      const token = response.headers.get("x-session-token");
+      if (token) {
+        await SecureStore.setItemAsync("session-token", token);
+      }
+    },
+  },
+});
+
+export const { signIn, signUp, signOut, useSession } = authClient;
+```
+
+### Auth in Screens
+
+Pass platform-specific auth to shared screens:
+
+```typescript
+// ✅ Good - Screen accepts auth callbacks
+// packages/ui/src/screens/auth/Login.tsx
+interface LoginScreenProps {
+  onLoginSuccess: () => void;
+  signIn?: typeof defaultSignIn;  // Platform-specific
+}
+
+export function LoginScreen({
+  onLoginSuccess,
+  signIn = defaultSignIn,
+}: LoginScreenProps) {
+  const handleSubmit = async (data: LoginInput) => {
+    const result = await signIn.email({
+      email: data.email,
+      password: data.password,
+    });
+
+    if (result.error) {
+      toast.error(t(result.error.message));
+      return;
+    }
+
+    onLoginSuccess();
+  };
+
+  return <LoginForm onSubmit={handleSubmit} />;
+}
+
+// apps/mobile/src/app/(auth)/login.tsx
+import { signIn } from "@app/auth/client/native";
+
+export default function LoginPage() {
+  const router = useRouter();
+
+  return (
+    <LoginScreen
+      signIn={signIn}  // Pass native client
+      onLoginSuccess={() => router.replace("/(app)/dashboard")}
+    />
+  );
+}
+```
+
+### Auth Guards
+
+Protect routes with auth checks:
+
+```typescript
+// ✅ Good - Layout-based auth guard (Mobile)
+// apps/mobile/src/app/(app)/_layout.tsx
+import { Redirect, Stack } from "expo-router";
+import { useSession } from "@app/auth/client/native";
+
+export default function AppLayout() {
+  const { data: session, isPending } = useSession();
+
+  if (isPending) return <LoadingScreen />;
+  if (!session) return <Redirect href="/(auth)/login" />;
+
+  return <Stack screenOptions={{ headerShown: false }} />;
+}
+
+// ✅ Good - Server-side auth guard (Web)
+// apps/web/src/app/(app)/layout.tsx
+import { getSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
+
+export default async function AppLayout({ children }) {
+  const session = await getSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  return <div>{children}</div>;
+}
+```
+
+### Session Handling
+
+Handle session state properly:
+
+```typescript
+// ✅ Good - Session-aware component
+import { useSession } from "@app/auth/client/native";
+
+export function ProfileButton() {
+  const { data: session, isPending } = useSession();
+
+  if (isPending) return <Skeleton className="h-8 w-8 rounded-full" />;
+
+  if (!session) {
+    return (
+      <Button onPress={() => router.push("/login")}>
+        <ButtonText>Sign In</ButtonText>
+      </Button>
+    );
+  }
+
+  return (
+    <Pressable onPress={() => router.push("/settings")}>
+      <Avatar src={session.user.image} />
+    </Pressable>
+  );
+}
+```
+
+### Logout Flow
+
+Handle logout with cleanup:
+
+```typescript
+// ✅ Good - Complete logout
+// packages/ui/src/hooks/auth/useLogout.ts
+export function useLogout({
+  signOut,
+  onSuccess,
+}: {
+  signOut?: () => Promise<unknown>;
+  onSuccess?: () => void;
+}) {
+  const queryClient = useQueryClient();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const logout = async () => {
+    setIsLoggingOut(true);
+    try {
+      // Call platform-specific signOut
+      await (signOut ?? defaultSignOut)();
+
+      // Clear query cache
+      queryClient.clear();
+
+      // Clear web storage (if on web)
+      if (Platform.OS === "web") {
+        window.localStorage.clear();
+        window.sessionStorage.clear();
+      }
+
+      onSuccess?.();
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
+  return { logout, isLoggingOut };
+}
+```
+
+### Password Reset
+
+Implement password reset flow:
+
+```typescript
+// ✅ Good - Password reset
+export function usePasswordReset() {
+  const { t } = useTranslation("auth");
+
+  const requestReset = async (email: string) => {
+    const result = await authClient.forgetPassword({ email });
+
+    if (result.error) {
+      throw new Error(t(result.error.message));
+    }
+
+    toast.success(t("resetPassword.emailSent"));
+  };
+
+  const resetPassword = async (token: string, newPassword: string) => {
+    const result = await authClient.resetPassword({
+      token,
+      newPassword,
+    });
+
+    if (result.error) {
+      throw new Error(t(result.error.message));
+    }
+
+    toast.success(t("resetPassword.success"));
+  };
+
+  return { requestReset, resetPassword };
+}
+```
+
+## Exceptions
+
+- OAuth providers require additional configuration
+- API-only auth for service-to-service calls
+- Admin impersonation features

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { Box } from "../box";
 import { Button, ButtonText } from "../button";
 import { FormField } from "../FormField";
 import { Heading } from "../heading";
@@ -55,6 +56,7 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
 
   const handleSubmit = async () => {
     setError("");
+    setIsSuccess(false); // Ensure we reset success state
 
     // Validation
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
@@ -65,9 +67,13 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
     setIsLoading(true);
     try {
       await onSubmit(email);
+      // Only set success if onSubmit completes without error
       setIsSuccess(true);
       setCountdown(60);
+      setError(""); // Clear any previous errors
     } catch (err) {
+      // Explicitly keep isSuccess false and show error
+      setIsSuccess(false);
       setError(err instanceof Error ? err.message : "Failed to send reset email");
     } finally {
       setIsLoading(false);
@@ -75,11 +81,15 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
   };
 
   const handleResend = async () => {
+    setError("");
     setCountdown(60);
     try {
       await onSubmit(email);
+      setError(""); // Clear errors on successful resend
     } catch (err) {
+      setIsSuccess(false); // Stay in error state
       setError(err instanceof Error ? err.message : "Failed to resend email");
+      setCountdown(0); // Stop countdown on error
     }
   };
 
@@ -99,22 +109,22 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
         <ModalBody>
           {isSuccess ? (
             <VStack space="md">
-              <div className="flex justify-center mb-4">
+              <Box className="flex justify-center mb-4">
                 <Icon as={CheckCircleIcon} className="w-16 h-16 text-success-600" />
-              </div>
+              </Box>
               <Text className="text-center text-typography-700">
                 {t("forgotPassword.successMessage", { email })}
               </Text>
               <Text size="sm" className="text-center text-typography-600">
                 {t("forgotPassword.resendHelper", { seconds: countdown })}
               </Text>
-              {countdown === 0 && (
+              {countdown === 0 ? (
                 <Button onPress={handleResend} className="bg-primary-600 rounded-lg py-2">
                   <ButtonText className="text-white font-semibold">
                     {t("forgotPassword.resend")}
                   </ButtonText>
                 </Button>
-              )}
+              ) : null}
             </VStack>
           ) : (
             <VStack space="md">
@@ -153,7 +163,7 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                 isDisabled={isLoading}
                 className="flex-1 bg-primary-600 rounded-lg py-3"
               >
-                {isLoading && <ButtonText className="text-white mr-2">⏳</ButtonText>}
+                {isLoading ? <ButtonText className="text-white mr-2">⏳</ButtonText> : null}
                 <ButtonText className="text-white font-semibold">
                   {t("forgotPassword.submit")}
                 </ButtonText>

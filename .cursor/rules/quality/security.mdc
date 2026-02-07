@@ -1,0 +1,286 @@
+---
+description: Security best practices and vulnerability prevention
+globs:
+  - '**/*.ts'
+  - '**/*.tsx'
+alwaysApply: true
+priority: high
+---
+
+# Security Best Practices
+
+## Objective
+Prevent common security vulnerabilities and maintain secure application development.
+
+## Context
+- OWASP Top 10 awareness
+- Better Auth for authentication
+- Zod for input validation
+- Environment variables for secrets
+
+## Rules
+
+### Input Validation
+
+Validate ALL external input with Zod:
+
+```typescript
+// ✅ Good - Validate at API boundary
+// packages/core-contract/src/contracts/users.ts
+export const createUserSchema = z.object({
+  email: z.string().email().max(255),
+  name: z.string().min(1).max(100).trim(),
+  password: z.string().min(8).max(128),
+});
+
+// ✅ Good - Validate route params
+export const userIdSchema = z.object({
+  id: z.string().uuid(),
+});
+
+// ❌ Avoid - Trusting input
+async function getUser(id: string) {
+  // id could be SQL injection or path traversal
+  return db.query.users.findFirst({ where: eq(users.id, id) });
+}
+```
+
+### SQL Injection Prevention
+
+Use Drizzle ORM's parameterized queries:
+
+```typescript
+// ✅ Good - Parameterized query
+const user = await db.query.users.findFirst({
+  where: eq(users.email, email),
+});
+
+// ✅ Good - Safe raw query if needed
+const results = await db.execute(
+  sql`SELECT * FROM users WHERE email = ${email}`
+);
+
+// ❌ NEVER - String concatenation
+const results = await db.execute(
+  sql.raw(`SELECT * FROM users WHERE email = '${email}'`)
+);
+```
+
+### XSS Prevention
+
+React handles most XSS, but be careful with:
+
+```typescript
+// ❌ Avoid - Dangerous HTML
+<div dangerouslySetInnerHTML={{ __html: userContent }} />
+
+// ✅ Good - If HTML needed, sanitize first
+import DOMPurify from "dompurify";
+
+<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }} />
+
+// ✅ Good - Use text content
+<Text>{userContent}</Text>
+```
+
+### Authentication & Authorization
+
+Check permissions on every protected route:
+
+```typescript
+// ✅ Good - Auth middleware
+export const requireAuth = orpc.middleware(async ({ context, next }) => {
+  if (!context.user) {
+    throw new ORPCError("UNAUTHORIZED", "errors.auth.required");
+  }
+  return next({ context: { ...context, user: context.user } });
+});
+
+// ✅ Good - Authorization check
+export const requireTenantAccess = (role?: string) =>
+  orpc.middleware(async ({ context, input, next }) => {
+    const membership = await db.query.tenantMembers.findFirst({
+      where: and(
+        eq(tenantMembers.tenantId, input.tenantId),
+        eq(tenantMembers.userId, context.user.id)
+      ),
+    });
+
+    if (!membership) {
+      throw new ORPCError("FORBIDDEN", "errors.tenant.notMember");
+    }
+
+    if (role && membership.role !== role) {
+      throw new ORPCError("FORBIDDEN", "errors.tenant.insufficientRole");
+    }
+
+    return next();
+  });
+```
+
+### Secrets Management
+
+Never hardcode secrets:
+
+```typescript
+// ✅ Good - Environment variables
+const dbUrl = process.env.DATABASE_URL;
+const authSecret = process.env.BETTER_AUTH_SECRET;
+
+// ✅ Good - Validate env at startup
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL is required");
+}
+
+// ❌ NEVER - Hardcoded secrets
+const API_KEY = "sk_live_abc123";
+const DB_PASSWORD = "password123";
+
+// ❌ NEVER - Secrets in logs
+console.log("Connecting with:", process.env.DATABASE_URL);
+```
+
+### Sensitive Data Handling
+
+Redact sensitive data in logs:
+
+```typescript
+// ✅ Good - Redact sensitive fields
+logger.info("User login", {
+  email: user.email,
+  password: "***REDACTED***",
+  ip: request.ip,
+});
+
+// ✅ Good - Exclude password from responses
+const { passwordHash, ...safeUser } = user;
+return safeUser;
+
+// ❌ Avoid - Logging sensitive data
+logger.debug("Auth attempt", { email, password });
+```
+
+### Rate Limiting
+
+Protect against brute force:
+
+```typescript
+// ✅ Good - Rate limit configuration
+// apps/api/src/plugins/rate-limit.ts
+export const rateLimitPlugin = fp(async (fastify) => {
+  await fastify.register(fastifyRateLimit, {
+    max: 100,
+    timeWindow: "1 minute",
+    keyGenerator: (request) => request.ip,
+  });
+
+  // Stricter limits for auth endpoints
+  fastify.addHook("onRoute", (routeOptions) => {
+    if (routeOptions.url?.includes("/auth/")) {
+      routeOptions.config = {
+        ...routeOptions.config,
+        rateLimit: {
+          max: 10,
+          timeWindow: "1 minute",
+        },
+      };
+    }
+  });
+});
+```
+
+### CORS Configuration
+
+Restrict allowed origins:
+
+```typescript
+// ✅ Good - Specific origins
+// apps/api/src/plugins/cors.ts
+export const corsPlugin = fp(async (fastify) => {
+  await fastify.register(fastifyCors, {
+    origin: [
+      process.env.WEB_URL,        // https://app.example.com
+      process.env.MOBILE_SCHEME,  // myapp://
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  });
+});
+
+// ❌ Avoid - Open CORS in production
+origin: "*"
+```
+
+### File Upload Security
+
+Validate file uploads carefully:
+
+```typescript
+// ✅ Good - Validate file type and size
+const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+const maxSize = 5 * 1024 * 1024; // 5MB
+
+export const uploadSchema = z.object({
+  file: z.object({
+    type: z.string().refine((t) => allowedTypes.includes(t), {
+      message: "Invalid file type",
+    }),
+    size: z.number().max(maxSize, "File too large"),
+    name: z.string().max(255),
+  }),
+});
+
+// Generate safe filename
+const safeFilename = `${uuid()}.${extension}`;
+```
+
+### Session Security
+
+Configure secure sessions:
+
+```typescript
+// ✅ Good - Secure session config
+// packages/auth/src/config.ts
+export const auth = betterAuth({
+  session: {
+    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    updateAge: 60 * 60 * 24,     // Refresh daily
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 5, // 5 minutes
+    },
+  },
+  cookie: {
+    secure: process.env.NODE_ENV === "production",
+    httpOnly: true,
+    sameSite: "lax",
+  },
+});
+```
+
+### Security Headers
+
+Set security headers:
+
+```typescript
+// ✅ Good - Security headers
+// apps/api/src/plugins/security.ts
+fastify.addHook("onSend", async (request, reply) => {
+  reply.header("X-Content-Type-Options", "nosniff");
+  reply.header("X-Frame-Options", "DENY");
+  reply.header("X-XSS-Protection", "1; mode=block");
+  reply.header("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+});
+
+// Next.js - next.config.ts
+const securityHeaders = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "DENY" },
+];
+```
+
+## Exceptions
+
+- Development environments may relax some restrictions
+- Admin tools may have different auth requirements
+- Public endpoints (health checks, public APIs)

@@ -5,29 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1765838083744,
-      "tag": "0000_unusual_catseye",
+      "when": 1770352645547,
+      "tag": "0000_reflective_wind_dancer",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1766467100234,
-      "tag": "0001_polite_chronomancer",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1766467530879,
-      "tag": "0002_awesome_earthquake",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1766509092328,
-      "tag": "0003_amused_wolverine",
+      "when": 1770352700000,
+      "tag": "0001_add_admin_role_column",
       "breakpoints": true
     }
   ]

@@ -1,0 +1,135 @@
+{
+  "title": "Settings",
+  "back": "Back",
+  "sections": {
+    "notifications": "Notifications",
+    "members": "Members",
+    "group": "Group Settings",
+    "billing": "Billing",
+    "privacy": "Privacy",
+    "account": "Account"
+  },
+  "notifications": {
+    "title": "Notification Preferences",
+    "subtitle": "Choose how you want to be notified",
+    "description": "Manage your notification preferences",
+    "inApp": {
+      "label": "In-App Notifications",
+      "description": "Show notifications within the app"
+    },
+    "push": {
+      "label": "Push Notifications",
+      "description": "Receive push notifications on your device"
+    },
+    "email": {
+      "label": "Email Notifications",
+      "description": "Receive important updates via email"
+    },
+    "marketing": {
+      "label": "Marketing Emails",
+      "description": "Receive news, tips, and special offers"
+    },
+    "saving": "Saving...",
+    "saved": "Preferences saved",
+    "error": "Failed to save preferences"
+  },
+  "members": {
+    "title": "Group Members",
+    "subtitle": "Manage who has access to your group",
+    "description": "Manage group members and their access",
+    "invite": "Invite Members",
+    "count": "{{count}} member",
+    "count_plural": "{{count}} members",
+    "you": "(you)",
+    "roles": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "member": "Member"
+    },
+    "actions": {
+      "changeRole": "Change Role",
+      "remove": "Remove",
+      "makeAdmin": "Make Admin",
+      "makeMember": "Make Member"
+    },
+    "confirmRemove": {
+      "title": "Remove Member",
+      "message": "Are you sure you want to remove {{name}} from this group?",
+      "confirm": "Remove",
+      "cancel": "Cancel"
+    },
+    "confirmRoleChange": {
+      "title": "Change Role",
+      "message": "Change {{name}}'s role to {{role}}?",
+      "confirm": "Change",
+      "cancel": "Cancel"
+    },
+    "errors": {
+      "cannotRemoveSelf": "You cannot remove yourself. Use 'Leave Group' instead.",
+      "cannotRemoveOwner": "Cannot remove the group owner",
+      "cannotChangeOwnRole": "You cannot change your own role",
+      "lastOwner": "Cannot remove the last owner of the group",
+      "removeFailed": "Failed to remove member",
+      "roleChangeFailed": "Failed to change role"
+    },
+    "success": {
+      "removed": "{{name}} has been removed",
+      "roleChanged": "{{name}} is now {{role}}"
+    },
+    "empty": "No members yet",
+    "inviteMore": "Invite Members",
+    "loading": "Loading members..."
+  },
+  "group": {
+    "title": "Group Settings",
+    "currentGroup": "Current Group",
+    "leave": "Leave Group",
+    "nameLabel": "Group Name",
+    "namePlaceholder": "Enter group name",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "saved": "Group updated",
+    "error": "Failed to update group",
+    "dangerZone": "Danger Zone",
+    "leaveGroup": {
+      "button": "Leave Group",
+      "title": "Leave Group",
+      "message": "Are you sure you want to leave {{groupName}}? You will lose access to all shared content.",
+      "confirm": "Leave",
+      "cancel": "Cancel",
+      "ownerWarning": "As the owner, you cannot leave until you transfer ownership or delete the group.",
+      "leaving": "Leaving...",
+      "success": "You have left the group",
+      "error": "Failed to leave group"
+    }
+  },
+  "account": {
+    "title": "Account Settings",
+    "description": "Manage your account and sign out",
+    "logout": "Log Out",
+    "comingSoon": "Coming soon"
+  },
+  "privacy": {
+    "title": "Privacy & Analytics",
+    "description": "Control how your data is collected and used",
+    "consentLevel": "Data Collection Level",
+    "consentDescription": "Choose how much data you want to share to help us improve the app",
+    "levels": {
+      "disabled": {
+        "title": "Disabled",
+        "description": "No analytics data is collected"
+      },
+      "anonymous": {
+        "title": "Anonymous",
+        "description": "Anonymous usage data without personal identifiers"
+      },
+      "enabled": {
+        "title": "Full",
+        "description": "Personalized analytics for the best experience"
+      }
+    },
+    "saving": "Saving...",
+    "saved": "Privacy settings saved",
+    "error": "Failed to save privacy settings"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "defaultLanguage": "en",
+  "fallbackLanguage": "en",
+  "languagePriority": {
+    "webMobile": ["userPreference", "browserOrDeviceDetected", "defaultEnglish"],
+    "email": ["userPreference", "defaultEnglish"]
+  },
+  "supportedLanguages": [
+    {
+      "code": "en",
+      "name": "English",
+      "nativeName": "English",
+      "isRTL": false,
+      "isDefault": true
+    },
+    {
+      "code": "es",
+      "name": "Spanish",
+      "nativeName": "Español",
+      "isRTL": false,
+      "isDefault": false
+    }
+  ],
+  "namespaces": [
+    "common",
+    "auth",
+    "validation",
+    "group",
+    "dashboard",
+    "emails",
+    "errors",
+    "subscriptions"
+  ]
+}

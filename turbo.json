@@ -2,8 +2,11 @@
   "$schema": "https://turborepo.com/schema.json",
   "ui": "tui",
   "globalEnv": [
+    "APP_NAME",
     "DATABASE_URL",
+    "NEXT_RUNTIME",
     "NODE_ENV",
+    "npm_package_version",
     "BETTER_AUTH_SECRET",
     "BETTER_AUTH_URL",
     "GOOGLE_CLIENT_ID",
@@ -14,21 +17,57 @@
     "EXPO_PUBLIC_API_URL",
     "POSTHOG_KEY",
     "POSTHOG_HOST",
+    "POSTHOG_LOGS_ENABLED",
     "NEXT_PUBLIC_POSTHOG_KEY",
     "NEXT_PUBLIC_POSTHOG_HOST",
     "EXPO_PUBLIC_POSTHOG_KEY",
     "EXPO_PUBLIC_POSTHOG_HOST",
     "TRUSTED_ORIGINS",
     "ALLOWED_ORIGINS",
-    "NEXT_PUBLIC_ONESIGNAL_APP_ID",
-    "EXPO_PUBLIC_ONESIGNAL_APP_ID",
-    "NEXT_PUBLIC_APP_URL"
+    "NOVU_SECRET_KEY",
+    "NOVU_APP_ID",
+    "NOVU_BASE_URL",
+    "NOTIFICATION_PROVIDER",
+    "NEXT_PUBLIC_NOVU_APP_ID",
+    "EXPO_PUBLIC_NOVU_APP_ID",
+    "NEXT_PUBLIC_APP_URL",
+    "MAILER_PROVIDER",
+    "RESEND_API_KEY",
+    "EMAIL_FROM_NAME",
+    "EMAIL_FROM_ADDRESS",
+    "EMAIL_REPLY_TO",
+    "NEXT_PUBLIC_REVENUECAT_API_KEY",
+    "EXPO_PUBLIC_REVENUECAT_API_KEY_IOS",
+    "EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID",
+    "REVENUECAT_WEBHOOK_SECRET",
+    "POLAR_ACCESS_TOKEN",
+    "POLAR_WEBHOOK_SECRET",
+    "VITE_API_URL",
+    "VITE_SITE_NAME",
+    "VITE_SITE_URL",
+    "VITE_POSTHOG_KEY",
+    "VITE_POSTHOG_HOST",
+    "EXPO_PUBLIC_ADS_ENABLED",
+    "NEXT_PUBLIC_ADS_ENABLED",
+    "EXPO_PUBLIC_ADMOB_ANDROID_APP_ID",
+    "EXPO_PUBLIC_ADMOB_IOS_APP_ID",
+    "EXPO_PUBLIC_ADMOB_ANDROID_BANNER_ID",
+    "EXPO_PUBLIC_ADMOB_IOS_BANNER_ID",
+    "EXPO_PUBLIC_ADMOB_ANDROID_INTERSTITIAL_ID",
+    "EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID",
+    "EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_ID",
+    "EXPO_PUBLIC_ADMOB_IOS_REWARDED_ID",
+    "EXPO_PUBLIC_ADMOB_TEST_DEVICE_IDS",
+    "NEXT_PUBLIC_ADSENSE_CLIENT_ID",
+    "NEXT_PUBLIC_ADSENSE_BANNER_SLOT_ID",
+    "RATE_LIMIT_MAX",
+    "RATE_LIMIT_WINDOW_MS"
   ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULTS$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", ".vinxi/**", ".output/**", "dist/**"]
     },
     "typecheck": {
       "dependsOn": ["^typecheck"]
@@ -43,6 +82,7 @@
       "cache": false
     },
     "dev": {
+      "dependsOn": ["^build"],
       "persistent": true,
       "cache": false
     }

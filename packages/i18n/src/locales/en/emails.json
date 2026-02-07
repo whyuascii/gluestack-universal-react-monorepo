@@ -1,0 +1,79 @@
+{
+  "verifyEmail": {
+    "subject": "Verify your email address",
+    "greeting": "Hi {{name}},",
+    "body": "Please verify your email address by clicking the button below.",
+    "cta": "Verify Email",
+    "expiry": "This link will expire in 24 hours.",
+    "ignore": "If you didn't create an account, you can safely ignore this email."
+  },
+  "adminInvite": {
+    "subject": "You've been invited to join the admin team",
+    "greeting": "Hi{{name}},",
+    "body": "You've been invited to join the {{appName}} admin team as a {{role}}.",
+    "bodyDetails": "As an admin, you'll have access to the internal dashboard to help manage users and support our community.",
+    "cta": "Accept Invitation",
+    "expiry": "This invitation will expire in 7 days.",
+    "ignore": "If you weren't expecting this invitation, you can safely ignore this email.",
+    "roleReadOnly": "Read-Only Admin",
+    "roleSupportRW": "Support Admin",
+    "roleSuperAdmin": "Super Admin"
+  },
+  "resetPassword": {
+    "subject": "Reset your password",
+    "greeting": "Hi {{name}},",
+    "body": "We received a request to reset your password. Click the button below to create a new password.",
+    "cta": "Reset Password",
+    "expiry": "This link will expire in {{expiresIn}}.",
+    "ignore": "If you didn't request a password reset, you can safely ignore this email."
+  },
+  "welcome": {
+    "subject": "Welcome to {{appName}}!",
+    "greeting": "Welcome, {{name}}!",
+    "body": "Thank you for joining {{appName}}. We're excited to have you on board.",
+    "cta": "Get Started",
+    "support": "If you have any questions, feel free to reach out to our support team."
+  },
+  "inviteToGroup": {
+    "subject": "You've been invited to join {{groupName}}",
+    "greeting": "Hi,",
+    "body": "{{inviterName}} has invited you to join {{groupName}} on {{appName}}.",
+    "cta": "Accept Invitation",
+    "expiry": "This invitation will expire in {{expiresIn}}.",
+    "ignore": "If you don't want to join, you can safely ignore this email."
+  },
+  "waitlist": {
+    "subject": "You're on the waitlist for {{appName}}!",
+    "title": "You're on the list!",
+    "greeting": "Hi {{name}},",
+    "body1": "Thanks for joining our waitlist! We're building something special and can't wait to share it with you.",
+    "body2": "We'll keep you updated on our progress and let you know as soon as we're ready for you to try.",
+    "body3": "In the meantime, feel free to reply to this email with any questions or feedback!",
+    "unsubscribe": "Unsubscribe from waitlist updates"
+  },
+  "subscription": {
+    "activated": {
+      "subject": "Welcome to {{planName}}!",
+      "greeting": "Hi {{name}},",
+      "body": "Thank you for subscribing to {{planName}}! Your subscription is now active and you have full access to all premium features.",
+      "cta": "Go to Dashboard"
+    },
+    "paymentFailed": {
+      "subject": "Action required: Payment failed",
+      "greeting": "Hi {{name}},",
+      "body": "We were unable to process your subscription payment. We'll automatically retry on {{retryDate}}.",
+      "cta": "Update Payment Method"
+    },
+    "trialEnding": {
+      "subject": "Your trial is ending soon",
+      "greeting": "Hi {{name}},",
+      "body": "Your free trial of {{planName}} will end on {{trialEndDate}}. To continue enjoying all the premium features, please upgrade your subscription.",
+      "cta": "Upgrade Now"
+    }
+  },
+  "common": {
+    "footer": "{{year}} {{appName}}. All rights reserved.",
+    "unsubscribe": "Unsubscribe from these emails",
+    "sentBy": "This email was sent by {{appName}}"
+  }
+}

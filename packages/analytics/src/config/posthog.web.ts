@@ -1,14 +1,10 @@
 import posthog from "posthog-js";
-import type { Analytics } from "../types";
+import type { Analytics, AnalyticsProperties, AnalyticsUser } from "../types";
 
 class PostHogWeb implements Analytics {
   private initialized = false;
 
-  constructor() {
-    this.init();
-  }
-
-  private init() {
+  async init(): Promise<void> {
     if (this.initialized || typeof window === "undefined") return;
 
     const apiKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
@@ -21,6 +17,7 @@ class PostHogWeb implements Analytics {
 
     posthog.init(apiKey, {
       api_host: apiHost,
+      cookieless_mode: "always", // GDPR-compliant: no cookies for analytics
       person_profiles: "always", // or 'identified_only'
       defaults: "2025-11-30",
       loaded: (posthog) => {
@@ -42,14 +39,14 @@ class PostHogWeb implements Analytics {
     this.initialized = true;
   }
 
-  track(event: string, properties?: Record<string, any>): void {
+  track(event: string, properties?: AnalyticsProperties): void {
     if (!this.initialized) return;
-    posthog.capture(event, properties);
+    posthog.capture(event, properties as Record<string, unknown>);
   }
 
-  identify(userId: string, properties?: Record<string, any>): void {
+  identify(userId: string, properties?: Partial<AnalyticsUser>): void {
     if (!this.initialized) return;
-    posthog.identify(userId, properties);
+    posthog.identify(userId, properties as Record<string, unknown>);
   }
 
   reset(): void {
@@ -57,9 +54,15 @@ class PostHogWeb implements Analytics {
     posthog.reset();
   }
 
-  capture(event: string, properties?: Record<string, any>): void {
+  capture(event: string, properties?: AnalyticsProperties): void {
     this.track(event, properties);
   }
 }
 
-export const analytics = new PostHogWeb();
+// Initialize on import (browser only)
+const analytics = new PostHogWeb();
+if (typeof window !== "undefined") {
+  analytics.init();
+}
+
+export { analytics };

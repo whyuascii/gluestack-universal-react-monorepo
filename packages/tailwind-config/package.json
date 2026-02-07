@@ -8,12 +8,18 @@
     "config",
     "nativewind"
   ],
-  "author": "whyuascii <eddy@whyuascii.com>",
+  "author": "",
   "license": "ISC",
   "private": true,
   "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./themes": "./themes/index.js",
+    "./themes/*": "./themes/*.js"
+  },
   "files": [
-    "index.js"
+    "index.js",
+    "themes"
   ],
   "sideEffects": false,
   "peerDependencies": {

@@ -1,0 +1,83 @@
+# CODEOWNERS - Automatic review assignment
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything
+* @your-github-username
+
+# =============================================================================
+# Apps
+# =============================================================================
+
+# Web application
+/apps/web/ @your-github-username
+
+# Mobile application
+/apps/mobile/ @your-github-username
+
+# API server
+/apps/api/ @your-github-username
+
+# Admin portal
+/apps/admin/ @your-github-username
+
+# =============================================================================
+# Core Packages
+# =============================================================================
+
+# Database schemas and migrations (critical - requires careful review)
+/packages/database/ @your-github-username
+
+# Authentication (security critical)
+/packages/auth/ @your-github-username
+
+# API contracts
+/packages/core-contract/ @your-github-username
+
+# =============================================================================
+# Shared Packages
+# =============================================================================
+
+# UI components and screens
+/packages/ui/ @your-github-username
+/packages/components/ @your-github-username
+
+# Configuration packages
+/packages/config/ @your-github-username
+/packages/tailwind-config/ @your-github-username
+
+# Internationalization
+/packages/i18n/ @your-github-username
+
+# =============================================================================
+# Infrastructure & CI/CD
+# =============================================================================
+
+# GitHub workflows (CI/CD changes need review)
+/.github/ @your-github-username
+
+# Deployment configuration
+/deployment/ @your-github-username
+
+# Docker configuration
+/docker-compose.yml @your-github-username
+Dockerfile* @your-github-username
+
+# =============================================================================
+# Documentation
+# =============================================================================
+
+/docs/ @your-github-username
+/README.md @your-github-username
+/CLAUDE.md @your-github-username
+
+# =============================================================================
+# Package Manager & Build
+# =============================================================================
+
+# Lock file changes (dependency updates)
+pnpm-lock.yaml @your-github-username
+
+# Root configuration
+/package.json @your-github-username
+/turbo.json @your-github-username
+/tsconfig.json @your-github-username

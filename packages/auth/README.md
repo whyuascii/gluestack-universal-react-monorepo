@@ -1,165 +1,370 @@
-# Auth Package
+# @app/auth
 
-Shared authentication package using [Better Auth](https://www.better-auth.com/) with email/password and OAuth support.
+Cross-platform authentication using [Better Auth](https://www.better-auth.com/) with email/password, email verification, and password reset support for Next.js and Expo.
+
+## Installation
+
+```bash
+pnpm add @app/auth
+```
 
 ## Features
 
 - Email/password authentication with verification
-- OAuth providers (Google, GitHub)
-- Cross-platform client support (Next.js web + Expo mobile)
-- Drizzle ORM integration with PostgreSQL
+- Password reset flow
+- Cross-platform client (Next.js web + Expo mobile)
+- Session management with JWT
+- React hooks for auth state
+- Inactivity timeout (web)
 - Type-safe with TypeScript
 
-## Architecture
+## Directory Structure
 
-- **Database package**: Contains all database schemas including auth schemas (`database/schema/auth`)
-- **Auth package**: Imports from database, exports Better Auth config and client hooks
-- **API app**: Creates Better Auth instance and mounts routes
-- **Web/Mobile apps**: Use client hooks from `auth/client/react` or `auth/client/native`
-- **UI package**: Imports client hooks to create shared auth screens
-
-**Dependency flow:** `auth` → `database` (no circular dependencies!)
-
-## Environment Variables
-
-### Required for API app:
-
-```env
-BETTER_AUTH_SECRET=your-secret-key
-BETTER_AUTH_URL=http://localhost:3001
-
-# Optional OAuth providers
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-GITHUB_CLIENT_ID=your-github-client-id
-GITHUB_CLIENT_SECRET=your-github-client-secret
 ```
-
-### Required for Web app:
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:3001
-```
-
-### Required for Mobile app:
-
-```env
-EXPO_PUBLIC_API_URL=http://localhost:3001
+src/
+├── index.ts              # Main exports (client-safe)
+├── server.ts             # Server-only exports (Better Auth config)
+├── config.ts             # Better Auth configuration
+├── utils.ts              # Auth utilities (authClient, helpers)
+├── types.ts              # Type definitions
+├── errors.ts             # Auth error classes
+├── hooks/
+│   ├── index.ts          # Hook exports
+│   ├── useSession.ts     # Session state hook
+│   ├── useLogout.ts      # Logout with cache clearing
+│   └── useInactivityLogout.ts  # Auto-logout on inactivity (web)
+└── client/
+    ├── index.ts          # Auto-detecting client
+    ├── react.ts          # Next.js/web client
+    └── native.ts         # Expo/mobile client
 ```
 
 ## Usage
 
-### In API app (apps/api)
+### In API (apps/api)
 
 ```typescript
-import { createAuthConfig } from "auth";
+import { createAuthConfig } from "@app/auth/server";
 
 // Create auth instance
 const auth = createAuthConfig();
 
-// Mount auth routes in Fastify
-app.all("/auth/*", async (req, res) => {
+// Mount auth routes
+app.all("/api/auth/*", async (req, res) => {
   return auth.handler(req, res);
 });
 ```
 
-### In Web app (apps/web)
+### In Web App (apps/web)
 
 ```tsx
-import { useSession, signIn, signOut } from "auth/client/react";
+import { useSession, useLogout, authClient } from "@app/auth";
+// Or explicit import:
+// import { authClient } from "@app/auth/client/react";
 
-function MyComponent() {
+function Profile() {
   const { data: session, isPending } = useSession();
+  const { logout, isLoggingOut } = useLogout({
+    onSuccess: () => router.push("/login"),
+  });
 
-  if (isPending) return <div>Loading...</div>;
-  if (!session) return <div>Not authenticated</div>;
-
-  return (
-    <div>
-      <p>Hello {session.user.name}</p>
-      <button onClick={() => signOut()}>Sign Out</button>
-    </div>
-  );
-}
-```
-
-### In Mobile app (apps/mobile)
-
-```tsx
-import { useSession, signIn, signOut } from "auth/client/native";
-
-function MyScreen() {
-  const { data: session, isPending } = useSession();
-
-  if (isPending) return <ActivityIndicator />;
-  if (!session) return <LoginScreen />;
+  if (isPending) return <Spinner />;
+  if (!session) return <Redirect to="/login" />;
 
   return (
     <View>
       <Text>Hello {session.user.name}</Text>
-      <Button title="Sign Out" onPress={() => signOut()} />
+      <Button onPress={logout} disabled={isLoggingOut}>
+        Sign Out
+      </Button>
     </View>
   );
 }
 ```
 
-### In UI package (packages/ui)
+### In Mobile App (apps/mobile)
 
 ```tsx
-// Create shared auth screens/components using client hooks
-import { useSession, signIn, signOut } from "auth/client/react";
-import { useSession as useSessionNative } from "auth/client/native";
+import { useSession, useLogout } from "@app/auth";
+import { signOut } from "@app/auth/client/native";
 
-// Use Platform to determine which client to use
-import { Platform } from "react-native";
+function Profile() {
+  const { data: session } = useSession();
+  const { logout, isLoggingOut } = useLogout({
+    signOut, // Pass native signOut function
+    onSuccess: () => router.replace("/login"),
+  });
 
-const useAuth = Platform.OS === "web" ? useSession : useSessionNative;
-
-export function AuthenticatedScreen() {
-  const { data: session } = useAuth();
-  // Shared screen logic...
+  return (
+    <View>
+      <Text>Hello {session?.user.name}</Text>
+      <Button onPress={logout}>Sign Out</Button>
+    </View>
+  );
 }
 ```
 
-## Database Migrations
+## Hooks
 
-After setting up the auth package, generate and run migrations:
+### `useSession()`
 
-```bash
-# Generate migration
-pnpm --filter database generate
+Get current auth session state.
 
-# Run migration
-pnpm --filter database db:migrate
+```typescript
+const { data, isPending, error } = useSession();
+
+// data: Session | null
+// data.user: { id, name, email, image, ... }
+// data.session: { id, expiresAt, ... }
 ```
 
-## OAuth Setup
+### `useLogout(options)`
 
-### Google OAuth
+Handle complete logout process with cache clearing.
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select existing
-3. Enable Google+ API
-4. Create OAuth 2.0 credentials
-5. Add authorized redirect URI: `http://localhost:3001/auth/callback/google`
-6. Copy client ID and secret to `.env`
+```typescript
+interface UseLogoutOptions {
+  onSuccess?: () => void; // Called after successful logout
+  onError?: (error: Error) => void; // Called on logout error
+  signOut?: () => Promise<unknown>; // Custom signOut (for native)
+}
 
-### GitHub OAuth
+const { logout, isLoggingOut } = useLogout({
+  onSuccess: () => router.push("/login"),
+});
+```
 
-1. Go to [GitHub Settings > Developer settings > OAuth Apps](https://github.com/settings/developers)
-2. Create a new OAuth app
-3. Set authorization callback URL: `http://localhost:3001/auth/callback/github`
-4. Copy client ID and secret to `.env`
+**What it does:**
+
+1. Signs out via Better Auth (invalidates server session)
+2. Clears React Query cache
+3. Clears localStorage/sessionStorage (web only)
+4. Calls onSuccess callback
+
+### `useInactivityLogout(options)` (Web Only)
+
+Auto-logout after period of inactivity.
+
+```typescript
+interface UseInactivityLogoutOptions {
+  timeout?: number; // ms (default: 15 min)
+  onInactivityLogout: () => void; // Called on timeout
+  enabled?: boolean; // Enable/disable
+  onWarning?: (secondsRemaining: number) => void; // Warning before logout
+  warningThreshold?: number; // Seconds before logout to warn
+}
+
+const { logout } = useLogout({ onSuccess: () => router.push("/login") });
+
+useInactivityLogout({
+  timeout: 10 * 60 * 1000, // 10 minutes
+  onInactivityLogout: logout,
+  enabled: !!session,
+  onWarning: (seconds) => toast.warning(`Logging out in ${seconds}s`),
+  warningThreshold: 60,
+});
+```
+
+**Tracked events:** mouse, keyboard, touch, scroll, visibility change
+
+## Auth Client
+
+### Sign In
+
+```typescript
+import { authClient } from "@app/auth";
+
+await authClient.signIn.email({
+  email: "user@example.com",
+  password: "password123",
+});
+```
+
+### Sign Up
+
+```typescript
+await authClient.signUp.email({
+  email: "user@example.com",
+  password: "password123",
+  name: "John Doe",
+});
+```
+
+### Sign Out
+
+```typescript
+await authClient.signOut();
+```
+
+### Password Reset
+
+```typescript
+// Request reset email
+await authClient.forgetPassword({
+  email: "user@example.com",
+  redirectTo: "/reset-password",
+});
+
+// Reset with token
+await authClient.resetPassword({
+  token: "reset-token",
+  newPassword: "newpassword123",
+});
+```
+
+### Email Verification
+
+```typescript
+// Resend verification email
+await authClient.sendVerificationEmail({
+  email: "user@example.com",
+  callbackURL: "/verify-email",
+});
+
+// Verify with token
+await authClient.verifyEmail({
+  token: "verification-token",
+});
+```
+
+## Error Handling
+
+```typescript
+import {
+  AuthError,
+  UnauthorizedError,
+  ForbiddenError,
+  NotFoundError,
+  BadRequestError,
+  ConflictError,
+} from "@app/auth";
+
+try {
+  await authClient.signIn.email({ email, password });
+} catch (error) {
+  if (error instanceof UnauthorizedError) {
+    // Invalid credentials
+  } else if (error instanceof ConflictError) {
+    // Email already exists
+  }
+}
+```
+
+## Types
+
+```typescript
+import type {
+  Session,
+  BetterAuthUser,
+  BetterAuthSession,
+  SignInCredentials,
+  SignUpCredentials,
+} from "@app/auth";
+
+// From Better Auth library
+import type { User, Account } from "@app/auth";
+```
+
+## Environment Variables
+
+### API App
+
+```env
+BETTER_AUTH_SECRET=your-secret-key-min-32-chars
+BETTER_AUTH_URL=http://localhost:3030
+DATABASE_URL=postgresql://...
+```
+
+### Web App
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3030
+```
+
+### Mobile App
+
+```env
+EXPO_PUBLIC_API_URL=http://localhost:3030
+```
 
 ## API Routes
 
-Better Auth automatically creates these routes:
+Better Auth creates these routes automatically:
 
-- `POST /auth/sign-up` - Register new user
-- `POST /auth/sign-in/email` - Sign in with email/password
-- `POST /auth/sign-out` - Sign out
-- `GET /auth/session` - Get current session
-- `GET /auth/callback/google` - Google OAuth callback
-- `GET /auth/callback/github` - GitHub OAuth callback
+| Route                               | Method | Description                  |
+| ----------------------------------- | ------ | ---------------------------- |
+| `/api/auth/sign-up/email`           | POST   | Register with email/password |
+| `/api/auth/sign-in/email`           | POST   | Sign in with email/password  |
+| `/api/auth/sign-out`                | POST   | Sign out                     |
+| `/api/auth/session`                 | GET    | Get current session          |
+| `/api/auth/forget-password`         | POST   | Request password reset       |
+| `/api/auth/reset-password`          | POST   | Reset password with token    |
+| `/api/auth/verify-email`            | POST   | Verify email with token      |
+| `/api/auth/send-verification-email` | POST   | Resend verification email    |
 
-See [Better Auth docs](https://www.better-auth.com/docs) for full API reference.
+## Session Configuration
+
+```typescript
+// Default session config in config.ts
+session: {
+  expiresIn: 60 * 60 * 24 * 7,    // 7 days
+  updateAge: 60 * 60 * 24,         // Refresh after 1 day
+  cookieCache: {
+    enabled: true,
+    maxAge: 60 * 5,                // 5 minute cache
+  },
+}
+```
+
+## Adding OAuth Providers
+
+Update `config.ts` with social providers:
+
+```typescript
+import { betterAuth } from "better-auth";
+
+export const createAuthConfig = () =>
+  betterAuth({
+    // ... existing config
+    socialProviders: {
+      google: {
+        clientId: process.env.GOOGLE_CLIENT_ID!,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      },
+      github: {
+        clientId: process.env.GITHUB_CLIENT_ID!,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      },
+    },
+  });
+```
+
+## Architecture
+
+```
+apps/api
+  └── Creates Better Auth instance with createAuthConfig()
+  └── Mounts /api/auth/* routes
+
+packages/auth
+  └── Exports client, hooks, types, errors
+  └── Platform-agnostic (web + mobile)
+
+apps/web, apps/mobile
+  └── Import useSession, useLogout, authClient
+  └── Use for auth UI and session management
+
+packages/ui
+  └── Auth screens (Login, Signup, etc.)
+  └── Re-exports hooks from @app/auth
+```
+
+**Dependency flow:** `@app/auth` → `@app/database` (no circular dependencies)
+
+## Related Packages
+
+| Package         | Purpose                                                  |
+| --------------- | -------------------------------------------------------- |
+| `@app/database` | Auth schemas (user, session, account, verification)      |
+| `@app/ui`       | Auth screens (Login, Signup, VerifyEmail, ResetPassword) |
+| `@app/mailer`   | Email sending for verification/reset                     |

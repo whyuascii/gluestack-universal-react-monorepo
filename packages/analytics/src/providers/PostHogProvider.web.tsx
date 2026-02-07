@@ -2,7 +2,8 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
-import React, { createContext, Suspense, useContext, useEffect } from "react";
+import { PostHogProvider as PHProvider } from "posthog-js/react";
+import React, { createContext, useContext, useEffect, Suspense } from "react";
 import { analytics } from "../config/posthog.web";
 import type { Analytics } from "../types";
 
@@ -28,14 +29,35 @@ function PostHogPageView() {
   return null;
 }
 
+/**
+ * PostHog Analytics Provider
+ *
+ * Wraps your app with PostHog context for analytics, feature flags, and experiments.
+ *
+ * Features enabled:
+ * - Event tracking
+ * - Feature flags (useFeatureFlagEnabled, useFeatureFlagVariantKey, useFeatureFlagPayload)
+ * - Experiments (A/B tests via feature flags)
+ * - Surveys (when enabled in PostHog project settings)
+ * - Automatic page view tracking
+ *
+ * Usage:
+ *   import { PostHogProvider } from "@app/analytics/web";
+ *
+ *   export default function RootLayout({ children }) {
+ *     return <PostHogProvider>{children}</PostHogProvider>;
+ *   }
+ */
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   return (
-    <AnalyticsContext.Provider value={analytics}>
-      <Suspense fallback={null}>
-        <PostHogPageView />
-      </Suspense>
-      {children}
-    </AnalyticsContext.Provider>
+    <PHProvider client={posthog}>
+      <AnalyticsContext.Provider value={analytics}>
+        <Suspense fallback={null}>
+          <PostHogPageView />
+        </Suspense>
+        {children}
+      </AnalyticsContext.Provider>
+    </PHProvider>
   );
 }
 

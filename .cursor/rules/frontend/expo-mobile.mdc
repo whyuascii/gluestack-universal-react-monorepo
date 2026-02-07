@@ -1,0 +1,309 @@
+---
+description: Expo and React Native patterns for mobile development
+globs:
+  - 'apps/mobile/**/*.ts'
+  - 'apps/mobile/**/*.tsx'
+alwaysApply: false
+priority: high
+---
+
+# Expo & React Native
+
+## Objective
+Build performant, native-feeling mobile apps with Expo and React Native.
+
+## Context
+- Expo 54 with Expo Router 6
+- React Native 0.81
+- NativeWind 4 for styling
+- EAS Build for deployment
+
+## Rules
+
+### File-Based Routing
+
+Follow Expo Router conventions:
+
+```
+apps/mobile/src/app/
+├── _layout.tsx          # Root layout
+├── index.tsx            # Entry point (/)
+├── (auth)/              # Auth route group
+│   ├── _layout.tsx      # Auth layout
+│   ├── login.tsx        # /(auth)/login
+│   ├── signup.tsx       # /(auth)/signup
+│   └── verify-email.tsx
+├── (app)/               # Protected routes
+│   ├── _layout.tsx      # App layout with auth guard
+│   ├── dashboard.tsx    # /(app)/dashboard
+│   ├── settings.tsx
+│   └── todos.tsx
+└── (group)/             # Nested groups
+    └── [id]/            # Dynamic routes
+        └── index.tsx
+```
+
+### Root Layout
+
+Configure app-wide providers:
+
+```tsx
+// ✅ Good - Root layout
+// apps/mobile/src/app/_layout.tsx
+import { Stack } from "expo-router";
+import { GluestackUIProvider } from "@app/components";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { PostHogProvider } from "@app/analytics/mobile";
+
+export default function RootLayout() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <GluestackUIProvider>
+        <PostHogProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(app)" />
+          </Stack>
+        </PostHogProvider>
+      </GluestackUIProvider>
+    </QueryClientProvider>
+  );
+}
+```
+
+### Thin Screen Wrappers
+
+Screens should be thin wrappers around `@app/ui`:
+
+```tsx
+// ✅ Good - Thin wrapper
+// apps/mobile/src/app/(app)/dashboard.tsx
+import { DashboardScreen } from "@app/ui/screens";
+import { useSession, signOut } from "@app/auth/client/native";
+import { useRouter } from "expo-router";
+
+export default function Dashboard() {
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  return (
+    <DashboardScreen
+      session={session}
+      signOut={signOut}  // Pass native client's signOut
+      onLogoutSuccess={() => router.replace("/(auth)/login")}
+    />
+  );
+}
+```
+
+### Auth Guard Layout
+
+Protect routes with layout guards:
+
+```tsx
+// ✅ Good - Auth guard
+// apps/mobile/src/app/(app)/_layout.tsx
+import { Redirect, Stack } from "expo-router";
+import { useSession } from "@app/auth/client/native";
+
+export default function AppLayout() {
+  const { data: session, isPending } = useSession();
+
+  if (isPending) {
+    return <LoadingScreen />;
+  }
+
+  if (!session) {
+    return <Redirect href="/(auth)/login" />;
+  }
+
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="dashboard" />
+      <Stack.Screen name="settings" />
+    </Stack>
+  );
+}
+```
+
+### Navigation
+
+Use Expo Router's typed navigation:
+
+```tsx
+// ✅ Good - Type-safe navigation
+import { useRouter, Link } from "expo-router";
+
+export function NavigationExample() {
+  const router = useRouter();
+
+  const handlePress = () => {
+    // Programmatic navigation
+    router.push("/(app)/settings");
+    router.replace("/(auth)/login");
+    router.back();
+  };
+
+  return (
+    <VStack>
+      {/* Declarative navigation */}
+      <Link href="/(app)/dashboard" asChild>
+        <Pressable>
+          <Text>Go to Dashboard</Text>
+        </Pressable>
+      </Link>
+
+      <Button onPress={handlePress}>
+        <ButtonText>Settings</ButtonText>
+      </Button>
+    </VStack>
+  );
+}
+```
+
+### Safe Areas
+
+Handle device safe areas:
+
+```tsx
+// ✅ Good - Safe area handling
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+export function ScreenWithSafeArea({ children }: { children: React.ReactNode }) {
+  return (
+    <SafeAreaView className="flex-1 bg-white">
+      {children}
+    </SafeAreaView>
+  );
+}
+
+// For custom padding
+export function CustomHeader() {
+  const insets = useSafeAreaInsets();
+
+  return (
+    <View style={{ paddingTop: insets.top }}>
+      <Text>Header</Text>
+    </View>
+  );
+}
+```
+
+### Platform-Specific Code
+
+Use Platform API or file extensions:
+
+```tsx
+// ✅ Good - Platform API
+import { Platform } from "react-native";
+
+export function PlatformText() {
+  return (
+    <Text>
+      Running on {Platform.OS} {Platform.Version}
+    </Text>
+  );
+}
+
+// Platform-specific styles
+const styles = StyleSheet.create({
+  container: {
+    ...Platform.select({
+      ios: { shadowColor: "#000", shadowOpacity: 0.1 },
+      android: { elevation: 2 },
+    }),
+  },
+});
+```
+
+### Native Modules
+
+Use Expo modules when available:
+
+```tsx
+// ✅ Good - Expo modules
+import * as ImagePicker from "expo-image-picker";
+import * as Haptics from "expo-haptics";
+import { Camera } from "expo-camera";
+
+export function useImagePicker() {
+  const pickImage = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permission.granted) {
+      Alert.alert("Permission required");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      return result.assets[0];
+    }
+  };
+
+  return { pickImage };
+}
+```
+
+### Performance
+
+Optimize lists and heavy renders:
+
+```tsx
+// ✅ Good - Optimized FlatList
+import { FlatList } from "react-native";
+
+export function OptimizedList({ data }) {
+  return (
+    <FlatList
+      data={data}
+      renderItem={({ item }) => <ListItem item={item} />}
+      keyExtractor={(item) => item.id}
+      initialNumToRender={10}
+      maxToRenderPerBatch={10}
+      windowSize={5}
+      removeClippedSubviews={true}
+      getItemLayout={(data, index) => ({
+        length: ITEM_HEIGHT,
+        offset: ITEM_HEIGHT * index,
+        index,
+      })}
+    />
+  );
+}
+
+// Memoize list items
+const ListItem = React.memo(function ListItem({ item }) {
+  return <View>{/* ... */}</View>;
+});
+```
+
+### App Configuration
+
+Use `app.config.js` for dynamic config:
+
+```javascript
+// ✅ Good - Dynamic app config
+// apps/mobile/app.config.js
+export default ({ config }) => ({
+  ...config,
+  name: process.env.APP_NAME || "MyApp",
+  slug: "myapp",
+  version: "1.0.0",
+  extra: {
+    apiUrl: process.env.EXPO_PUBLIC_API_URL,
+    posthogKey: process.env.EXPO_PUBLIC_POSTHOG_KEY,
+  },
+});
+```
+
+## Exceptions
+
+- Development-only debugging tools
+- Native module bridges
+- EAS Build specific configurations

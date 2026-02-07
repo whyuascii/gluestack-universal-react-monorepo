@@ -97,6 +97,59 @@ This directory contains CI/CD workflows for the monorepo.
 
 **Duration:** ~2-3 minutes
 
+### 5. Stale Issues & PRs Workflow (`stale.yml`)
+
+**Triggers:**
+
+- Scheduled daily at midnight UTC
+- Manual dispatch
+
+**Jobs:**
+
+- **stale** - Marks and closes inactive issues/PRs
+
+**Features:**
+
+- ✅ Marks issues stale after 60 days of inactivity
+- ✅ Closes stale issues after 7 more days
+- ✅ Marks PRs stale after 30 days of inactivity
+- ✅ Closes stale PRs after 14 more days
+- ✅ Exempt labels: `pinned`, `security`, `bug`, `help wanted`, `work-in-progress`, `dependencies`
+- ✅ Removes stale label when updated
+
+**Duration:** ~1-2 minutes
+
+### 6. Release Workflow (`release.yml`)
+
+**Triggers:**
+
+- Push of version tags (`v*.*.*`)
+- Manual dispatch with version input
+
+**Jobs:**
+
+- **release** - Creates GitHub releases with auto-generated changelog
+
+**Features:**
+
+- ✅ Auto-generates changelog from commits since last tag
+- ✅ Categorizes changes (Features, Bug Fixes, Other)
+- ✅ Creates GitHub Release with release notes
+- ✅ Marks prereleases for `-alpha`, `-beta`, `-rc` versions
+- ✅ Supports manual release creation
+
+**Usage:**
+
+```bash
+# Create a release by pushing a tag
+git tag v1.0.0
+git push origin v1.0.0
+
+# Or use manual dispatch in GitHub Actions UI
+```
+
+**Duration:** ~1-2 minutes
+
 ## 🚀 Optimization Features
 
 ### Caching Strategy
@@ -145,7 +198,7 @@ Tests run in parallel for multiple packages:
 
 ```yaml
 matrix:
-  package: [api, components, database, errors, utils]
+  package: [api, components, database, auth, utils]
 ```
 
 ## 🔧 Configuration

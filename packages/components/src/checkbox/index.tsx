@@ -98,10 +98,24 @@ const checkboxIconStyle = tva({
 const CheckboxGroup = UICheckbox.Group;
 
 type ICheckboxProps = React.ComponentPropsWithoutRef<typeof UICheckbox> &
-  VariantProps<typeof checkboxStyle>;
+  VariantProps<typeof checkboxStyle> & {
+    accessibilityLabel?: string;
+    accessibilityHint?: string;
+  };
 
 const Checkbox = React.forwardRef<React.ComponentRef<typeof UICheckbox>, ICheckboxProps>(
-  function Checkbox({ className, size = "md", ...props }, ref) {
+  function Checkbox(
+    {
+      className,
+      size = "md",
+      accessibilityLabel,
+      accessibilityHint,
+      isChecked,
+      isDisabled,
+      ...props
+    },
+    ref
+  ) {
     return (
       <UICheckbox
         className={checkboxStyle({
@@ -109,6 +123,15 @@ const Checkbox = React.forwardRef<React.ComponentRef<typeof UICheckbox>, ICheckb
           size,
         })}
         {...props}
+        isChecked={isChecked}
+        isDisabled={isDisabled}
+        accessibilityRole="checkbox"
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
+        accessibilityState={{
+          checked: isChecked ?? false,
+          disabled: isDisabled ?? false,
+        }}
         context={{
           size,
         }}

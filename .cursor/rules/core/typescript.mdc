@@ -1,0 +1,233 @@
+---
+description: TypeScript best practices and type safety guidelines
+globs:
+  - '**/*.ts'
+  - '**/*.tsx'
+alwaysApply: true
+priority: high
+---
+
+# TypeScript Best Practices
+
+## Objective
+Maintain strict type safety and leverage TypeScript's full potential across the codebase.
+
+## Context
+- TypeScript 5.9+ with strict mode
+- Zod for runtime validation
+- oRPC for end-to-end type safety
+- Drizzle for type-safe database queries
+
+## Rules
+
+### Strict Typing
+
+**Never use `any`** - Use `unknown` or proper types:
+
+```typescript
+// ✅ Good
+function parseJSON(input: string): unknown {
+  return JSON.parse(input);
+}
+
+function handleError(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
+// ❌ Avoid
+function parseJSON(input: string): any {
+  return JSON.parse(input);
+}
+```
+
+**Avoid type assertions** - Prefer type guards:
+
+```typescript
+// ✅ Good - Type guard
+function isUser(value: unknown): value is User {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "id" in value &&
+    "email" in value
+  );
+}
+
+if (isUser(data)) {
+  console.log(data.email); // Type-safe
+}
+
+// ❌ Avoid - Type assertion
+const user = data as User;
+```
+
+### Type Inference
+
+Let TypeScript infer when possible, but be explicit at boundaries:
+
+```typescript
+// ✅ Good - Inferred internal types
+const count = 0; // number
+const users = []; // Infer from usage or annotate if empty
+
+// ✅ Good - Explicit at function boundaries
+function getUser(id: string): Promise<User | null> {
+  return db.query.users.findFirst({ where: eq(users.id, id) });
+}
+
+// ❌ Avoid - Redundant type annotations
+const count: number = 0;
+const name: string = "John";
+```
+
+### Schema-Driven Types
+
+Use Zod schemas as the source of truth:
+
+```typescript
+// ✅ Good - Type derived from schema
+import { z } from "zod";
+
+export const createUserSchema = z.object({
+  email: z.string().email(),
+  name: z.string().min(1).max(100),
+  role: z.enum(["user", "admin"]),
+});
+
+export type CreateUserInput = z.infer<typeof createUserSchema>;
+
+// ❌ Avoid - Duplicate type definitions
+interface CreateUserInput {
+  email: string;
+  name: string;
+  role: "user" | "admin";
+}
+
+const createUserSchema = z.object({
+  email: z.string().email(),
+  // ... duplication
+});
+```
+
+### Database Types
+
+Use Drizzle's generated types:
+
+```typescript
+// ✅ Good - Use Drizzle types
+import { users } from "@app/database";
+import type { InferSelectModel, InferInsertModel } from "drizzle-orm";
+
+type User = InferSelectModel<typeof users>;
+type NewUser = InferInsertModel<typeof users>;
+
+// ✅ Good - Use auto-generated Zod schemas
+import { insertUserSchema, selectUserSchema } from "@app/database";
+```
+
+### Generics
+
+Use descriptive generic names for complex types:
+
+```typescript
+// ✅ Good - Descriptive generics
+function useQuery<TData, TError = Error>(
+  queryFn: () => Promise<TData>
+): QueryResult<TData, TError> { }
+
+type ApiResponse<TData, TMeta = DefaultMeta> = {
+  data: TData;
+  meta: TMeta;
+};
+
+// ❌ Avoid - Single letters for complex generics
+function useQuery<T, U>(fn: () => Promise<T>): Result<T, U> { }
+```
+
+### Null Handling
+
+Be explicit about null/undefined:
+
+```typescript
+// ✅ Good - Explicit nullability
+function findUser(id: string): User | null {
+  // Returns null if not found
+}
+
+function getUserEmail(user: User | null): string | undefined {
+  return user?.email;
+}
+
+// ✅ Good - Non-null assertion only when certain
+const element = document.getElementById("root")!; // Only if guaranteed
+
+// ❌ Avoid - Silent failures
+function getEmail(user: User) {
+  return user.email; // Will throw if user is null
+}
+```
+
+### Utility Types
+
+Leverage TypeScript utility types:
+
+```typescript
+// ✅ Good - Utility types
+type UserUpdate = Partial<User>;
+type RequiredUserFields = Required<Pick<User, "email" | "name">>;
+type UserWithoutPassword = Omit<User, "passwordHash">;
+type ReadonlyUser = Readonly<User>;
+
+// For oRPC contracts
+type CreateInput = z.infer<typeof createSchema>;
+type UpdateInput = z.infer<typeof updateSchema>;
+```
+
+### Discriminated Unions
+
+Use discriminated unions for state management:
+
+```typescript
+// ✅ Good - Discriminated union
+type AsyncState<T> =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "success"; data: T }
+  | { status: "error"; error: Error };
+
+function handleState(state: AsyncState<User>) {
+  switch (state.status) {
+    case "success":
+      return state.data.email; // Type-safe access
+    case "error":
+      return state.error.message;
+  }
+}
+```
+
+### Module Augmentation
+
+Extend third-party types properly:
+
+```typescript
+// ✅ Good - Fastify augmentation
+// apps/api/src/@types/fastify.d.ts
+declare module "fastify" {
+  interface FastifyInstance {
+    db: Database;
+    auth: AuthInstance;
+  }
+
+  interface FastifyRequest {
+    user: User | null;
+    session: Session | null;
+  }
+}
+```
+
+## Exceptions
+
+- Test files may use `as` assertions for mocking
+- Third-party library types that require `any`
+- Migration scripts with dynamic data

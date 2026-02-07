@@ -5,7 +5,28 @@ import React, { useState, createContext, useContext, useMemo, forwardRef } from 
 import { View, Dimensions, Platform, type ViewProps } from "react-native";
 import { gridStyle, gridItemStyle } from "./styles";
 const { width: DEVICE_WIDTH } = Dimensions.get("window");
-const GridContext = createContext<any>({});
+
+/** Breakpoint value map type used by gluestack hooks */
+type BreakpointMap = Partial<Record<string, unknown>>;
+
+/** Grid context shape */
+interface GridContextValue {
+  calculatedWidth: number | null;
+  numColumns: number;
+  itemsPerRow: Record<number, number[]>;
+  flexDirection: "row" | "column" | "row-reverse" | "column-reverse";
+  gap: number;
+  columnGap: number;
+}
+
+const GridContext = createContext<GridContextValue>({
+  calculatedWidth: null,
+  numColumns: 12,
+  itemsPerRow: {},
+  flexDirection: "row",
+  gap: 0,
+  columnGap: 0,
+});
 function arrangeChildrenIntoRows({
   childrenArray,
   colSpanArr,
@@ -35,14 +56,14 @@ function arrangeChildrenIntoRows({
   }
   return rowItemsCount;
 }
-function generateResponsiveNumColumns({ gridClass }: { gridClass: string }) {
+function generateResponsiveNumColumns({ gridClass }: { gridClass: string }): BreakpointMap | null {
   const gridClassNamePattern = /\b(?:\w+:)?grid-cols-?\d+\b/g;
   const numColumns = gridClass?.match(gridClassNamePattern);
   if (!numColumns) {
-    return 12;
+    return null;
   }
   const regex = /^(?:(\w+):)?grid-cols-?(\d+)$/;
-  const result: any = {};
+  const result: Record<string, number> = {};
   numColumns.forEach((classname) => {
     const match = classname.match(regex);
     if (match) {
@@ -53,15 +74,20 @@ function generateResponsiveNumColumns({ gridClass }: { gridClass: string }) {
   });
   return result;
 }
-function generateResponsiveColSpans({ gridItemClassName }: { gridItemClassName: string }) {
+
+function generateResponsiveColSpans({
+  gridItemClassName,
+}: {
+  gridItemClassName: string;
+}): BreakpointMap | null {
   const gridClassNamePattern = /\b(?:\w+:)?col-span-?\d+\b/g;
-  const colSpan: any = gridItemClassName?.match(gridClassNamePattern);
-  if (!colSpan) {
-    return 1;
+  const colSpanMatches = gridItemClassName?.match(gridClassNamePattern);
+  if (!colSpanMatches) {
+    return null;
   }
   const regex = /^(?:(\w+):)?col-span-?(\d+)$/;
-  const result: any = {};
-  colSpan.forEach((classname: any) => {
+  const result: Record<string, number> = {};
+  colSpanMatches.forEach((classname) => {
     const match = classname.match(regex);
     if (match) {
       const prefix = match[1] || "default";
@@ -95,33 +121,41 @@ const Grid = forwardRef<React.ComponentRef<typeof View>, IGridProps>(function Gr
 ) {
   const [calculatedWidth, setCalculatedWidth] = useState<number | null>(null);
   const gridClass = _extra?.className;
-  const obj = generateResponsiveNumColumns({ gridClass });
-  const responsiveNumColumns: any = useBreakpointValue(obj);
+  const breakpointMap = generateResponsiveNumColumns({ gridClass });
+  const breakpointValue = useBreakpointValue(breakpointMap ?? { default: 12 });
+  const responsiveNumColumns = (
+    typeof breakpointValue === "number" ? breakpointValue : 12
+  ) as number;
   const itemsPerRow = useMemo(() => {
     // get the colSpan of each child
-    const colSpanArr = React.Children.map(children, (child: any) => {
-      const gridItemClassName = child?.props?._extra?.className;
-      const colSpan2 = getBreakPointValue(
-        generateResponsiveColSpans({ gridItemClassName }),
-        DEVICE_WIDTH
-      );
-      const colSpan = colSpan2 ? colSpan2 : 1;
-      if (colSpan > responsiveNumColumns) {
-        return responsiveNumColumns;
-      }
-      return colSpan;
-    });
+    const colSpanArr =
+      React.Children.map(children, (child) => {
+        const childElement = child as React.ReactElement<{
+          _extra?: { className?: string };
+        }> | null;
+        const gridItemClassName = childElement?.props?._extra?.className ?? "";
+        const colSpanMap = generateResponsiveColSpans({ gridItemClassName });
+        const colSpan2 = colSpanMap ? getBreakPointValue(colSpanMap, DEVICE_WIDTH) : 1;
+        const colSpan = typeof colSpan2 === "number" ? colSpan2 : 1;
+        if (colSpan > responsiveNumColumns) {
+          return responsiveNumColumns;
+        }
+        return colSpan;
+      }) ?? [];
     const childrenArray = React.Children.toArray(children);
     const rowItemsCount = arrangeChildrenIntoRows({
       childrenArray,
-      colSpanArr,
+      colSpanArr: colSpanArr as number[],
       numColumns: responsiveNumColumns,
     });
     return rowItemsCount;
   }, [responsiveNumColumns, children]);
   const childrenWithProps = React.Children.map(children, (child, index) => {
     if (React.isValidElement(child)) {
-      return React.cloneElement(child, { key: index, index: index } as any);
+      return React.cloneElement(child, { key: index, index: index } as {
+        key: number;
+        index: number;
+      });
     }
     return child;
   });
@@ -200,9 +234,9 @@ const GridItem = forwardRef<React.ComponentRef<typeof View>, IGridItemProps>(fun
   const { calculatedWidth, numColumns, itemsPerRow, flexDirection, gap, columnGap } =
     useContext(GridContext);
   const gridItemClass = _extra?.className;
-  const responsiveColSpan = (useBreakpointValue(
-    generateResponsiveColSpans({ gridItemClassName: gridItemClass })
-  ) ?? 1) as number;
+  const colSpanMap = generateResponsiveColSpans({ gridItemClassName: gridItemClass });
+  const colSpanValue = useBreakpointValue(colSpanMap ?? { default: 1 });
+  const responsiveColSpan = (typeof colSpanValue === "number" ? colSpanValue : 1) as number;
   const flexBasisValue = useMemo(() => {
     if (!calculatedWidth || !numColumns || responsiveColSpan <= 0) {
       return "auto";
@@ -211,13 +245,15 @@ const GridItem = forwardRef<React.ComponentRef<typeof View>, IGridItemProps>(fun
       return "auto";
     }
     // Find which row this item is in
-    const row = Object.keys(itemsPerRow).find((key) => {
-      return itemsPerRow[key].includes(props?.index);
+    const rowKey = Object.keys(itemsPerRow).find((key) => {
+      const rowNum = parseInt(key, 10);
+      return itemsPerRow[rowNum]?.includes(props?.index ?? -1);
     });
-    if (!row) {
+    if (!rowKey) {
       return "auto";
     }
-    const rowColsCount = itemsPerRow[row]?.length || 1;
+    const rowNum = parseInt(rowKey, 10);
+    const rowColsCount = itemsPerRow[rowNum]?.length || 1;
     const space = columnGap || gap || 0;
     // Calculate available width accounting for gaps
     const totalGapWidth = space * (rowColsCount - 1);

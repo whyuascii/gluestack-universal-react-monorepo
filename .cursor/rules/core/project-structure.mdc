@@ -1,0 +1,162 @@
+---
+description: Monorepo structure, package organization, and file placement guidelines
+globs:
+  - '**/*'
+alwaysApply: true
+priority: high
+---
+
+# Project Structure
+
+## Objective
+Maintain clear separation of concerns and prevent circular dependencies in the monorepo.
+
+## Context
+- Turborepo + pnpm workspaces monorepo
+- Strict package layering to prevent circular imports
+- ~80-90% code sharing between web and mobile
+
+## Rules
+
+### Package Layers
+
+Packages are organized in layers. **Lower layers cannot import from higher layers.**
+
+```
+Layer 1 (Foundation) - No internal dependencies
+├── typescript-config
+├── eslint-config
+├── tailwind-config
+└── config (constants, RBAC)
+
+Layer 2 (Infrastructure) - Depends on Layer 1 only
+├── database
+├── auth (depends on database, mailer)
+└── mailer
+
+Layer 3 (Features) - Depends on Layers 1-2
+├── components
+├── i18n
+├── analytics
+├── notifications
+└── subscriptions
+
+Layer 4 (Business Logic) - Depends on Layers 1-3
+└── ui (screens, hooks, stores)
+
+Layer 5 (Applications) - Can depend on any package
+├── web
+├── mobile
+├── api
+└── admin
+```
+
+### File Placement by Type
+
+| What You're Building | Location | Example |
+|---------------------|----------|---------|
+| Database tables | `packages/database/src/schema/tables/` | `users.ts` |
+| API contracts | `packages/core-contract/src/contracts/` | `users.ts` |
+| API routes | `apps/api/src/orpc-routes/` | `index.ts` |
+| API actions | `apps/api/src/actions/` | `users.ts` |
+| Query hooks | `packages/ui/src/hooks/queries/` | `useUser.ts` |
+| Mutation hooks | `packages/ui/src/hooks/mutations/` | `useCreateUser.ts` |
+| Screen components | `packages/ui/src/screens/` | `dashboard/Dashboard.tsx` |
+| Form definitions | `packages/ui/src/forms/` | `userForm.ts` |
+| Table definitions | `packages/ui/src/tables/` | `usersTable.ts` |
+| Translations | `packages/i18n/src/locales/` | `en/users.json` |
+| Web pages | `apps/web/src/app/` | `users/page.tsx` |
+| Mobile screens | `apps/mobile/src/app/` | `(app)/users.tsx` |
+| Route constants | `packages/ui/src/constants/` | `routes.ts` |
+| Zustand stores | `packages/ui/src/stores/` | `userStore.ts` |
+| Email templates | `packages/mailer/emails/` | `userWelcome.tsx` |
+
+### Screen Location Rules
+
+**All screens MUST be in `packages/ui/src/screens/`**
+
+Apps only contain thin routing wrappers:
+
+```typescript
+// ✅ Good - Screen in packages/ui
+// packages/ui/src/screens/dashboard/Dashboard.tsx
+export function DashboardScreen({ session, onLogout }) {
+  // Full implementation here
+}
+
+// apps/web/src/app/dashboard/page.tsx (thin wrapper)
+import { DashboardScreen } from "@app/ui";
+export default function DashboardPage() {
+  return <DashboardScreen {...props} />;
+}
+
+// ❌ Avoid - Screen implementation in apps/
+// apps/web/src/app/dashboard/page.tsx
+export default function DashboardPage() {
+  // Don't put business logic here
+}
+```
+
+### Platform-Specific Code
+
+Use file extensions for platform-specific implementations:
+- `.web.tsx` - Web-only
+- `.native.tsx` - Mobile-only (iOS + Android)
+- `.ios.tsx` - iOS-only
+- `.android.tsx` - Android-only
+
+```
+packages/ui/src/screens/home/
+├── Home.tsx       # Mobile implementation (default)
+└── Home.web.tsx   # Web implementation (overrides on web)
+```
+
+For conditional logic within shared files, use `Platform.OS`:
+
+```typescript
+import { Platform } from "react-native";
+
+if (Platform.OS === "web") {
+  // Web-specific code
+}
+
+if (Platform.OS !== "web") {
+  // Mobile-specific code
+}
+```
+
+### Import Paths
+
+Always use package aliases, never relative paths across packages:
+
+```typescript
+// ✅ Good - Package alias
+import { useSession } from "@app/auth/client/native";
+import { PrimaryButton } from "@app/components";
+import { orpc } from "@app/ui/api";
+
+// ❌ Avoid - Relative cross-package imports
+import { useSession } from "../../../packages/auth/src/client/native";
+```
+
+### Barrel Exports
+
+Each package must have clean exports via `index.ts`:
+
+```typescript
+// packages/ui/src/index.ts
+export * from "./screens";
+export * from "./hooks";
+export * from "./stores";
+export * from "./constants/routes";
+
+// packages/ui/src/screens/index.ts
+export { DashboardScreen } from "./dashboard/Dashboard";
+export { SettingsScreen } from "./settings/Settings";
+```
+
+## Exceptions
+
+- `apps/*/src/components/` - App-specific components that won't be shared
+- `apps/api/src/lib/` - API-specific utilities
+- Configuration files at package roots

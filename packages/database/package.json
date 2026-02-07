@@ -9,7 +9,7 @@
     "orm",
     "zod"
   ],
-  "author": "whyuascii <eddy@whyuascii.com>",
+  "author": "",
   "license": "ISC",
   "private": true,
   "main": "./dist/index.js",

@@ -1,9 +1,29 @@
 import posthog from "posthog-js";
-import { Component, type ErrorInfo, type ReactNode } from "react";
+import React, { Component, type ErrorInfo, type ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
-  fallback?: (error: Error, errorInfo: ErrorInfo) => ReactNode;
+  /**
+   * Custom fallback component to render when an error occurs.
+   * For a polished UI, pass GeneralError from @app/components:
+   * @example
+   * ```tsx
+   * import { GeneralError } from "@app/components";
+   *
+   * <ErrorBoundary
+   *   fallback={(error, info, retry) => (
+   *     <GeneralError
+   *       onRetry={retry}
+   *       errorDetails={error.toString()}
+   *       componentStack={info.componentStack}
+   *     />
+   *   )}
+   * >
+   *   {children}
+   * </ErrorBoundary>
+   * ```
+   */
+  fallback?: (error: Error, errorInfo: ErrorInfo, retry: () => void) => ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
 
@@ -61,11 +81,19 @@ export class ErrorBoundary extends Component<Props, State> {
     }
   }
 
+  handleRetry = () => {
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null,
+    });
+  };
+
   render(): ReactNode {
     if (this.state.hasError && this.state.error && this.state.errorInfo) {
       // Render custom fallback if provided
       if (this.props.fallback) {
-        return this.props.fallback(this.state.error, this.state.errorInfo);
+        return this.props.fallback(this.state.error, this.state.errorInfo, this.handleRetry);
       }
 
       // Default error UI
@@ -99,7 +127,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </details>
           )}
           <button
-            onClick={() => window.location.reload()}
+            onClick={this.handleRetry}
             style={{
               marginTop: "20px",
               padding: "10px 20px",
@@ -110,7 +138,7 @@ export class ErrorBoundary extends Component<Props, State> {
               cursor: "pointer",
             }}
           >
-            Reload Page
+            Try Again
           </button>
         </div>
       );

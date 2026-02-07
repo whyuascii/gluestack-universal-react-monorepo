@@ -1,0 +1,257 @@
+---
+description: Git workflow and commit conventions
+globs:
+  - '**/*'
+alwaysApply: true
+priority: medium
+---
+
+# Git Conventions
+
+## Objective
+Maintain clean git history with meaningful commits and proper branching.
+
+## Context
+- Conventional Commits for commit messages
+- Feature branch workflow
+- Protected main branch
+- Pre-commit hooks with lint-staged
+
+## Rules
+
+### Commit Message Format
+
+Follow Conventional Commits:
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer]
+```
+
+**Types:**
+- `feat` - New feature
+- `fix` - Bug fix
+- `docs` - Documentation only
+- `style` - Formatting (no code change)
+- `refactor` - Code change that neither fixes nor adds
+- `perf` - Performance improvement
+- `test` - Adding or updating tests
+- `build` - Build system or dependencies
+- `ci` - CI configuration
+- `chore` - Other changes (tooling, etc.)
+
+```bash
+# ✅ Good commit messages
+git commit -m "feat(auth): add email verification flow"
+git commit -m "fix(api): handle null user in session middleware"
+git commit -m "refactor(ui): extract form validation into custom hook"
+git commit -m "docs: update API authentication guide"
+git commit -m "test(users): add integration tests for user creation"
+
+# ❌ Avoid
+git commit -m "fix stuff"
+git commit -m "WIP"
+git commit -m "Update file"
+git commit -m "asdfasdf"
+```
+
+### Scope Guidelines
+
+Use package/app names as scope:
+
+```bash
+# App scopes
+feat(web): add dashboard page
+feat(mobile): implement push notifications
+feat(api): add rate limiting middleware
+feat(admin): create user management table
+
+# Package scopes
+feat(ui): add notification bell component
+feat(auth): implement password reset
+feat(database): add tenants schema
+feat(i18n): add Spanish translations
+
+# Cross-cutting scopes
+feat(deps): update TanStack Query to v5
+ci: add deployment workflow
+docs: update README setup instructions
+```
+
+### Branch Naming
+
+Use descriptive branch names:
+
+```bash
+# ✅ Good branch names
+feature/user-authentication
+feature/tenant-invitations
+fix/login-redirect-loop
+fix/api-rate-limit-bypass
+refactor/form-validation
+docs/deployment-guide
+chore/upgrade-dependencies
+
+# ❌ Avoid
+feature1
+fix
+my-branch
+test123
+```
+
+### Branching Strategy
+
+```
+main (production)
+  └── develop (staging)
+        ├── feature/user-auth
+        ├── feature/notifications
+        └── fix/login-bug
+```
+
+**Workflow:**
+1. Create feature branch from `develop`
+2. Make commits following conventions
+3. Create PR to `develop`
+4. After review, merge to `develop`
+5. Periodically merge `develop` to `main` for releases
+
+### Pre-commit Hooks
+
+Hooks run automatically via Husky:
+
+```bash
+# .husky/pre-commit runs:
+pnpm lint-staged
+
+# .lintstagedrc.json:
+{
+  "*.{js,jsx,ts,tsx}": ["prettier --write", "eslint --fix --max-warnings=0"],
+  "*.{json,md,yml,yaml,css,html}": ["prettier --write"]
+}
+```
+
+### Atomic Commits
+
+Each commit should be self-contained:
+
+```bash
+# ✅ Good - Atomic commits
+git commit -m "feat(database): add notifications table schema"
+git commit -m "feat(api): add notification CRUD endpoints"
+git commit -m "feat(ui): add notification bell component"
+git commit -m "test(api): add notification endpoint tests"
+
+# ❌ Avoid - Mixed concerns
+git commit -m "add notifications feature with tests and UI"
+```
+
+### Commit Frequency
+
+Commit early and often:
+
+```bash
+# ✅ Good - Frequent, meaningful commits
+git commit -m "feat(ui): add notification list skeleton"
+git commit -m "feat(ui): implement notification item component"
+git commit -m "feat(ui): add mark-as-read functionality"
+git commit -m "feat(ui): add notification badge count"
+
+# ❌ Avoid - Giant commits
+git commit -m "feat: implement entire notification system"
+# (with 50+ files changed)
+```
+
+### PR Guidelines
+
+Create meaningful pull requests:
+
+```markdown
+## Summary
+- Add notification system with real-time updates
+- Implement notification preferences
+- Add email notification delivery
+
+## Changes
+- `packages/database/src/schema/notifications.ts` - Schema
+- `apps/api/src/actions/notifications.ts` - API logic
+- `packages/ui/src/hooks/useNotifications.ts` - React hook
+- `packages/ui/src/components/NotificationBell.tsx` - UI
+
+## Test Plan
+- [ ] Create notification via API
+- [ ] Verify real-time delivery
+- [ ] Test email notifications
+- [ ] Check notification preferences
+
+## Screenshots
+[If UI changes]
+```
+
+### Git Safety
+
+Avoid destructive operations:
+
+```bash
+# ❌ NEVER on shared branches
+git push --force origin main
+git push --force origin develop
+git reset --hard origin/main
+
+# ✅ OK on feature branches (with caution)
+git push --force-with-lease origin feature/my-branch
+
+# ✅ Safe operations
+git revert <commit>  # Creates new commit
+git cherry-pick <commit>
+```
+
+### Handling Merge Conflicts
+
+Resolve conflicts carefully:
+
+```bash
+# 1. Update your branch
+git fetch origin
+git rebase origin/develop  # or merge
+
+# 2. Resolve conflicts
+# Edit files to resolve
+
+# 3. Mark resolved
+git add <resolved-files>
+git rebase --continue  # or commit
+
+# 4. Verify
+pnpm typecheck
+pnpm lint
+pnpm test
+```
+
+### Sensitive Data
+
+Never commit secrets:
+
+```bash
+# ✅ Good - Use .env files
+echo "DATABASE_URL=..." >> .env
+
+# Verify .gitignore includes
+.env
+.env.*
+!.env.example
+
+# ❌ NEVER commit
+.env with real credentials
+API keys in code
+Passwords in config files
+```
+
+## Exceptions
+
+- Hotfixes may go directly to `main`
+- Documentation-only changes may skip CI
+- Dependency updates may be grouped

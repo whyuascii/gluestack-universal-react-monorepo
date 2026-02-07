@@ -1,5 +1,5 @@
-import { ResetPasswordScreen } from "@app/ui";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { ResetPasswordScreen, ROUTES } from "@app/ui";
+import { useRouter, useLocalSearchParams, type Href } from "expo-router";
 import React from "react";
 
 export default function ResetPassword() {
@@ -9,7 +9,7 @@ export default function ResetPassword() {
   // If no token, redirect to login
   React.useEffect(() => {
     if (!token) {
-      router.push("/(auth)/login");
+      router.push(ROUTES.LOGIN.mobile as Href);
     }
   }, [token, router]);
 
@@ -20,7 +20,7 @@ export default function ResetPassword() {
   const handleSuccess = () => {
     // Show success message briefly, then redirect to login
     setTimeout(() => {
-      router.push("/(auth)/login");
+      router.push(ROUTES.LOGIN.mobile as Href);
     }, 2000);
   };
 

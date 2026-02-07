@@ -1,8 +1,14 @@
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "./providers";
 import "./globals.css";
 import StyledJsxRegistry from "./registry";
+import { defaultMetadata } from "@/config/seo";
+import {
+  StructuredData,
+  generateOrganizationSchema,
+  generateWebSiteSchema,
+  generateWebApplicationSchema,
+} from "@/lib/seo";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,11 +20,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "TwigQuest - Build Your Cozy Nest Together",
-  description:
-    "The shared space for couples to grow, plan, and nurture their life together. Simple, warm, and designed for two.",
-};
+// SEO metadata is centralized in config/seo.ts
+export const metadata = defaultMetadata;
 
 export default function RootLayout({
   children,
@@ -26,14 +29,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
+      <head>
+        {/* Structured Data (JSON-LD) for rich search results */}
+        <StructuredData
+          data={[
+            generateOrganizationSchema(),
+            generateWebSiteSchema(),
+            generateWebApplicationSchema({
+              offers: { price: "0", priceCurrency: "USD" },
+            }),
+          ]}
+        />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        style={{ flex: 1 }}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-full`}
       >
         <StyledJsxRegistry>
           <Providers>
-            <div className="h-screen w-screen overflow-hidden overflow-y-scroll">{children}</div>
+            <main className="flex flex-col flex-1 min-h-0">{children}</main>
           </Providers>
         </StyledJsxRegistry>
       </body>

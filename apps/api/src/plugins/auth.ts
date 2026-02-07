@@ -1,5 +1,5 @@
 import { createAuthConfig } from "@app/auth/server";
-import { BadRequestError, UnauthorizedError, ForbiddenError, ConflictError } from "@app/errors";
+import { BadRequestError, UnauthorizedError, ForbiddenError, ConflictError } from "@app/auth";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import fastifyPlugin from "fastify-plugin";
 
@@ -66,6 +66,28 @@ function transformBetterAuthError(code: string, message: string, status: number)
         betterAuthDebug
       );
 
+    case "AUTH_ERROR":
+      // Check if this is a 404 (user not found) for password reset
+      if (status === 404) {
+        throw new BadRequestError(
+          `Better Auth: User not found - ${message}`,
+          {
+            message:
+              "No account found with this email. Please check your email or create a new account.",
+          },
+          betterAuthDebug
+        );
+      }
+      // Fall through to default for other AUTH_ERROR cases
+      throw new BadRequestError(
+        `Better Auth: ${code} - ${message}`,
+        {
+          message: message || "Unable to complete authentication. Please try again.",
+          details: ["If this problem persists, please contact support."],
+        },
+        betterAuthDebug
+      );
+
     default:
       // Generic error - provide a safe message to the user
       throw new BadRequestError(
@@ -97,12 +119,38 @@ export default fastifyPlugin(
 
       // Mount Better Auth handler at /api/auth/*
       fastify.all("/api/auth/*", async (request, reply) => {
+        // Debug: Log origin header to troubleshoot CORS issues
+        const origin = request.headers.origin;
+        fastify.log.info({
+          message: "Auth request received",
+          origin: origin || "NO ORIGIN HEADER",
+          referer: request.headers.referer,
+          url: request.url,
+        });
+
         // Convert Fastify request to Web Request
         const url = new URL(request.url, `${request.protocol}://${request.hostname}`);
 
+        // Properly convert Fastify headers to Headers object
+        const headers = new Headers();
+        for (const [key, value] of Object.entries(request.headers)) {
+          if (value !== undefined) {
+            if (Array.isArray(value)) {
+              value.forEach((v) => headers.append(key, v));
+            } else {
+              headers.set(key, value);
+            }
+          }
+        }
+
+        // Ensure content-type is set for POST requests with body
+        if (request.body && !headers.has("content-type")) {
+          headers.set("content-type", "application/json");
+        }
+
         const webRequest = new Request(url, {
           method: request.method,
-          headers: request.headers as Record<string, string>,
+          headers,
           body:
             request.method !== "GET" && request.method !== "HEAD"
               ? JSON.stringify(request.body)
@@ -131,6 +179,17 @@ export default fastifyPlugin(
             // If body is not JSON, use raw text
             errorData = { message: body || "Authentication error occurred" };
           }
+
+          // Debug logging for auth errors
+          fastify.log.error({
+            message: "Better Auth error response",
+            status: response.status,
+            body: body,
+            errorData: errorData,
+            requestUrl: request.url,
+            requestMethod: request.method,
+            requestBody: request.body,
+          });
 
           // Extract error details
           const code = (errorData.code as string) || "AUTH_ERROR";
@@ -177,5 +236,5 @@ export default fastifyPlugin(
       throw err;
     }
   },
-  { name: "betterAuth", dependencies: ["config", "database"] }
+  { name: "betterAuth", dependencies: ["config"] }
 );

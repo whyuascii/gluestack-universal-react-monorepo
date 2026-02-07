@@ -1,35 +1,72 @@
 "use client";
 
-import { auth, authClient } from "@app/auth";
-import { VStack, HStack, Heading, Text, Link, LinkText, Box, Pressable } from "@app/components";
+import { authClient } from "@app/auth";
 import {
-  AuthCard,
-  FormField,
-  PrimaryButton,
-  SocialAuthButton,
+  Box,
+  Button,
+  ButtonText,
+  ButtonSpinner,
   ForgotPasswordModal,
+  FormField,
+  Heading,
+  HStack,
+  Icon,
+  Link,
+  LinkText,
+  Pressable,
+  SocialAuthButton,
+  Text,
+  VStack,
 } from "@app/components";
-import React, { useState } from "react";
+import { Eye, EyeOff, ArrowRight, Mail, Lock, Sparkles } from "lucide-react-native";
+import React, { useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { ScrollView, KeyboardAvoidingView, Platform, View, type TextInput } from "react-native";
+import { useAccessibilityAnnounce } from "../../hooks/useAccessibilityAnnounce";
 
 interface LoginScreenProps {
   onNavigateToSignup: () => void;
   onLoginSuccess?: () => void;
+  /**
+   * Platform-specific signIn function.
+   * Mobile MUST pass signIn from @app/auth/client/native.
+   * Web can omit to use default authClient.
+   */
+  signIn?: (params: {
+    email: string;
+    password: string;
+  }) => Promise<{ error?: { message?: string } }>;
 }
 
-export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigateToSignup, onLoginSuccess }) => {
-  const { t } = useTranslation(["auth", "validation"]);
+export const LoginScreen: React.FC<LoginScreenProps> = ({
+  onNavigateToSignup,
+  onLoginSuccess,
+  signIn,
+}) => {
+  const performSignIn =
+    signIn || ((params: { email: string; password: string }) => authClient.signIn.email(params));
+  const { t } = useTranslation(["auth", "validation", "common"]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState<{
+    email?: string;
+    password?: string;
+    general?: string;
+  }>({});
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const passwordInputRef = useRef<TextInput>(null);
+  const announce = useAccessibilityAnnounce();
+
+  const handleEmailSubmit = useCallback(() => {
+    passwordInputRef.current?.focus();
+  }, []);
+
   const handleLogin = async () => {
-    // Reset errors
     setErrors({});
 
-    // Validation
     const newErrors: typeof errors = {};
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = t("validation:email.invalid");
@@ -45,26 +82,21 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigateToSignup, on
 
     setIsLoading(true);
     try {
-      const response = await authClient.signIn.email({
-        email,
-        password,
-      });
+      const response = await performSignIn({ email, password });
 
-      // Better Auth returns { data, error } - check for error
       if (response.error) {
         setErrors({
-          general: response.error.message || "Login failed",
+          general: response.error.message || t("auth:login.failed"),
         });
         return;
       }
 
-      // Success - Better Auth automatically sets the session cookie
-      // Call success callback if provided
+      announce(t("auth:login.success"));
       onLoginSuccess?.();
     } catch (error) {
-      setErrors({
-        general: error instanceof Error ? error.message : "Login failed",
-      });
+      const errorMessage = error instanceof Error ? error.message : t("auth:login.failed");
+      setErrors({ general: errorMessage });
+      announce(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -79,140 +111,192 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigateToSignup, on
       });
     } catch (error) {
       setErrors({
-        general: error instanceof Error ? error.message : "Social auth failed",
+        general: error instanceof Error ? error.message : t("auth:social.failed"),
       });
       setIsLoading(false);
     }
   };
 
-  const handleForgotPassword = async (email: string) => {
+  const handleForgotPassword = async (resetEmail: string) => {
     try {
-      await auth.forgetPassword(email, "/reset-password");
+      await authClient.forgetPassword({
+        email: resetEmail,
+        redirectTo: "/reset-password",
+      });
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : "Failed to send reset email");
+      throw new Error(error instanceof Error ? error.message : t("auth:forgotPassword.error"));
     }
   };
 
   return (
-    <Box className="flex-1 justify-center bg-background-0 p-4 relative overflow-hidden">
-      {/* Decorative floating leaves in background */}
-      <Box className="absolute top-20 left-10 opacity-20 animate-float-slow">
-        <svg width="40" height="40" viewBox="0 0 100 100" fill="none">
-          <path d="M50 10C30 10 20 30 20 50C20 70 30 90 50 90C50 70 50 30 50 10Z" fill="#A8CBB7" />
-        </svg>
-      </Box>
-      <Box className="absolute bottom-32 right-16 opacity-15 animate-float">
-        <svg width="35" height="35" viewBox="0 0 100 100" fill="none">
-          <path d="M50 10C30 10 20 30 20 50C20 70 30 90 50 90C50 70 50 30 50 10Z" fill="#FAD97A" />
-        </svg>
-      </Box>
+    <View className="flex-1">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
+      >
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+          className="px-6 md:px-12"
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <Box className="w-full max-w-md self-center py-8">
+            {/* Header */}
+            <VStack space="sm" className="items-center mb-8">
+              <Box className="w-16 h-16 rounded-2xl bg-primary-500 items-center justify-center mb-2 shadow-lg">
+                <Sparkles size={32} color="#ffffff" />
+              </Box>
+              <Heading size="2xl" className="text-typography-900 text-center">
+                {t("auth:login.title")}
+              </Heading>
+              <Text className="text-typography-500 text-center text-base">
+                {t("auth:login.subtitle")}
+              </Text>
+            </VStack>
 
-      <AuthCard>
-        <VStack space="lg">
-          {/* Small decorative illustration at top */}
-          <Box className="items-center mb-2">
-            <svg width="48" height="48" viewBox="0 0 100 100" fill="none">
-              <circle cx="50" cy="50" r="40" fill="#A8CBB7" opacity="0.2" />
-              <path
-                d="M30 60C30 50 40 45 50 45C60 45 70 50 70 60C70 70 60 75 50 75C40 75 30 70 30 60Z"
-                fill="#A8CBB7"
-              />
-            </svg>
-          </Box>
+            {/* Card */}
+            <Box className="bg-background-0 rounded-3xl p-6 md:p-8 shadow-hard-2 border border-outline-100">
+              {/* Error Message */}
+              {errors.general && (
+                <Box className="bg-error-50 border border-error-200 p-4 rounded-2xl mb-6">
+                  <Text className="text-error-700 text-center text-sm font-medium">
+                    {errors.general}
+                  </Text>
+                </Box>
+              )}
 
-          {/* Title & Subtitle */}
-          <VStack space="xs">
-            <Heading size="2xl" className="text-typography-900 text-center">
-              {t("auth:login.title")}
-            </Heading>
-            <Text size="sm" className="text-typography-600 text-center">
-              {t("auth:login.subtitle")}
-            </Text>
-          </VStack>
+              {/* Form Fields */}
+              <VStack space="lg">
+                <FormField
+                  label={t("auth:login.email")}
+                  error={errors.email}
+                  leftIcon={<Mail size={20} className="text-typography-400" />}
+                  input={{
+                    placeholder: t("auth:login.emailPlaceholder"),
+                    value: email,
+                    onChangeText: setEmail,
+                    keyboardType: "email-address",
+                    autoCapitalize: "none",
+                    returnKeyType: "next",
+                    onSubmitEditing: handleEmailSubmit,
+                    blurOnSubmit: false,
+                  }}
+                  testID="login-email-input"
+                />
 
-          {/* Social Auth Buttons */}
-          <VStack space="md">
-            <HStack space="md" className="w-full">
-              <Box className="flex-1">
+                <VStack space="xs">
+                  <FormField
+                    ref={passwordInputRef}
+                    label={t("auth:login.password")}
+                    error={errors.password}
+                    leftIcon={<Lock size={20} className="text-typography-400" />}
+                    rightIcon={
+                      <Pressable
+                        onPress={() => setShowPassword(!showPassword)}
+                        hitSlop={8}
+                        accessibilityLabel={
+                          showPassword ? t("auth:login.hidePassword") : t("auth:login.showPassword")
+                        }
+                        accessibilityRole="button"
+                        className="p-1"
+                      >
+                        {showPassword ? (
+                          <EyeOff size={20} className="text-typography-400" />
+                        ) : (
+                          <Eye size={20} className="text-typography-400" />
+                        )}
+                      </Pressable>
+                    }
+                    input={{
+                      placeholder: t("auth:login.passwordPlaceholder"),
+                      value: password,
+                      onChangeText: setPassword,
+                      secureTextEntry: !showPassword,
+                      returnKeyType: "done",
+                      onSubmitEditing: handleLogin,
+                    }}
+                    testID="login-password-input"
+                  />
+
+                  {/* Forgot Password Link */}
+                  <HStack className="justify-end mt-1">
+                    <Link onPress={() => setIsForgotPasswordOpen(true)}>
+                      <LinkText className="text-sm text-primary-500 font-medium">
+                        {t("auth:login.forgotPassword")}
+                      </LinkText>
+                    </Link>
+                  </HStack>
+                </VStack>
+
+                {/* Submit Button */}
+                <Button
+                  size="xl"
+                  action="primary"
+                  onPress={handleLogin}
+                  isDisabled={isLoading}
+                  className="rounded-2xl h-14 mt-2"
+                  testID="login-submit-button"
+                >
+                  {isLoading ? (
+                    <ButtonSpinner color="white" />
+                  ) : (
+                    <>
+                      <ButtonText className="font-semibold text-base">
+                        {t("auth:login.submit")}
+                      </ButtonText>
+                      <Icon as={ArrowRight} size="md" className="text-white ml-2" />
+                    </>
+                  )}
+                </Button>
+              </VStack>
+
+              {/* Divider */}
+              <HStack className="items-center my-6">
+                <Box className="flex-1 h-px bg-outline-200" />
+                <Text className="text-typography-400 text-xs uppercase px-4 font-medium">
+                  {t("auth:login.orContinueWith")}
+                </Text>
+                <Box className="flex-1 h-px bg-outline-200" />
+              </HStack>
+
+              {/* Social Auth Buttons */}
+              <VStack space="md">
                 <SocialAuthButton
                   provider="google"
                   onPress={() => handleSocialAuth("google")}
-                  isLoading={isLoading}
                   isDisabled={isLoading}
                 />
-              </Box>
-              <Box className="flex-1">
                 <SocialAuthButton
                   provider="github"
                   onPress={() => handleSocialAuth("github")}
-                  isLoading={isLoading}
                   isDisabled={isLoading}
                 />
-              </Box>
-            </HStack>
+              </VStack>
 
-            {/* Divider */}
-            <HStack space="md" className="items-center">
-              <Box className="flex-1 h-px bg-outline-200" />
-              <Text size="sm" className="text-typography-500">
-                {t("auth:social.divider")}
-              </Text>
-              <Box className="flex-1 h-px bg-outline-200" />
-            </HStack>
-          </VStack>
-
-          {/* Email Form */}
-          <VStack space="md">
-            <FormField
-              label={t("auth:login.email")}
-              value={email}
-              onChangeText={setEmail}
-              error={errors.email || errors.general}
-              placeholder={t("auth:login.emailPlaceholder")}
-              keyboardType="email-address"
-            />
-
-            <Box>
-              <FormField
-                label={t("auth:login.password")}
-                value={password}
-                onChangeText={setPassword}
-                error={errors.password}
-                placeholder={t("auth:login.passwordPlaceholder")}
-                secureTextEntry
-              />
-              <Pressable onPress={() => setIsForgotPasswordOpen(true)} className="mt-1">
-                <Text size="sm" className="text-primary-600 font-medium text-right">
-                  {t("auth:login.forgotPassword")}
-                </Text>
-              </Pressable>
+              {/* Sign Up Link */}
+              <HStack className="justify-center items-center mt-8 pt-6 border-t border-outline-100">
+                <Text className="text-typography-500 text-base">{t("auth:login.noAccount")} </Text>
+                <Link onPress={onNavigateToSignup}>
+                  <LinkText className="text-primary-500 font-semibold text-base">
+                    {t("auth:login.signUp")}
+                  </LinkText>
+                </Link>
+              </HStack>
             </Box>
 
-            <PrimaryButton onPress={handleLogin} isLoading={isLoading} isDisabled={isLoading}>
-              {t("auth:login.submit")}
-            </PrimaryButton>
-          </VStack>
-
-          {/* Sign up link */}
-          <Box className="items-center">
-            <Text size="sm" className="text-typography-600">
-              {t("auth:login.noAccount")}{" "}
-              <Link onPress={onNavigateToSignup}>
-                <LinkText className="text-primary-600 font-semibold">
-                  {t("auth:login.signupLink")}
-                </LinkText>
-              </Link>
+            {/* Terms */}
+            <Text className="text-typography-400 text-xs text-center mt-6 px-4">
+              {t("auth:login.termsNotice")}
             </Text>
           </Box>
-        </VStack>
-      </AuthCard>
+        </ScrollView>
 
-      {/* Forgot Password Modal */}
-      <ForgotPasswordModal
-        isOpen={isForgotPasswordOpen}
-        onClose={() => setIsForgotPasswordOpen(false)}
-        onSubmit={handleForgotPassword}
-      />
-    </Box>
+        <ForgotPasswordModal
+          isOpen={isForgotPasswordOpen}
+          onClose={() => setIsForgotPasswordOpen(false)}
+          onSubmit={handleForgotPassword}
+        />
+      </KeyboardAvoidingView>
+    </View>
   );
 };

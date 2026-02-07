@@ -1,0 +1,277 @@
+---
+description: oRPC contract definitions and type-safe API patterns
+globs:
+  - 'packages/core-contract/**/*.ts'
+  - 'apps/api/src/orpc-routes/**/*.ts'
+  - 'packages/ui/src/api/**/*.ts'
+alwaysApply: false
+priority: high
+---
+
+# oRPC Contracts & Type Safety
+
+## Objective
+Maintain end-to-end type safety between API and clients using oRPC contracts.
+
+## Context
+- oRPC for type-safe RPC
+- Zod for schema validation
+- Contracts in `packages/core-contract`
+- Client in `packages/ui/src/api`
+
+## Rules
+
+### Contract Structure
+
+Define contracts with Zod schemas:
+
+```typescript
+// ✅ Good - Contract definition
+// packages/core-contract/src/contracts/users.ts
+import { oc } from "@orpc/contract";
+import { z } from "zod";
+
+// Input schemas
+export const createUserSchema = z.object({
+  email: z.string().email(),
+  name: z.string().min(1).max(100),
+  role: z.enum(["user", "admin"]).default("user"),
+});
+
+export const updateUserSchema = createUserSchema.partial();
+
+export const userIdSchema = z.object({
+  id: z.string().uuid(),
+});
+
+// Output schemas
+export const userSchema = z.object({
+  id: z.string().uuid(),
+  email: z.string(),
+  name: z.string(),
+  role: z.enum(["user", "admin"]),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
+// Contract definition
+export const usersContract = {
+  list: oc
+    .route({ method: "GET", path: "/users" })
+    .input(z.object({
+      limit: z.number().min(1).max(100).default(20),
+      offset: z.number().min(0).default(0),
+      search: z.string().optional(),
+    }))
+    .output(z.object({
+      items: z.array(userSchema),
+      total: z.number(),
+    })),
+
+  getById: oc
+    .route({ method: "GET", path: "/users/:id" })
+    .input(userIdSchema)
+    .output(userSchema),
+
+  create: oc
+    .route({ method: "POST", path: "/users" })
+    .input(createUserSchema)
+    .output(userSchema)
+    .errors({
+      CONFLICT: z.object({
+        message: z.literal("Email already exists"),
+      }),
+    }),
+
+  update: oc
+    .route({ method: "PATCH", path: "/users/:id" })
+    .input(userIdSchema.merge(updateUserSchema))
+    .output(userSchema),
+
+  delete: oc
+    .route({ method: "DELETE", path: "/users/:id" })
+    .input(userIdSchema)
+    .output(z.object({ success: z.literal(true) })),
+};
+```
+
+### Schema Reuse
+
+Derive types from schemas:
+
+```typescript
+// ✅ Good - Type derivation
+// packages/core-contract/src/contracts/users.ts
+import { z } from "zod";
+
+export const createUserSchema = z.object({
+  email: z.string().email(),
+  name: z.string(),
+});
+
+// Derived types
+export type CreateUserInput = z.infer<typeof createUserSchema>;
+export type User = z.infer<typeof userSchema>;
+
+// ❌ Avoid - Duplicate type definitions
+interface CreateUserInput {
+  email: string;
+  name: string;
+}
+// Schema defined separately with same shape
+```
+
+### Error Types
+
+Define typed errors in contracts:
+
+```typescript
+// ✅ Good - Typed errors
+export const tenantsContract = {
+  join: oc
+    .route({ method: "POST", path: "/tenants/:id/join" })
+    .input(z.object({ inviteCode: z.string() }))
+    .output(tenantSchema)
+    .errors({
+      NOT_FOUND: z.object({
+        message: z.literal("errors.invite.notFound"),
+      }),
+      CONFLICT: z.object({
+        message: z.literal("errors.tenant.alreadyMember"),
+      }),
+      GONE: z.object({
+        message: z.literal("errors.invite.expired"),
+      }),
+    }),
+};
+```
+
+### Client Usage
+
+Use oRPC client with TanStack Query:
+
+```typescript
+// ✅ Good - Query hook
+// packages/ui/src/hooks/queries/useUsers.ts
+import { useQuery } from "@tanstack/react-query";
+import { orpc } from "@app/ui/api";
+
+export function useUsers(params: { limit?: number; search?: string } = {}) {
+  return useQuery(
+    orpc.users.list.queryOptions({
+      limit: params.limit ?? 20,
+      offset: 0,
+      search: params.search,
+    })
+  );
+}
+
+// ✅ Good - Mutation hook
+// packages/ui/src/hooks/mutations/useCreateUser.ts
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { orpc } from "@app/ui/api";
+
+export function useCreateUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    ...orpc.users.create.mutationOptions(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+    onError: (error) => {
+      if (error.code === "CONFLICT") {
+        toast.error(t("errors.emailExists"));
+      }
+    },
+  });
+}
+```
+
+### Pagination Pattern
+
+Use consistent pagination:
+
+```typescript
+// ✅ Good - Pagination schema
+export const paginationSchema = z.object({
+  limit: z.number().min(1).max(100).default(20),
+  offset: z.number().min(0).default(0),
+});
+
+export const paginatedResponseSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>
+  z.object({
+    items: z.array(itemSchema),
+    total: z.number(),
+    hasMore: z.boolean(),
+  });
+
+// Usage in contract
+export const usersContract = {
+  list: oc
+    .route({ method: "GET", path: "/users" })
+    .input(paginationSchema.extend({
+      search: z.string().optional(),
+    }))
+    .output(paginatedResponseSchema(userSchema)),
+};
+```
+
+### Nested Resources
+
+Handle nested routes properly:
+
+```typescript
+// ✅ Good - Nested resources
+export const tenantMembersContract = {
+  list: oc
+    .route({ method: "GET", path: "/tenants/:tenantId/members" })
+    .input(z.object({
+      tenantId: z.string().uuid(),
+    }).merge(paginationSchema))
+    .output(paginatedResponseSchema(memberSchema)),
+
+  invite: oc
+    .route({ method: "POST", path: "/tenants/:tenantId/members/invite" })
+    .input(z.object({
+      tenantId: z.string().uuid(),
+      email: z.string().email(),
+      role: z.enum(["member", "admin"]),
+    }))
+    .output(inviteSchema),
+};
+```
+
+### Contract Organization
+
+Organize contracts by domain:
+
+```
+packages/core-contract/src/
+├── index.ts              # Main export
+└── contracts/
+    ├── auth.ts           # Auth-related
+    ├── users.ts          # User management
+    ├── tenants.ts        # Multi-tenancy
+    ├── notifications.ts  # Notifications
+    └── subscriptions.ts  # Payments
+```
+
+```typescript
+// packages/core-contract/src/index.ts
+export * from "./contracts/auth";
+export * from "./contracts/users";
+export * from "./contracts/tenants";
+
+export const contract = {
+  auth: authContract,
+  users: usersContract,
+  tenants: tenantsContract,
+};
+```
+
+## Exceptions
+
+- Webhook contracts may have looser typing
+- File upload endpoints
+- Legacy REST endpoints

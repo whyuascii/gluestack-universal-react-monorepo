@@ -14,6 +14,7 @@ export * from "./center";
 export * from "./checkbox";
 export * from "./divider";
 export * from "./drawer";
+export * from "./EmailChipInput";
 export * from "./fab";
 export * from "./flat-list";
 export * from "./form-control";
@@ -46,7 +47,7 @@ export * from "./slider";
 export * from "./spinner";
 export * from "./status-bar";
 export * from "./switch";
-// export * from "./table";
+export * from "./table";
 export * from "./text";
 export * from "./textarea";
 export * from "./toast";
@@ -56,11 +57,16 @@ export * from "./virtualized-list";
 export * from "./vstack";
 
 // Custom composite components
-export * from "./ActivityItem";
 export * from "./AppHeader";
 export * from "./AuthCard";
+export * from "./ErrorStates";
 export * from "./ForgotPasswordModal";
 export * from "./FormField";
+// Mobile-only components - import from @app/components/native instead
+// export * from "./HapticTab";
+// export * from "./OfflineIndicator";
+// export * from "./PermissionRequester";
 export * from "./PrimaryButton";
 export * from "./SocialAuthButton";
 export * from "./StatCard";
+export * from "./Typography";

@@ -1,0 +1,33 @@
+{
+  "title": "My Todos",
+  "loading": "Loading todos...",
+  "placeholder": "What needs to be done?",
+  "newTodoLabel": "New todo title",
+  "addButton": "Add todo",
+  "created": "Todo created",
+  "deleted": "Todo deleted",
+  "markedComplete": "Marked as complete",
+  "markedActive": "Marked as active",
+  "summary": "{{active}} active, {{completed}} completed",
+  "filter": {
+    "all": "All",
+    "active": "Active",
+    "completed": "Completed"
+  },
+  "empty": {
+    "all": "No todos yet. Add one above!",
+    "active": "No active todos",
+    "completed": "No completed todos"
+  },
+  "stats": {
+    "itemsLeft": "{{count}} item left",
+    "itemsLeft_plural": "{{count}} items left",
+    "completed": "{{count}} completed"
+  },
+  "error": {
+    "load": "Failed to load todos",
+    "create": "Failed to create todo",
+    "toggle": "Failed to update todo",
+    "delete": "Failed to delete todo"
+  }
+}

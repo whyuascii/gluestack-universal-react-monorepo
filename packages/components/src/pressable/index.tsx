@@ -4,7 +4,12 @@ import { tva } from "@gluestack-ui/utils/nativewind-utils";
 import { withStyleContext } from "@gluestack-ui/utils/nativewind-utils";
 import type { VariantProps } from "@gluestack-ui/utils/nativewind-utils";
 import React from "react";
-import { Pressable as RNPressable } from "react-native";
+import {
+  Pressable as RNPressable,
+  Platform,
+  type AccessibilityRole,
+  type AccessibilityState,
+} from "react-native";
 
 const UIPressable = createPressable({
   Root: withStyleContext(RNPressable),
@@ -15,13 +20,54 @@ const pressableStyle = tva({
 });
 
 type IPressableProps = Omit<React.ComponentProps<typeof UIPressable>, "context"> &
-  VariantProps<typeof pressableStyle>;
+  VariantProps<typeof pressableStyle> & {
+    accessibilityLabel?: string;
+    accessibilityHint?: string;
+    accessibilityRole?: AccessibilityRole;
+    accessibilityState?: AccessibilityState;
+  };
+
 const Pressable = React.forwardRef<React.ComponentRef<typeof UIPressable>, IPressableProps>(
-  function Pressable({ className, ...props }, ref) {
+  function Pressable(
+    {
+      className,
+      accessibilityLabel,
+      accessibilityHint,
+      accessibilityRole = "button",
+      accessibilityState,
+      disabled,
+      onPress,
+      ...props
+    },
+    ref
+  ) {
+    // Handle keyboard events for web accessibility
+    const handleKeyDown = React.useCallback(
+      (e: React.KeyboardEvent) => {
+        if (Platform.OS === "web" && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault();
+          if (!disabled && onPress) {
+            onPress(e as unknown as Parameters<NonNullable<typeof onPress>>[0]);
+          }
+        }
+      },
+      [disabled, onPress]
+    );
+
     return (
       <UIPressable
         {...props}
         ref={ref}
+        disabled={disabled}
+        onPress={onPress}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
+        accessibilityRole={accessibilityRole}
+        accessibilityState={{
+          disabled: disabled ?? false,
+          ...accessibilityState,
+        }}
+        {...(Platform.OS === "web" && { onKeyDown: handleKeyDown })}
         className={pressableStyle({
           class: className,
         })}

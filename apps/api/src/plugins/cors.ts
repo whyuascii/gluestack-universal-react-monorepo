@@ -15,8 +15,8 @@ export default fastifyPlugin(
         }
 
         // In production, check against allowed origins
-        if (process.env.NODE_ENV === "production") {
-          const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
+        if (fastify.config.NODE_ENV === "production") {
+          const allowedOrigins = fastify.config.ALLOWED_ORIGINS?.split(",") || [];
           if (allowedOrigins.includes(origin)) {
             callback(null, true);
           } else {
@@ -28,8 +28,17 @@ export default fastifyPlugin(
         }
       },
       credentials: true,
-      allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
-      methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+      allowedHeaders: [
+        "Origin",
+        "X-Requested-With",
+        "Content-Type",
+        "Accept",
+        "Authorization",
+        "x-trace-id",
+        "x-posthog-distinct-id",
+        "x-posthog-session-id",
+      ],
+      methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     });
   },
   { name: "cors", dependencies: ["config"] }

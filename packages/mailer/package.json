@@ -1,0 +1,63 @@
+{
+  "name": "@app/mailer",
+  "version": "0.0.0",
+  "description": "Transactional email service using Resend and React Email",
+  "keywords": [
+    "email",
+    "resend",
+    "react-email",
+    "transactional"
+  ],
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./templates": {
+      "types": "./dist/templates/index.d.ts",
+      "default": "./dist/templates/index.js"
+    }
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "preview": "email dev --dir src/templates",
+    "dev": "swc src -d dist --strip-leading-paths --copy-files --watch",
+    "build": "pnpm run build:swc && pnpm run build:types",
+    "build:swc": "swc src -d dist --strip-leading-paths --copy-files",
+    "build:types": "tsc --emitDeclarationOnly --declaration --outDir dist",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "resend": "^4.0.1",
+    "@react-email/components": "^1.0.6",
+    "react": "^19.1.0",
+    "react-email": "^5.2.5"
+  },
+  "devDependencies": {
+    "@swc/cli": "^0.6.0",
+    "@swc/core": "^1.10.6",
+    "@types/node": "^24.10.2",
+    "@types/react": "^19.1.0",
+    "eslint": "^9.18.0",
+    "@app/eslint-config": "workspace:*",
+    "typescript": "^5.9.3",
+    "@app/typescript-config": "workspace:*"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

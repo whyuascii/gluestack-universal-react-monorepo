@@ -1,8 +1,15 @@
+import { Platform } from "react-native";
+
 /**
  * RevenueCat Configuration
  *
  * Centralized configuration for RevenueCat SDK
  * All values are loaded from environment variables
+ *
+ * RevenueCat requires SEPARATE API keys for each platform:
+ * - iOS: Apple App Store (public Apple API key from RevenueCat dashboard)
+ * - Android: Google Play Store (public Google API key from RevenueCat dashboard)
+ * - Web: Stripe/Web payments (public web API key from RevenueCat dashboard)
  */
 
 // Helper to get environment variable (works in both Node.js and React Native/Next.js)
@@ -28,6 +35,38 @@ function getEnvVar(key: string, fallback?: string): string {
 }
 
 /**
+ * Get the platform-specific RevenueCat API key
+ *
+ * RevenueCat requires different API keys for each platform because they
+ * represent different "projects" in the RevenueCat dashboard connected
+ * to different app stores.
+ *
+ * Environment variables:
+ * - iOS: EXPO_PUBLIC_REVENUECAT_API_KEY_IOS
+ * - Android: EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID
+ * - Web: NEXT_PUBLIC_REVENUECAT_API_KEY
+ */
+export function getPlatformApiKey(): string {
+  // Web platform
+  if (Platform.OS === "web") {
+    return getEnvVar("REVENUECAT_API_KEY");
+  }
+
+  // iOS platform
+  if (Platform.OS === "ios") {
+    return getEnvVar("REVENUECAT_API_KEY_IOS");
+  }
+
+  // Android platform
+  if (Platform.OS === "android") {
+    return getEnvVar("REVENUECAT_API_KEY_ANDROID");
+  }
+
+  // Fallback for unknown platforms (should not happen)
+  throw new Error(`Unsupported platform for RevenueCat: ${Platform.OS}`);
+}
+
+/**
  * RevenueCat configuration singleton
  * Lazily evaluated to prevent module-load-time errors when env vars aren't available
  */
@@ -36,25 +75,30 @@ let revenueCatConfig: ReturnType<typeof createRevenueCatConfig> | null = null;
 function createRevenueCatConfig() {
   return {
     /**
-     * RevenueCat API Key
-     * Set via NEXT_PUBLIC_REVENUECAT_API_KEY (web) or EXPO_PUBLIC_REVENUECAT_API_KEY (mobile)
-     * Use test_* keys for testing, live keys for production
+     * RevenueCat API Key (platform-specific)
+     *
+     * Each platform requires its own API key from RevenueCat:
+     * - iOS: EXPO_PUBLIC_REVENUECAT_API_KEY_IOS (Apple App Store key)
+     * - Android: EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID (Google Play key)
+     * - Web: NEXT_PUBLIC_REVENUECAT_API_KEY (Web/Stripe key)
      */
-    apiKey: getEnvVar("REVENUECAT_API_KEY"),
+    get apiKey() {
+      return getPlatformApiKey();
+    },
 
     /**
      * Entitlement identifiers
      * These must match what's configured in RevenueCat dashboard
-     * Set via NEXT_PUBLIC_REVENUECAT_ENTITLEMENT_PREMIUM (web) or EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_PREMIUM (mobile)
+     * Entitlements are shared across all platforms in RevenueCat
      */
     entitlements: {
-      premium: getEnvVar("REVENUECAT_ENTITLEMENT_PREMIUM", "Premium"),
+      premium: getEnvVar("REVENUECAT_ENTITLEMENT_PREMIUM", "premium"),
     },
 
     /**
      * Product identifiers
      * These must match what's configured in App Store Connect / Play Console
-     * Set via NEXT_PUBLIC_REVENUECAT_PRODUCT_MONTHLY/YEARLY (web) or EXPO_PUBLIC_REVENUECAT_PRODUCT_MONTHLY/YEARLY (mobile)
+     * Note: Product IDs may differ between iOS and Android stores
      */
     products: {
       monthly: getEnvVar("REVENUECAT_PRODUCT_MONTHLY", "monthly"),
@@ -64,7 +108,7 @@ function createRevenueCatConfig() {
     /**
      * Offering identifier
      * Default offering to display in paywalls
-     * Set via NEXT_PUBLIC_REVENUECAT_DEFAULT_OFFERING (web) or EXPO_PUBLIC_REVENUECAT_DEFAULT_OFFERING (mobile)
+     * Offerings are configured in RevenueCat dashboard and shared across platforms
      */
     defaultOffering: getEnvVar("REVENUECAT_DEFAULT_OFFERING", "default"),
   } as const;

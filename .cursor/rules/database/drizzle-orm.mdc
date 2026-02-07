@@ -1,0 +1,310 @@
+---
+description: Drizzle ORM patterns for database schema and queries
+globs:
+  - 'packages/database/**/*.ts'
+  - 'apps/api/src/actions/**/*.ts'
+alwaysApply: false
+priority: high
+---
+
+# Drizzle ORM Patterns
+
+## Objective
+Maintain consistent, type-safe database operations with Drizzle ORM.
+
+## Context
+- Drizzle ORM 0.44 with PostgreSQL
+- Schema-first development
+- Auto-generated Zod validators
+- Migrations via Drizzle Kit
+
+## Rules
+
+### Schema Definition
+
+Define tables with proper types and constraints:
+
+```typescript
+// ✅ Good - Complete table definition
+// packages/database/src/schema/tables/users.ts
+import { pgTable, uuid, varchar, boolean, timestamp, index } from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
+
+export const users = pgTable(
+  "users",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    email: varchar("email", { length: 255 }).notNull().unique(),
+    name: varchar("name", { length: 100 }).notNull(),
+    emailVerified: boolean("email_verified").default(false).notNull(),
+    role: varchar("role", { length: 20 }).default("user").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => ({
+    emailIdx: index("users_email_idx").on(table.email),
+    roleIdx: index("users_role_idx").on(table.role),
+  })
+);
+
+// Auto-generated Zod schemas
+export const insertUserSchema = createInsertSchema(users, {
+  email: z.string().email(),
+  name: z.string().min(1).max(100),
+});
+
+export const selectUserSchema = createSelectSchema(users);
+
+// Derived types
+export type User = z.infer<typeof selectUserSchema>;
+export type NewUser = z.infer<typeof insertUserSchema>;
+```
+
+### Relations
+
+Define relations for query building:
+
+```typescript
+// ✅ Good - Relations definition
+// packages/database/src/schema/tables/relations.ts
+import { relations } from "drizzle-orm";
+import { users } from "./users";
+import { tenants, tenantMembers } from "./tenants";
+
+export const usersRelations = relations(users, ({ many }) => ({
+  memberships: many(tenantMembers),
+  ownedTenants: many(tenants),
+}));
+
+export const tenantsRelations = relations(tenants, ({ one, many }) => ({
+  owner: one(users, {
+    fields: [tenants.ownerId],
+    references: [users.id],
+  }),
+  members: many(tenantMembers),
+}));
+
+export const tenantMembersRelations = relations(tenantMembers, ({ one }) => ({
+  user: one(users, {
+    fields: [tenantMembers.userId],
+    references: [users.id],
+  }),
+  tenant: one(tenants, {
+    fields: [tenantMembers.tenantId],
+    references: [tenants.id],
+  }),
+}));
+```
+
+### Query Patterns
+
+Use type-safe query methods:
+
+```typescript
+// ✅ Good - Type-safe queries
+// apps/api/src/actions/users.ts
+import { db } from "@app/database";
+import { users } from "@app/database/schema";
+import { eq, like, and, desc, sql } from "drizzle-orm";
+
+export class UsersActions {
+  // Simple query
+  async getById(id: string) {
+    return db.query.users.findFirst({
+      where: eq(users.id, id),
+    });
+  }
+
+  // Query with relations
+  async getWithMemberships(id: string) {
+    return db.query.users.findFirst({
+      where: eq(users.id, id),
+      with: {
+        memberships: {
+          with: {
+            tenant: true,
+          },
+        },
+      },
+    });
+  }
+
+  // List with filtering and pagination
+  async list({ limit, offset, search }: ListParams) {
+    const whereClause = search
+      ? like(users.email, `%${search}%`)
+      : undefined;
+
+    const [items, countResult] = await Promise.all([
+      db.query.users.findMany({
+        where: whereClause,
+        limit,
+        offset,
+        orderBy: [desc(users.createdAt)],
+      }),
+      db.select({ count: sql<number>`count(*)` })
+        .from(users)
+        .where(whereClause),
+    ]);
+
+    return {
+      items,
+      total: countResult[0].count,
+    };
+  }
+}
+```
+
+### Insert/Update Patterns
+
+Use returning for immediate access to created data:
+
+```typescript
+// ✅ Good - Insert with returning
+async create(input: NewUser) {
+  const [user] = await db
+    .insert(users)
+    .values(input)
+    .returning();
+
+  return user;
+}
+
+// ✅ Good - Update with returning
+async update(id: string, data: Partial<User>) {
+  const [user] = await db
+    .update(users)
+    .set(data)
+    .where(eq(users.id, id))
+    .returning();
+
+  return user;
+}
+
+// ✅ Good - Upsert (insert or update)
+async upsert(email: string, data: NewUser) {
+  const [user] = await db
+    .insert(users)
+    .values(data)
+    .onConflictDoUpdate({
+      target: users.email,
+      set: { name: data.name, updatedAt: new Date() },
+    })
+    .returning();
+
+  return user;
+}
+```
+
+### Transactions
+
+Use transactions for multi-step operations:
+
+```typescript
+// ✅ Good - Transaction usage
+async createTenantWithOwner(input: CreateTenantInput, ownerId: string) {
+  return db.transaction(async (tx) => {
+    // Create tenant
+    const [tenant] = await tx
+      .insert(tenants)
+      .values({
+        name: input.name,
+        ownerId,
+      })
+      .returning();
+
+    // Add owner as member
+    await tx.insert(tenantMembers).values({
+      tenantId: tenant.id,
+      userId: ownerId,
+      role: "owner",
+    });
+
+    return tenant;
+  });
+}
+
+// ✅ Good - Transaction with rollback
+async transferOwnership(tenantId: string, newOwnerId: string) {
+  return db.transaction(async (tx) => {
+    const tenant = await tx.query.tenants.findFirst({
+      where: eq(tenants.id, tenantId),
+    });
+
+    if (!tenant) {
+      throw new Error("Tenant not found");
+      // Transaction automatically rolls back on throw
+    }
+
+    await tx
+      .update(tenants)
+      .set({ ownerId: newOwnerId })
+      .where(eq(tenants.id, tenantId));
+
+    await tx
+      .update(tenantMembers)
+      .set({ role: "owner" })
+      .where(
+        and(
+          eq(tenantMembers.tenantId, tenantId),
+          eq(tenantMembers.userId, newOwnerId)
+        )
+      );
+  });
+}
+```
+
+### Soft Deletes
+
+Implement soft deletes when needed:
+
+```typescript
+// ✅ Good - Soft delete pattern
+export const users = pgTable("users", {
+  // ... other columns
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
+});
+
+// Soft delete
+async softDelete(id: string) {
+  await db
+    .update(users)
+    .set({ deletedAt: new Date() })
+    .where(eq(users.id, id));
+}
+
+// Query excluding deleted
+async listActive() {
+  return db.query.users.findMany({
+    where: isNull(users.deletedAt),
+  });
+}
+```
+
+### Migration Workflow
+
+Follow the migration workflow:
+
+```bash
+# 1. Modify schema in packages/database/src/schema/tables/*.ts
+
+# 2. Generate migration
+pnpm --filter database generate
+
+# 3. Review migration in packages/database/drizzle/
+
+# 4. Apply migration
+pnpm --filter database db:migrate
+```
+
+## Exceptions
+
+- Raw SQL for complex analytics queries
+- Bulk operations may use raw SQL for performance
+- Database-specific features not in Drizzle

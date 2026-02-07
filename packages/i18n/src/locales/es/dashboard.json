@@ -1,0 +1,74 @@
+{
+  "title": "Panel",
+  "loading": "Cargando panel...",
+  "greeting": "Bienvenido, {{name}}!",
+  "subtitle": "Esto es lo que esta pasando en tu espacio de trabajo",
+  "welcome": {
+    "title": "Bienvenido a tu panel",
+    "subtitle": "Aqui tienes un resumen de tu espacio de trabajo e integraciones"
+  },
+  "integrations": {
+    "title": "Integraciones",
+    "subtitle": "Servicios conectados y su estado",
+    "posthog": {
+      "title": "Analiticas",
+      "description": "Analiticas de producto PostHog",
+      "action": "Rastrear Evento",
+      "tracking": "Rastreando...",
+      "tracked": "Evento rastreado!",
+      "status": {
+        "connected": "Conectado",
+        "notConfigured": "No configurado"
+      }
+    },
+    "resend": {
+      "title": "Email",
+      "description": "Servicio de email Resend",
+      "action": "Enviar Email de Prueba",
+      "sending": "Enviando...",
+      "sent": "Email enviado!",
+      "status": {
+        "connected": "Conectado",
+        "notConfigured": "No configurado"
+      }
+    },
+    "notifications": {
+      "title": "Notificaciones en Tiempo Real",
+      "description": "Notificaciones Novu en tiempo real",
+      "action": "Enviar Prueba",
+      "sending": "Enviando...",
+      "sent": "Enviado!",
+      "status": {
+        "connected": "Conectado",
+        "notConfigured": "No configurado"
+      }
+    },
+    "revenuecat": {
+      "title": "Suscripciones",
+      "description": "Gestion de suscripciones RevenueCat",
+      "action": "Probar Integracion",
+      "testing": "Probando...",
+      "configured": "Configurado!",
+      "status": {
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "notConfigured": "No configurado"
+      }
+    }
+  },
+  "components": {
+    "title": "Muestra de Componentes",
+    "subtitle": "Ejemplos de componentes UI compartidos",
+    "buttons": "Botones",
+    "inputs": "Campos",
+    "cards": "Tarjetas",
+    "alerts": "Alertas"
+  },
+  "stats": {
+    "title": "Estadisticas Rapidas",
+    "members": "Miembros",
+    "groups": "Grupos",
+    "activeUsers": "Usuarios Activos",
+    "events": "Eventos Rastreados"
+  }
+}

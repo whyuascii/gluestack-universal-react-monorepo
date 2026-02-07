@@ -2,367 +2,311 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
+Cross-platform monorepo for web and mobile apps with ~80-90% code sharing.
 
-This is a cross-platform monorepo template for building web and mobile applications with maximum code sharing (~80-90%). It's a production-ready foundation with authentication, database, analytics, subscriptions, and internationalization already configured.
+## Tech Stack
 
-**Tech Stack:**
-
-- **Monorepo:** Turborepo + pnpm workspaces
-- **Web:** Next.js 15 (App Router) + React 19
-- **Mobile:** Expo 54 + React Native 0.81
-- **API:** Fastify 5 with Zod validation
+- **Monorepo:** Turborepo + pnpm
+- **Web:** Next.js 15 + React 19
+- **Mobile:** Expo 54 + React Native
+- **API:** Fastify 5 + oRPC
 - **Database:** Drizzle ORM + PostgreSQL
-- **Auth:** Better Auth (email/password + OAuth)
-- **Styling:** Tailwind CSS + NativeWind 4 + Gluestack UI v3
-- **Analytics:** PostHog (web, mobile, API)
-- **Subscriptions:** RevenueCat
-- **i18n:** i18next (English + Spanish)
+- **Auth:** Better Auth
+- **Styling:** Tailwind + NativeWind + Gluestack UI
+- **Subscriptions:** Polar (web) + RevenueCat (mobile)
+- **Notifications:** Novu (in-app/email) + Expo Push
+- **Ads:** Google AdMob (mobile) + AdSense (web)
+- **i18n:** i18next (en + es)
 
 ## Essential Commands
 
-### Development
-
 ```bash
-# Start all apps (web, mobile, api)
-pnpm dev
+# Development
+pnpm dev                          # Start all apps
+pnpm --filter api dev             # API at :3030
+pnpm --filter web dev             # Web at :3000
+pnpm --filter mobile dev          # Mobile at :8081
+pnpm --filter admin dev           # Admin at :3001
 
-# Start specific app
-pnpm --filter web dev      # Web at http://localhost:3000
-pnpm --filter mobile dev   # Mobile at http://localhost:8081
-pnpm --filter api dev      # API at http://localhost:3030
+# Quality
+pnpm typecheck                    # Type check all
+pnpm lint                         # Lint all
+pnpm test                         # Test all
+pnpm --filter <package> test      # Test single package
 
-# Mobile platform-specific
-cd apps/mobile
-pnpm ios                   # iOS simulator
-pnpm android               # Android emulator
+# Database
+pnpm --filter database generate   # Generate migration after schema change
+pnpm --filter database db:migrate # Apply migrations
+pnpm --filter database db:studio  # Open Drizzle Studio
+
+# Novu Workflows (local testing)
+# Terminal 1: pnpm --filter api dev
+# Terminal 2: npx novu@latest dev --port 3030 --route /api/novu
+# Open http://localhost:2022 to test workflows
 ```
 
-### Testing
-
-```bash
-# Run all tests
-pnpm test
-
-# Run tests for specific package
-pnpm --filter api test
-pnpm --filter components test
-
-# Run with coverage
-pnpm --filter api coverage
-
-# Test-specific commands
-pnpm --filter api test:unit
-```
-
-### Database
-
-```bash
-# Run migrations
-pnpm --filter database db:migrate
-
-# Open Drizzle Studio (database GUI)
-pnpm --filter database db:studio
-
-# Generate new migration from schema changes
-pnpm --filter database generate
-
-# Seed database
-pnpm --filter database db:seed
-```
-
-### Type Checking & Linting
-
-```bash
-# Type check all packages
-pnpm typecheck
-
-# Lint all packages
-pnpm lint
-
-# Lint specific package
-pnpm --filter web lint
-pnpm --filter api lint:fix
-```
-
-### Building
-
-```bash
-# Build all apps
-pnpm build
-
-# Build specific app
-pnpm --filter web build
-pnpm --filter api build
-pnpm --filter mobile build  # expo export
-
-# Clean build artifacts
-pnpm clean
-```
-
-### API-Specific
-
-```bash
-# Generate Swagger/OpenAPI docs
-pnpm --filter api swagger
-```
-
-## High-Level Architecture
-
-### Monorepo Structure
-
-The repository follows a **strict separation of concerns** with three types of top-level directories:
-
-1. **`apps/`** - Deployable applications (web, mobile, api)
-2. **`packages/`** - Shared libraries used by apps
-3. **`docs/`** - Comprehensive documentation
-
-### Package Dependency Philosophy
-
-Packages are organized in **layers** to prevent circular dependencies:
+## Architecture
 
 ```
-Layer 1 (Foundation):
-  - typescript-config, eslint-config, tailwind-config
-  - errors, service-contracts, utils
+apps/
+├── api/          # Fastify API (oRPC routes)
+├── web/          # Next.js (thin wrappers only)
+├── mobile/       # Expo (thin wrappers only)
+└── admin/        # Internal admin portal
 
-Layer 2 (Infrastructure):
-  - database (depends on: nothing from this repo)
-  - auth (depends on: database)
-
-Layer 3 (Features):
-  - components (depends on: tailwind-config)
-  - i18n (depends on: nothing from this repo)
-  - analytics (depends on: nothing from this repo)
-
-Layer 4 (Business Logic):
-  - ui (depends on: components, i18n, analytics, service-contracts)
-
-Layer 5 (Applications):
-  - web, mobile, api (can depend on any package)
+packages/
+├── ui/           # ALL screens, hooks, stores (shared)
+├── components/   # UI primitives (cross-platform)
+├── core-contract/# oRPC API contracts
+├── database/     # Drizzle schemas
+├── auth/         # Better Auth config + clients
+├── i18n/         # Translations
+├── config/       # RBAC, subscription tiers, constants
+├── analytics/    # PostHog + OTEL logging
+├── mailer/       # Resend emails
+├── notifications/# Novu workflows + push
+├── subscriptions/# Polar + RevenueCat providers
+└── ads/          # AdMob + AdSense
 ```
 
-### Key Packages
+### Package Layers (Dependency Rules)
 
-- **`auth`** - Better Auth configuration with separate clients for web (`auth/client/react`) and mobile (`auth/client/native`)
-- **`components`** - 50+ cross-platform UI primitives from Gluestack UI v3 + custom components
-- **`ui`** - Business logic layer containing screens, hooks, state management, and RevenueCat subscription logic
-- **`database`** - Drizzle ORM schemas in `src/schema/`, with auto-generated Zod validators
-- **`i18n`** - Platform-specific configs (`i18n/web`, `i18n/mobile`) with translations in `src/locales/{en,es}/`
-- **`analytics`** - PostHog integration with platform-specific configs (`analytics/web`, `@app/analytics/mobile`) and ErrorBoundary components
-- **`service-contracts`** - Shared TypeScript types and interfaces used across all apps
+Lower layers cannot import from higher layers:
 
-### How Code is Shared
+```
+Layer 1 (Foundation): typescript-config, eslint-config, tailwind-config, config
+Layer 2 (Infrastructure): database, auth, mailer
+Layer 3 (Features): components, i18n, analytics, notifications, subscriptions
+Layer 4 (Business Logic): ui (screens, hooks, stores)
+Layer 5 (Applications): web, mobile, api, admin
+```
 
-The monorepo achieves 80-90% code sharing through:
+## Core Rules
 
-1. **Shared UI Components** - `packages/components` works identically on web (React Native Web) and mobile (React Native)
-2. **Unified Styling** - Tailwind classes via NativeWind work on both platforms
-3. **Business Logic in `ui` package** - Screens, hooks, and logic are platform-agnostic
-4. **Type Safety Everywhere** - `service-contracts` ensures API contracts match between frontend and backend
-
-**Platform-specific code only needed for:**
-
-- Navigation (Next.js App Router vs Expo Router)
-- Platform APIs (camera, notifications, etc.)
-- Auth clients (different fetch implementations)
-- Analytics initialization (web vs mobile SDKs)
-
-## Critical Patterns
-
-### Database Schema-First Development
-
-**All database changes follow this workflow:**
-
-1. Modify schema in `packages/database/src/schema/*.ts`
-2. Generate migration: `pnpm --filter database generate`
-3. Review migration in `packages/database/drizzle/`
-4. Apply migration: `pnpm --filter database db:migrate`
-
-**Important:** Drizzle auto-generates Zod validators from schemas. After schema changes, TypeScript types and validators are automatically in sync.
-
-Example pattern in schemas:
+### 1. Screens in packages/ui ONLY
 
 ```typescript
-// Define table
-export const users = pgTable("users", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  email: varchar("email", { length: 255 }).notNull(),
+// All screens in packages/ui/src/screens/
+// Apps only contain thin routing wrappers
+```
+
+### 2. i18n for ALL User-Facing Text
+
+```typescript
+// Use translation keys for all user-facing content
+<Button>{t("actions.submit")}</Button>
+throwError("FORBIDDEN", "errors.forbidden.noPermission");
+
+// Internal logs stay in English
+console.log(`[Auth] User ${userId} logged in`);
+posthog.capture("user_signup", { method: "email" });
+```
+
+### 3. Mobile Auth
+
+```typescript
+// Mobile MUST pass native signOut to shared screens
+import { signOut } from "@app/auth/client/native";
+<DashboardScreen signOut={signOut} />
+```
+
+### 4. Platform-Specific Files
+
+```
+.web.tsx    # Web-only
+.native.tsx # Mobile-only (iOS + Android)
+.ios.tsx    # iOS-only
+.android.tsx # Android-only
+```
+
+## Quick Reference: Where Code Goes
+
+| Building               | Location                                |
+| ---------------------- | --------------------------------------- |
+| Database tables        | `packages/database/src/schema/tables/`  |
+| API contracts          | `packages/core-contract/src/contracts/` |
+| API routes             | `apps/api/src/orpc-routes/`             |
+| Business logic         | `apps/api/src/actions/`                 |
+| Query hooks            | `packages/ui/src/hooks/queries/`        |
+| Mutation hooks         | `packages/ui/src/hooks/mutations/`      |
+| Screens                | `packages/ui/src/screens/`              |
+| Translations           | `packages/i18n/src/locales/{en,es}/`    |
+| Novu workflows         | `packages/notifications/src/workflows/` |
+| Subscription providers | `packages/subscriptions/src/providers/` |
+
+## Feature Development Order
+
+1. **Database** → `packages/database/src/schema/tables/`
+2. **Contract** → `packages/core-contract/src/contracts/`
+3. **Action** → `apps/api/src/actions/`
+4. **Route** → `apps/api/src/orpc-routes/`
+5. **Hooks** → `packages/ui/src/hooks/`
+6. **Screen** → `packages/ui/src/screens/`
+7. **i18n** → `packages/i18n/src/locales/`
+8. **Web/Mobile routes** → `apps/*/src/app/`
+
+---
+
+## API Pattern
+
+```typescript
+// 1. Contract (packages/core-contract/src/contracts/example.ts)
+export const exampleContract = {
+  create: oc
+    .route({ method: "POST", path: "/examples" })
+    .input(z.object({ name: z.string() }))
+    .output(z.object({ id: z.string() })),
+};
+
+// 2. Action (apps/api/src/actions/example.ts)
+export class ExampleActions {
+  static async create(input, context: AuthContext) {
+    return db.insert(examples).values(input).returning();
+  }
+}
+
+// 3. Route (apps/api/src/orpc-routes/example.ts)
+const create = os.example.create
+  .use(authMiddleware)
+  .handler(({ input, context }) => ExampleActions.create(input, context));
+```
+
+### Middleware Stack
+
+```typescript
+.use(authMiddleware)                         // 1. Auth required
+.use(tenantMiddleware)                       // 2. Tenant membership
+.use(createRBACMiddleware("task", "create")) // 3. Permission check
+.use(requireFeature("bulkExport"))           // 4. Subscription feature gate
+```
+
+---
+
+## Subscription Providers
+
+Multi-provider system: Polar (web) + RevenueCat (mobile) with unified entitlements.
+
+```typescript
+// Server-side
+import { getTenantEntitlements, hasFeatureAccess } from "@app/subscriptions/server";
+
+const entitlements = await getTenantEntitlements(tenantId);
+if (entitlements.tier === "pro") {
+  /* pro features */
+}
+if (await hasFeatureAccess(tenantId, "bulkExport")) {
+  /* allowed */
+}
+```
+
+### Status Handling
+
+| Status     | Access           | Notes                          |
+| ---------- | ---------------- | ------------------------------ |
+| `active`   | Full             | Normal subscription            |
+| `trialing` | Full             | Trial period                   |
+| `past_due` | Grace period     | 7 days after payment failure   |
+| `canceled` | Until period end | If `cancelAtPeriodEnd` is true |
+| `expired`  | None             | Reverts to free tier           |
+
+---
+
+## Notifications (Novu)
+
+20 pre-built workflows with in-app, push, and email channels.
+
+```typescript
+// Server-side: Send notification
+import { notify } from "@app/notifications/server";
+
+await notify({
+  workflow: "invite-received",
+  to: { subscriberId: userId },
+  payload: { inviterName, tenantName, inviteLink },
 });
 
-// Auto-generate validators
-export const insertUserSchema = createInsertSchema(users, {
-  email: z.string().email(),
-});
-
-// Derive types
-export type User = z.infer<typeof selectUserSchema>;
+// Client-side: Listen to notifications
+import { useNotifications } from "@novu/nextjs"; // or @novu/react-native
+const { notifications, markAsRead } = useNotifications();
 ```
 
-### Authentication Architecture
+### Adding a Custom Workflow
 
-Better Auth provides a **unified auth solution** with database integration:
+1. Define in `packages/notifications/src/workflows/definitions.ts`
+2. Export in `packages/notifications/src/workflows/index.ts`
+3. Add ID to `packages/notifications/src/workflows/types.ts`
+4. Restart API server - workflow syncs automatically
 
-- **Server config:** `packages/auth/src/config.ts` (uses Drizzle adapter)
-- **Web client:** Import from `auth/client/react`
-- **Mobile client:** Import from `auth/client/native`
-- **Database tables:** Managed by Better Auth, schemas in `packages/database/src/schema/auth/`
+---
 
-**Auth is integrated at the API level** - apps/api mounts Better Auth routes, while web and mobile apps use respective clients.
+## RBAC (packages/config)
 
-### Environment Variables
+Two-tier permission system:
 
-**Critical variables** (defined in `turbo.json` globalEnv):
+**Tier 1 - Tenant Roles:** `owner`, `admin`, `member`
+**Tier 2 - Member Roles:** `editor`, `viewer`, `contributor`, `moderator`
 
-```bash
-# Database
-DATABASE_URL=postgresql://...
+```typescript
+import { canAccess, isAdminOrOwner } from "@app/config";
 
-# Better Auth
-BETTER_AUTH_SECRET=
-BETTER_AUTH_URL=http://localhost:3030
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-GITHUB_CLIENT_ID=
-GITHUB_CLIENT_SECRET=
+if (canAccess(tenantRole, memberRole, "task", "delete")) { /* allowed */ }
+if (isAdminOrOwner(tenantRole)) { /* manage settings */ }
 
-# API URLs
-NEXT_PUBLIC_API_URL=http://localhost:3030
-EXPO_PUBLIC_API_URL=http://localhost:3030
-
-# PostHog Analytics
-NEXT_PUBLIC_POSTHOG_KEY=
-NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
-EXPO_PUBLIC_POSTHOG_KEY=
-EXPO_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
-POSTHOG_KEY=  # For API server
-POSTHOG_HOST=
-
-# RevenueCat (Optional)
-NEXT_PUBLIC_REVENUECAT_API_KEY=
-EXPO_PUBLIC_REVENUECAT_API_KEY=
+// Middleware
+.use(createRBACMiddleware("task", "delete"))
 ```
 
-**Note:** Web uses `NEXT_PUBLIC_*` prefix, Mobile uses `EXPO_PUBLIC_*` prefix.
+**Resources:** `tenant`, `member`, `invite`, `task`, `project`, `comment`, `file`, `settings`, `billing`, `analytics`, `audit_log`
+**Actions:** `create`, `read`, `update`, `delete`, `manage`
 
-### Analytics & Error Tracking
+---
 
-PostHog is initialized **differently per platform**:
+## Subscription Tiers (packages/config)
 
-- **Web:** `analytics/web` uses posthog-js
-- **Mobile:** `@app/analytics/mobile` uses posthog-react-native
-- **API:** Direct PostHog Node SDK in `apps/api/src/plugins/posthog-analytics.ts`
+| Feature       | Free     | Pro       | Enterprise |
+| ------------- | -------- | --------- | ---------- |
+| `adsEnabled`  | true     | false     | false      |
+| `maxMembers`  | 5        | unlimited | unlimited  |
+| `exportLimit` | 10/month | unlimited | unlimited  |
+| `bulkExport`  | false    | true      | true       |
+| `sso`         | false    | false     | true       |
+| `auditLogs`   | false    | false     | true       |
 
-**ErrorBoundary usage:** Always wrap apps with `<ErrorBoundary>` from the appropriate platform package to automatically capture and report React errors.
+```typescript
+import { requireFeature, getMemberLimit } from "@app/config";
 
-### Subscription Management (RevenueCat)
-
-RevenueCat logic lives in **`packages/ui/src/subscriptions/`**:
-
-- `RevenueCatProvider` - Wrap app root
-- `useSubscription()` - Check subscription status
-- `usePaywall()` - Show/hide paywall
-- `PremiumGate` - Component for gating premium features
-- `PaywallScreen` - Full paywall UI
-- `SubscriptionScreen` - Manage subscriptions
-
-**Platform differences:** Mobile uses native SDKs (`react-native-purchases`), web uses JavaScript SDK (`@revenuecat/purchases-js`).
-
-### Internationalization (i18n)
-
-Translations organized by domain in `packages/i18n/src/locales/`:
-
-```
-locales/
-├── en/
-│   ├── common.json       # UI strings
-│   ├── auth.json         # Auth-related
-│   └── validation.json   # Form validation
-└── es/
-    └── (same structure)
+requireFeature(entitlements, "bulkExport"); // Throws if not allowed
+const limit = getMemberLimit(entitlements); // -1 = unlimited
 ```
 
-**Usage:**
+---
 
-- Web: `import { useTranslation } from '@app/i18n/web'`
-- Mobile: `import { useTranslation } from '@app/i18n/mobile'`
+## Admin Portal (apps/admin)
 
-Platform configs handle language detection and persistence differently.
+Internal dashboard at `:3001` for support/DevOps.
 
-## Turborepo Pipeline
+**Routes:** `/dashboard` (metrics), `/dashboard/users`, `/dashboard/tenants`
+**Roles:** `read_only`, `support_rw`, `super_admin`
 
-**Build pipeline** (defined in `turbo.json`):
+Features: User/tenant search, impersonation with audit logging, webhook debugging, support flags.
 
-- **`dev`** - Persistent task, no caching
-- **`build`** - Depends on `^build` (builds dependencies first)
-- **`typecheck`, `lint`, `test`** - Depend on dependencies being checked/linted/tested first
+---
 
-**Caching:** Turborepo caches build outputs (`.next/`, `dist/`) based on file hashes. Clean with `pnpm clean`.
+## Skills (in .claude/skills/)
 
-## Testing Strategy
-
-**Test runner:** Vitest (configured in each package)
-
-**Coverage:** Run `pnpm --filter <package> coverage` to generate coverage reports
-
-**API testing:** Uses real PostgreSQL database for integration tests (see `apps/api/src/__tests__/`)
-
-**Component testing:** React Testing Library for UI components
-
-**Important:** Apps (web, mobile) have placeholder tests. Packages (database, utils, errors, api) have comprehensive test suites.
-
-## Common Development Workflows
-
-### Adding a New API Endpoint
-
-1. Create route file in `apps/api/src/routes/<domain>/`
-2. Define Zod schema for request/response in route file or `service-contracts`
-3. Implement handler with Fastify TypeScript types
-4. Register route in `apps/api/src/index.ts` or route index
-5. Add tests in `apps/api/src/routes/<domain>/__tests__/`
-
-### Adding a New Screen
-
-1. Create screen component in `packages/ui/src/screens/`
-2. Use components from `packages/components`
-3. Add routing in `apps/web/src/app/` (Next.js) and `apps/mobile/src/app/` (Expo Router)
-4. Screens automatically work on both platforms
-
-### Adding a Database Table
-
-1. Create schema in `packages/database/src/schema/<domain>.ts`
-2. Export from `packages/database/src/schema/index.ts`
-3. Run `pnpm --filter database generate`
-4. Review generated migration
-5. Run `pnpm --filter database db:migrate`
-6. Types and validators are now available in all packages
-
-### Running Single Test File
-
-```bash
-# API test
-pnpm --filter api test src/routes/health/__tests__/health.test.ts
-
-# Any package test
-pnpm --filter <package-name> test <path-to-test-file>
-```
-
-## Project-Specific Notes
-
-- **React 19 & Next.js 15:** Using latest versions with App Router
-- **NativeWind 4:** Tailwind works identically on web and mobile
-- **Multitenant:** Database has `tenants` table for SaaS use cases
-- **Expo Router:** Mobile app uses file-based routing like Next.js
-- **Type Safety:** Zod schemas at API boundaries ensure runtime validation
-- **Monorepo References:** Packages reference each other via `workspace:*` in package.json
+| Skill               | Use When                          |
+| ------------------- | --------------------------------- |
+| `building-features` | Adding screens, endpoints, tables |
+| `backend-developer` | API implementation                |
+| `web-developer`     | Web frontend                      |
+| `mobile-developer`  | Mobile frontend                   |
+| `code-reviewer`     | Before merging                    |
+| `security-reviewer` | Auth features                     |
+| `i18n-manager`      | Translations                      |
+| `feature-flags`     | A/B tests                         |
 
 ## Documentation
 
-Full documentation in `docs/`:
-
-- `docs/guides/` - How-to guides (authentication, database migrations, testing, etc.)
-- `docs/packages/` - Package-specific documentation
-- `docs/adr/` - Architecture Decision Records
-- `docs/api/` - API documentation
-
-Always check existing docs before making architectural changes.
+- `docs/GETTING-STARTED.md` - Setup
+- `docs/BUILDING-FEATURES.md` - Development guide
+- `.claude/skills/` - Agent skills with detailed patterns

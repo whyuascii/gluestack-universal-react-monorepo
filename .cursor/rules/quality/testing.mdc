@@ -1,0 +1,314 @@
+---
+description: Testing patterns and best practices with Vitest
+globs:
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+  - '**/__tests__/**/*.ts'
+alwaysApply: false
+priority: high
+---
+
+# Testing Patterns
+
+## Objective
+Write maintainable, reliable tests that provide confidence in code changes.
+
+## Context
+- Vitest as the test runner
+- React Testing Library for components
+- PostgreSQL for integration tests
+- ~80% coverage target for packages
+
+## Rules
+
+### Test File Organization
+
+Place tests near the code they test:
+
+```
+packages/ui/src/
+├── hooks/
+│   ├── useAuth.ts
+│   └── __tests__/
+│       └── useAuth.test.ts
+├── screens/
+│   ├── Dashboard.tsx
+│   └── __tests__/
+│       └── Dashboard.test.tsx
+
+apps/api/src/
+├── actions/
+│   └── users.ts
+└── __tests__/
+    └── users.test.ts
+```
+
+### Test Structure
+
+Follow Arrange-Act-Assert pattern:
+
+```typescript
+// ✅ Good - Clear AAA structure
+import { describe, it, expect, beforeEach } from "vitest";
+
+describe("UsersActions", () => {
+  let actions: UsersActions;
+
+  beforeEach(() => {
+    // Arrange - Setup
+    actions = new UsersActions(testDb);
+  });
+
+  describe("create", () => {
+    it("should create a user with valid input", async () => {
+      // Arrange
+      const input = {
+        email: "test@example.com",
+        name: "Test User",
+      };
+
+      // Act
+      const user = await actions.create(input);
+
+      // Assert
+      expect(user).toMatchObject({
+        email: input.email,
+        name: input.name,
+        role: "user",
+      });
+      expect(user.id).toBeDefined();
+    });
+
+    it("should throw on duplicate email", async () => {
+      // Arrange
+      const input = { email: "dupe@example.com", name: "User" };
+      await actions.create(input);
+
+      // Act & Assert
+      await expect(actions.create(input)).rejects.toThrow("already exists");
+    });
+  });
+});
+```
+
+### Naming Conventions
+
+Use descriptive test names:
+
+```typescript
+// ✅ Good - Describes behavior
+describe("useAuth hook", () => {
+  it("should return null session when not authenticated", () => {});
+  it("should return user data after successful login", () => {});
+  it("should clear session on logout", () => {});
+  it("should refresh token before expiry", () => {});
+});
+
+// ❌ Avoid - Vague names
+describe("useAuth", () => {
+  it("works", () => {});
+  it("test login", () => {});
+  it("handles error", () => {});
+});
+```
+
+### Mocking
+
+Mock external dependencies, not internal logic:
+
+```typescript
+// ✅ Good - Mock external service
+import { vi, describe, it, expect } from "vitest";
+
+vi.mock("@app/mailer", () => ({
+  sendTemplateEmail: vi.fn().mockResolvedValue({ id: "email-123" }),
+}));
+
+describe("AuthActions", () => {
+  it("should send verification email on signup", async () => {
+    const { sendTemplateEmail } = await import("@app/mailer");
+
+    await authActions.signUp({ email: "new@example.com", password: "pass123" });
+
+    expect(sendTemplateEmail).toHaveBeenCalledWith(
+      "authVerifyEmail",
+      expect.objectContaining({ to: "new@example.com" })
+    );
+  });
+});
+
+// ❌ Avoid - Mocking internal implementation
+vi.mock("../utils/validateEmail"); // Don't mock internal functions
+```
+
+### Database Testing
+
+Use real database for integration tests:
+
+```typescript
+// ✅ Good - Integration test with real DB
+import { describe, it, expect, beforeAll, afterAll, afterEach } from "vitest";
+import { db, sql } from "@app/database";
+import { users } from "@app/database/schema";
+
+describe("Users Integration", () => {
+  beforeAll(async () => {
+    // Ensure test database is ready
+    await db.execute(sql`SELECT 1`);
+  });
+
+  afterEach(async () => {
+    // Clean up test data
+    await db.delete(users).where(like(users.email, "%@test.example.com"));
+  });
+
+  it("should persist user to database", async () => {
+    const [user] = await db
+      .insert(users)
+      .values({ email: "persist@test.example.com", name: "Test" })
+      .returning();
+
+    const found = await db.query.users.findFirst({
+      where: eq(users.id, user.id),
+    });
+
+    expect(found).toMatchObject({ email: "persist@test.example.com" });
+  });
+});
+```
+
+### Component Testing
+
+Test behavior, not implementation:
+
+```typescript
+// ✅ Good - Test user behavior
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { LoginForm } from "./LoginForm";
+
+describe("LoginForm", () => {
+  it("should call onSubmit with form data", async () => {
+    const onSubmit = vi.fn();
+    render(<LoginForm onSubmit={onSubmit} />);
+
+    // Fill form
+    fireEvent.changeText(
+      screen.getByPlaceholderText("Email"),
+      "user@example.com"
+    );
+    fireEvent.changeText(
+      screen.getByPlaceholderText("Password"),
+      "password123"
+    );
+
+    // Submit
+    fireEvent.press(screen.getByText("Sign In"));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith({
+        email: "user@example.com",
+        password: "password123",
+      });
+    });
+  });
+
+  it("should show validation error for invalid email", async () => {
+    render(<LoginForm onSubmit={vi.fn()} />);
+
+    fireEvent.changeText(screen.getByPlaceholderText("Email"), "invalid");
+    fireEvent.press(screen.getByText("Sign In"));
+
+    await waitFor(() => {
+      expect(screen.getByText(/invalid email/i)).toBeVisible();
+    });
+  });
+});
+
+// ❌ Avoid - Testing implementation details
+it("should set isSubmitting state", () => {
+  // Don't test internal state
+});
+```
+
+### Hook Testing
+
+Use renderHook for custom hooks:
+
+```typescript
+// ✅ Good - Hook testing
+import { renderHook, waitFor } from "@testing-library/react";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { useUsers } from "./useUsers";
+
+const wrapper = ({ children }) => (
+  <QueryClientProvider client={queryClient}>
+    {children}
+  </QueryClientProvider>
+);
+
+describe("useUsers", () => {
+  it("should fetch users list", async () => {
+    const { result } = renderHook(() => useUsers(), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(result.current.data).toHaveLength(3);
+  });
+
+  it("should filter users by search", async () => {
+    const { result } = renderHook(
+      () => useUsers({ search: "john" }),
+      { wrapper }
+    );
+
+    await waitFor(() => {
+      expect(result.current.data).toHaveLength(1);
+    });
+  });
+});
+```
+
+### Test Data Factories
+
+Create reusable test data:
+
+```typescript
+// ✅ Good - Test data factory
+// packages/database/src/__tests__/factories.ts
+import { faker } from "@faker-js/faker";
+
+export function createTestUser(overrides: Partial<User> = {}): User {
+  return {
+    id: faker.string.uuid(),
+    email: faker.internet.email(),
+    name: faker.person.fullName(),
+    role: "user",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ...overrides,
+  };
+}
+
+// Usage in tests
+const user = createTestUser({ role: "admin" });
+```
+
+### Coverage
+
+Maintain meaningful coverage:
+
+```bash
+# Run with coverage
+pnpm --filter api coverage
+
+# Target ~80% for packages
+# Focus on business logic, not boilerplate
+```
+
+## Exceptions
+
+- Snapshot tests for stable UI components
+- E2E tests in separate test suite
+- Performance tests with different config

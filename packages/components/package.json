@@ -1,7 +1,6 @@
 {
   "name": "@app/components",
   "version": "0.0.0",
-  "type": "module",
   "description": "Cross-platform UI components built with gluestack-v3 and NativeWind",
   "keywords": [
     "react",
@@ -11,7 +10,7 @@
     "gluestack",
     "nativewind"
   ],
-  "author": "whyuascii <eddy@whyuascii.com>",
+  "author": "",
   "license": "ISC",
   "private": true,
   "main": "./dist/index.js",
@@ -20,6 +19,10 @@
     ".": {
       "types": "./src/index.ts",
       "default": "./dist/index.js"
+    },
+    "./native": {
+      "types": "./src/native.ts",
+      "default": "./dist/native.js"
     }
   },
   "files": [
@@ -39,9 +42,9 @@
     "@expo/html-elements": "^0.12.5",
     "@gorhom/bottom-sheet": "^5.2.6",
     "@legendapp/motion": "^2.4.0",
-    "tailwind-merge": "^2.4.0",
+    "tailwind-merge": "^3.4.0",
     "tailwind-variants": "^3.1.0",
-    "@app/service-contracts": "workspace:*"
+    "@app/config": "workspace:*"
   },
   "devDependencies": {
     "@swc/cli": "^0.6.0",
@@ -60,7 +63,6 @@
     "react": "workspace:*",
     "react-dom": "workspace:*",
     "react-native": "^*",
-    "react-native-reanimated": ">=4",
     "react-native-svg": ">=15.12"
   },
   "engines": {

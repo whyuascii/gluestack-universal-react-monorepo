@@ -1,0 +1,90 @@
+{
+  "title": "Grupo",
+  "unnamed": "Grupo sin nombre",
+  "member": "miembro",
+  "members": "miembros",
+  "noGroup": {
+    "title": "Sin Grupo Aún",
+    "description": "Crea o únete a un grupo para comenzar.",
+    "createButton": "Crear Grupo"
+  },
+  "actions": {
+    "invite": {
+      "title": "Invitar Miembros",
+      "description": "Agregar nuevas personas a tu grupo"
+    },
+    "settings": {
+      "title": "Configuración del Grupo",
+      "description": "Administrar preferencias del grupo"
+    }
+  },
+  "create": {
+    "title": "Crear un Grupo",
+    "subtitle": "Configura un espacio compartido para tu equipo.",
+    "stepIndicator": "Paso 1 de 2",
+    "nameLabel": "Nombre del Grupo",
+    "namePlaceholder": "ej. Mi Equipo",
+    "suggestions": "Sugerencias:",
+    "suggestion1": "Mi Proyecto",
+    "suggestion2": "Nuestro Equipo",
+    "submit": "Crear Grupo",
+    "skip": "Omitir por ahora",
+    "creating": "Creando tu grupo...",
+    "error": "No se pudo crear el grupo. Por favor, inténtalo de nuevo.",
+    "validation": {
+      "tooShort": "El nombre del grupo debe tener al menos 2 caracteres",
+      "tooLong": "El nombre del grupo debe tener como máximo 50 caracteres"
+    }
+  },
+  "invite": {
+    "title": "Invitar Miembros",
+    "subtitle": "Agrega personas a",
+    "stepIndicator": "Paso 2 de 2",
+    "emailLabel": "Correo Electrónico",
+    "emailPlaceholder": "compañero@ejemplo.com",
+    "invitesCounter": "Invitaciones ({{count}}/10)",
+    "clearAll": "Limpiar todo",
+    "noInvites": "Sin invitaciones aún. Agrega correos arriba.",
+    "counter": "{{count}}/10 invitaciones",
+    "submit": "Enviar Invitaciones",
+    "skip": "Omitir por ahora",
+    "sending": "Enviando invitaciones...",
+    "success": "{{count}} invitación(es) enviada(s)",
+    "partialSuccess": "{{sent}} invitaciones enviadas. {{failed}} fallidas.",
+    "failed": "No se pudieron enviar las invitaciones. Por favor, inténtalo de nuevo.",
+    "errors": {
+      "invalidEmail": "Por favor ingresa un correo válido",
+      "duplicate": "Este correo ya fue agregado",
+      "selfInvite": "No puedes invitarte a ti mismo",
+      "maxReached": "Puedes invitar hasta 10 miembros",
+      "alreadyMember": "{{email}} ya es miembro"
+    }
+  },
+  "accept": {
+    "title": "¡Estás Invitado!",
+    "subtitle": "{{inviter}} te invitó a unirte a {{groupName}}",
+    "description": "Únete a este grupo para colaborar y compartir recursos juntos.",
+    "loginPrompt": "Inicia sesión para aceptar esta invitación",
+    "signupPrompt": "Crea una cuenta para unirte",
+    "acceptButton": "Aceptar Invitación",
+    "accepting": "Aceptando invitación...",
+    "success": "¡Bienvenido a {{groupName}}!",
+    "redirecting": "Llevándote a tu panel...",
+    "errors": {
+      "expired": "Esta invitación ha expirado",
+      "invalid": "Enlace de invitación inválido",
+      "alreadyMember": "Ya eres miembro de este grupo"
+    },
+    "actions": {
+      "signup": "Registrarse",
+      "login": "¿Ya tienes cuenta? Inicia sesión"
+    }
+  },
+  "switcher": {
+    "title": "Cambiar Grupo",
+    "current": "Actual",
+    "createNew": "Crear Nuevo Grupo",
+    "switching": "Cambiando...",
+    "groups": "Tus Grupos"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "paywall": {
+    "title": "Desbloquear Premium",
+    "subtitle": "Obtén acceso a todas las funciones premium",
+    "featuresTitle": "Funciones Premium",
+    "features": {
+      "unlimited": "Acceso ilimitado a todas las funciones",
+      "support": "Soporte prioritario al cliente",
+      "analytics": "Analíticas e insights avanzados",
+      "adFree": "Experiencia sin anuncios"
+    },
+    "loading": "Cargando planes...",
+    "noPlans": "No hay planes de suscripción disponibles",
+    "choosePlan": "Elige tu Plan",
+    "subscribe": "Suscribirse Ahora",
+    "maybeLater": "Quizás Después",
+    "popular": "POPULAR",
+    "loadError": "No se pudieron cargar los planes de suscripción",
+    "purchaseError": "Error en la compra. Por favor, inténtalo de nuevo."
+  },
+  "status": {
+    "active": "Activo",
+    "expired": "Expirado",
+    "cancelled": "Cancelado",
+    "trial": "Prueba",
+    "premium": "Premium",
+    "free": "Gratis",
+    "trialing": "Prueba",
+    "past_due": "Pago Pendiente",
+    "paused": "Pausado"
+  },
+  "manage": {
+    "title": "Administrar Suscripción",
+    "currentPlan": "Plan Actual",
+    "renewsOn": "Se renueva el {{date}}",
+    "expiresOn": "Expira el {{date}}",
+    "cancel": "Cancelar Suscripción",
+    "restore": "Restaurar Compras",
+    "restoring": "Restaurando...",
+    "restoreSuccess": "Compras restauradas exitosamente",
+    "restoreError": "No se pudieron restaurar las compras"
+  },
+  "billing": {
+    "title": "Facturación",
+    "currentPlan": "Plan Actual",
+    "freePlan": "Plan Gratis",
+    "proPlan": "Plan Pro",
+    "upgradeTitle": "Actualizar a Pro",
+    "upgradeDescription": "Desbloquea todas las funciones premium para tu grupo",
+    "upgradeCta": "Actualizar Ahora",
+    "manageSubscription": "Administrar Suscripción",
+    "cancelSubscription": "Cancelar Suscripción",
+    "cancelConfirmTitle": "¿Cancelar Suscripción?",
+    "cancelConfirmMessage": "Tu suscripción permanecerá activa hasta el final del período de facturación.",
+    "cancelConfirm": "Sí, Cancelar",
+    "cancelDismiss": "Mantener Suscripción",
+    "billingPortal": "Portal de Facturación",
+    "paymentMethod": "Método de Pago",
+    "updatePayment": "Actualizar Método de Pago",
+    "nextBillingDate": "Próxima fecha de facturación",
+    "loading": "Cargando información de facturación...",
+    "error": "No se pudo cargar la información de facturación"
+  },
+  "entitlements": {
+    "maxMembers": "Hasta {{count}} miembros",
+    "unlimitedMembers": "Miembros ilimitados",
+    "features": "Funciones premium incluidas",
+    "gracePeriod": "Problema de pago - actualiza el método de pago",
+    "trialEnds": "La prueba termina el {{date}}"
+  },
+  "upgrade": {
+    "title": "Actualización Requerida",
+    "memberLimit": "Has alcanzado el límite de miembros de tu plan",
+    "featureLimit": "Esta función requiere una suscripción Pro",
+    "cta": "Actualizar a Pro"
+  }
+}

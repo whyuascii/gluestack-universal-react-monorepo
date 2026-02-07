@@ -5,7 +5,7 @@ import { withStyleContext } from "@gluestack-ui/utils/nativewind-utils";
 import type { VariantProps } from "@gluestack-ui/utils/nativewind-utils";
 import { cssInterop } from "nativewind";
 import React from "react";
-import { Text } from "react-native";
+import { Text, Platform } from "react-native";
 import { Pressable } from "react-native";
 export const UILink = createLink({
   Root: withStyleContext(Pressable),
@@ -61,13 +61,42 @@ const linkTextStyle = tva({
 });
 
 type ILinkProps = React.ComponentProps<typeof UILink> &
-  VariantProps<typeof linkStyle> & { className?: string };
+  VariantProps<typeof linkStyle> & {
+    className?: string;
+    accessibilityLabel?: string;
+    accessibilityHint?: string;
+    isExternal?: boolean;
+  };
 
 const Link = React.forwardRef<React.ComponentRef<typeof UILink>, ILinkProps>(function Link(
-  { className, ...props },
+  { className, accessibilityLabel, accessibilityHint, isExternal, isDisabled, href, ...props },
   ref
 ) {
-  return <UILink ref={ref} {...props} className={linkStyle({ class: className })} />;
+  // Build web-specific props for external links
+  const webExternalProps =
+    Platform.OS === "web" && isExternal
+      ? {
+          target: "_blank",
+          rel: "noopener noreferrer",
+        }
+      : {};
+
+  return (
+    <UILink
+      ref={ref}
+      {...props}
+      {...webExternalProps}
+      href={href}
+      isDisabled={isDisabled}
+      accessibilityRole="link"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint ?? (isExternal ? "Opens in new window" : undefined)}
+      accessibilityState={{
+        disabled: isDisabled ?? false,
+      }}
+      className={linkStyle({ class: className })}
+    />
+  );
 });
 
 type ILinkTextProps = React.ComponentProps<typeof UILink.Text> &

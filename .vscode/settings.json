@@ -54,5 +54,10 @@
     "editor.quickSuggestions": {
         "strings": "on"
     },
-    "editor.autoClosingQuotes": "always"
+    "editor.autoClosingQuotes": "always",
+      "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit",
+    "source.sortMembers": "explicit"
+  }
 }

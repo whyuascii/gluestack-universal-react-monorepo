@@ -1,130 +1,229 @@
 # Utils
 
-This package contains utility functions that do not have backend nor frontend dependencies and can be used in both frontend and backend environments. It was created to provide a shared set of utilities that can be used across different parts of the application without introducing unnecessary dependencies.
+Isomorphic utility functions for TypeScript, Zod validation, and URL building. These utilities work in both browser and Node.js environments with no platform-specific dependencies.
 
-**Note:** This package is for isomorphic utilities only - code that works the same in browser and Node.js environments.
+## Installation
 
-## When should you add a function to this package?
+This package is internal to the monorepo:
 
-- The function is used across multiple workspaces.
-  - If the function is only used in one workspace, keep it in the utils directory of that workspace.
-  - Avoid prematurely adding functions to this package based on anticipated future use. This can lead to stale code.
-- The function does not have any backend-specific dependencies.
-- The function is not frontend-specific.
-- The function can be used in both frontend and backend environments.
+```typescript
+import { transformDate, isString, buildUrl } from "@app/utils";
+```
 
-## Current Utilities
+## When to Add Utilities Here
+
+**Do add:**
+
+- Functions used across multiple packages (API + UI, etc.)
+- Isomorphic code (works in browser and Node.js)
+- Pure utility functions without side effects
+
+**Don't add:**
+
+- Workspace-specific code (keep in that workspace's `utils/` folder)
+- Business logic
+- Database/API code
+- React components or hooks
+- Platform-specific code (web-only, mobile-only)
+
+## Available Utilities
 
 ### TypeScript Utilities (`typescript-utils/`)
 
-TypeScript utility types and type guards for common patterns:
-
-- **Type Manipulation**: `PartiallyOptional`, `PartiallyRequired`, `PartiallyNullable`, `RemoveNullable`
-- **Type Guards**: Runtime type checking utilities
-- **Nested Keys**: `NestedKeyOf` for generating type-safe nested object paths
-
-### Zod Utilities (`zod/`)
-
-Validation and transformation helpers for Zod schemas:
-
-- **Date Transforms**: `transformDate`, `transformNullishDate`, `transformDateToUTC`
-- **Boolean Transforms**: `transformToBoolean` - Parse string booleans ("true"/"false")
-- **String Transforms**: `transformEmptyStringToNull`
-- **Array Helpers**: `transformStringToArray` - Convert single values to arrays
-- **Sort Parsing**: `sortStringSchema` - Parse sort strings like "asc(fieldName),desc(otherField)"
-- **Error Formatting**: `transformValidationErrorMessages` - Format Zod errors for display
-
-### URL Utilities (`url-utils/`)
-
-URL building utilities for the application:
-
-- **Domain Building**: `buildDomainUrl` - Build domain URLs based on environment
-- **URL Building**: `buildUrl` - Build complete URLs with protocol and paths
-
-## What Should Be in a Utils Package
-
-- **Utility Functions**: Generic, reusable functions (e.g., string manipulation, date utilities, array/object manipulation, math functions)
-- **Configuration Utilities**: Environment variable validation, configuration file parsing
-- **Validation Utilities**: Shared validation methods (e.g., regex patterns, Zod schemas, but not DTO models)
-- **Type Utilities**: Shared TypeScript utility types and type guards
-- **Transform Functions**: Data transformation utilities that work across environments
-
-## What Should Not Be in a Utils Package
-
-- Workspace-specific code
-- Standalone type definitions (use `service-contracts` or `types` packages)
-- Error classes (use `errors` package)
-- Business logic
-- Database models and schemas (use `database` package)
-- API client code
-- Component code
-- Routing logic
-- State management
-
-## Usage Examples
-
-### Zod Validation
+**Type Manipulation:**
 
 ```typescript
-import { z } from "zod";
-import { transformDate, sortStringSchema } from "@app/utils";
-
-// Date transformation
-const schema = z.object({
-  createdAt: transformDate,
-  sort: sortStringSchema.optional(),
-});
-
-// Parse input
-const result = schema.parse({
-  createdAt: "2024-01-01",
-  sort: "asc(name),desc(createdAt)",
-});
-```
-
-### TypeScript Type Utilities
-
-```typescript
-import type { PartiallyOptional, NestedKeyOf } from "@app/utils";
+import type {
+  PartiallyOptional,
+  PartiallyRequired,
+  PartiallyNullable,
+  RemoveNullable,
+  NonUndefined,
+  NestedKeyOf,
+} from "@app/utils";
 
 interface User {
   id: string;
   name: string;
   email: string;
-  settings: {
-    theme: string;
-    notifications: boolean;
-  };
+  settings: { theme: string; notifications: boolean };
 }
 
 // Make some fields optional
-type UserInput = PartiallyOptional<User, "id" | "settings">;
+type UserInput = PartiallyOptional<User, "id">;
 
-// Generate nested keys
+// Make some fields required on a partial type
+type RequiredEmail = PartiallyRequired<Partial<User>, "email">;
+
+// Allow null on specific fields
+type NullableName = PartiallyNullable<User, "name">;
+
+// Remove null from specific fields
+type NonNullEmail = RemoveNullable<User, "email">;
+
+// Generate nested key paths
 type UserKeys = NestedKeyOf<User, "settings">;
-// Result: "id" | "name" | "email" | "settings" | "settings.theme" | "settings.notifications"
+// "id" | "name" | "email" | "settings" | "settings.theme" | "settings.notifications"
 ```
 
-### URL Building
+**Type Guards:**
 
 ```typescript
-import { buildUrl } from "@app/utils";
+import {
+  isString,
+  isBoolean,
+  isArray,
+  isDate,
+  isRecord,
+  isValidISODate,
+  isValidJSONString,
+} from "@app/utils";
 
-const apiUrl = buildUrl({
+// Runtime type checking
+if (isString(value)) {
+  // value is typed as string
+}
+
+if (isRecord(value)) {
+  // value is typed as Record<string, unknown>
+}
+
+// Validation helpers
+isValidISODate("2024-01-01T00:00:00Z"); // true
+isValidJSONString('{"key": "value"}'); // true
+```
+
+### Zod Utilities (`zod/`)
+
+**Date Transforms:**
+
+```typescript
+import { z } from "zod";
+import {
+  transformDate,
+  transformNullishDate,
+  transformDateToUTC,
+  transformDateToUTCString,
+} from "@app/utils";
+
+// String to Date
+const schema = z.object({
+  createdAt: transformDate, // "2024-01-01" -> Date
+  deletedAt: transformNullishDate, // null | undefined | "2024-01-01" -> Date | null
+  scheduledAt: transformDateToUTC, // Converts to UTC Date
+  expiresAt: transformDateToUTCString, // Converts to UTC ISO string
+});
+```
+
+**Boolean & String Transforms:**
+
+```typescript
+import {
+  transformToBoolean,
+  transformEmptyStringToNull,
+  transformStringToBoolean,
+} from "@app/utils";
+
+// Parse "true"/"false" strings (case insensitive)
+const boolSchema = z.object({
+  enabled: transformToBoolean, // "TRUE" -> true, "false" -> false
+});
+
+// Empty string to null
+const stringSchema = z.object({
+  nickname: transformEmptyStringToNull, // "" -> null
+});
+
+// For query params
+const querySchema = z.object({
+  active: transformStringToBoolean, // "true" -> true (optional)
+});
+```
+
+**Array & Sort Helpers:**
+
+```typescript
+import { transformStringToArray, sortStringSchema } from "@app/utils";
+
+// Single value to array
+const arraySchema = transformStringToArray(z.string());
+// "item" -> ["item"]
+// ["a", "b"] -> ["a", "b"]
+
+// Parse sort strings (for API queries)
+const listSchema = z.object({
+  sort: sortStringSchema.optional(),
+});
+
+const result = listSchema.parse({ sort: "asc(name),desc(createdAt)" });
+// result.sort = { name: 1, createdAt: -1 }
+```
+
+**Error Formatting:**
+
+```typescript
+import { transformValidationErrorMessages } from "@app/utils";
+
+try {
+  schema.parse(data);
+} catch (error) {
+  if (error instanceof z.ZodError) {
+    const formatted = transformValidationErrorMessages(error.issues);
+    // [{ index: 0, path: ["email"], message: "Invalid email" }]
+  }
+}
+```
+
+### URL Utilities (`url-utils/`)
+
+Build URLs based on environment stage:
+
+```typescript
+import { buildUrl, buildDomainUrl } from "@app/utils";
+
+// Build full URL
+buildUrl({
   environmentStage: "production",
   subdomain: "api",
   path: "/users",
 });
-// Result: "https://api.demo-app.com/users"
+// "https://api.demo-app.com/users"
+
+buildUrl({
+  environmentStage: "staging",
+  path: "/health",
+});
+// "https://staging.demo-app.com/health"
+
+buildUrl({
+  environmentStage: "local",
+  path: "/api",
+});
+// "http://localhost:3000/api"
+
+// Just the domain
+buildDomainUrl({ environmentStage: "production" });
+// "demo-app.com"
+
+buildDomainUrl({ environmentStage: "staging", subdomain: "api" });
+// "api.staging.demo-app.com"
 ```
+
+> **Note:** The base domain is configured in `url-utils/index.ts`. Update `BASE_DOMAIN` and `LOCAL_PORT` for your application.
 
 ## Adding New Utilities
 
-When adding new utilities to this package:
+1. Create a directory under `src/` for the category (e.g., `string-utils/`)
+2. Add an `index.ts` that exports all utilities
+3. Export from `src/index.ts`
+4. Add tests in a `.test.ts` file
+5. Run `pnpm --filter utils test` to verify
 
-1. Create a new directory under `src/` for the category (e.g., `string-utils/`, `array-utils/`)
-2. Add an `index.ts` file that exports all utilities in that category
-3. Export from the main `src/index.ts` file
-4. Add unit tests in a `.test.ts` or `.unit.test.ts` file
-5. Update this README with the new utilities and usage examples
-6. Ensure the utility has no platform-specific dependencies
+## Scripts
+
+```bash
+pnpm --filter utils build      # Build the package
+pnpm --filter utils test       # Run tests
+pnpm --filter utils typecheck  # Type check
+pnpm --filter utils lint       # Lint
+```

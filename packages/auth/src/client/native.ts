@@ -20,8 +20,18 @@ import { createAuthClient } from "better-auth/react";
  *
  * Note: Requires EXPO_PUBLIC_API_URL environment variable
  */
+const apiUrl = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3030";
+
+// Log the API URL for debugging (only in development)
+if (process.env.NODE_ENV === "development") {
+  console.log("[Auth Client Native] Using API URL:", apiUrl);
+}
+
 export const authClient = createAuthClient({
-  baseURL: process.env.EXPO_PUBLIC_API_URL || "http://localhost:3001",
+  baseURL: apiUrl,
+  fetchOptions: {
+    credentials: "include",
+  },
 });
 
 // Re-export all hooks from the client

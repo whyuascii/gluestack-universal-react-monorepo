@@ -1,128 +1,263 @@
 {
   "app": {
-    "name": "App"
+    "name": "Nombre de App",
+    "tagline": "Tu eslogan aqui"
+  },
+  "dashboard": {
+    "greeting": "Bienvenido, {{name}}",
+    "welcomeTitle": "Bienvenido a tu panel!",
+    "welcomeSubtitle": "Tu espacio de trabajo esta listo. Comencemos.",
+    "newItem": "Nuevo Item",
+    "search": "Buscar..."
   },
   "navigation": {
-    "features": "Características",
-    "ourStory": "Nuestra Historia",
+    "features": "Caracteristicas",
     "pricing": "Precios",
-    "about": "Sobre Nosotros",
+    "about": "Acerca de",
     "blog": "Blog",
     "contact": "Contacto",
-    "roadmap": "Hoja de Ruta",
-    "testimonials": "Testimonios"
+    "docs": "Documentacion",
+    "dashboard": "Panel",
+    "todos": "Tareas",
+    "groups": "Grupos",
+    "settings": "Configuracion",
+    "profile": "Perfil",
+    "notifications": "Notificaciones",
+    "logout": "Cerrar Sesión"
   },
   "hero": {
-    "badge": "Nuevo",
+    "badge": "Bienvenido",
     "title": {
-      "part1": "Gestiona tus tareas",
-      "cozy": "eficientemente",
-      "part2": "y mantente organizado"
+      "line1": "Construye algo",
+      "highlight": "increible",
+      "line2": "juntos."
     },
-    "subtitle": "Una aplicación simple de gestión de tareas para ayudarte a mantenerte organizado y productivo.",
+    "subtitle": "Una plantilla lista para produccion para construir aplicaciones web y moviles multiplataforma. Comienza a construir funciones, no boilerplate.",
     "waitlist": {
-      "placeholder": "Ingresa tu correo electrónico",
-      "button": "Únete a la Lista",
-      "submitting": "Uniéndote...",
-      "success": "Gracias. Nos pondremos en contacto pronto.",
-      "disclaimer": "Respetamos tu privacidad"
+      "placeholder": "Ingresa tu correo",
+      "button": "Unirse a la Lista",
+      "submitting": "Uniendose...",
+      "success": "Estas en la lista! Te contactaremos pronto.",
+      "disclaimer": "Se de los primeros en obtener acceso. Sin spam, nunca."
     }
   },
   "features": {
-    "title": "Características",
-    "subtitle": "Todo lo que necesitas para gestionar tus tareas",
-    "choreGarden": {
-      "title": "Gestión de Tareas",
-      "description": "Crea, organiza y rastrea tus tareas. Establece prioridades y plazos.",
-      "extra": "Organización y seguimiento simple de tareas"
+    "title": "Caracteristicas",
+    "subtitle": "Todo lo que necesitas para construir y lanzar tu app",
+    "auth": {
+      "title": "Autenticacion",
+      "description": "Autenticacion por email/password y OAuth con Better Auth. Incluye verificacion de email y restablecimiento de password."
     },
-    "checkins": {
-      "title": "Revisiones Regulares",
-      "description": "Programa revisiones regulares para revisar tu progreso y actualizar tus objetivos.",
-      "extra": "Rastrea tu progreso con el tiempo"
+    "database": {
+      "title": "Base de Datos",
+      "description": "PostgreSQL con Drizzle ORM. Consultas type-safe con validadores Zod auto-generados."
     },
-    "calendar": {
-      "title": "Vista de Calendario",
-      "description": "Ve tus tareas y plazos en formato de calendario.",
-      "extra": "Ve tu horario de un vistazo"
+    "crossPlatform": {
+      "title": "Multiplataforma",
+      "description": "Web y movil desde una sola base de codigo con 80%+ de codigo compartido usando React Native y Next.js."
     },
-    "loveNotes": {
-      "title": "Notas",
-      "description": "Agrega notas y recordatorios a tus tareas.",
-      "extra": "Mantén un registro de detalles importantes"
+    "analytics": {
+      "title": "Analiticas",
+      "description": "Integracion con PostHog para analiticas de producto, feature flags y grabacion de sesiones."
     },
-    "stayInSync": {
-      "title": "Sincronizar entre Dispositivos",
-      "description": "Accede a tus tareas desde cualquier dispositivo con sincronización automática.",
-      "extra": "Disponible en iOS, Android y web"
+    "subscriptions": {
+      "title": "Suscripciones",
+      "description": "Integracion con RevenueCat para gestion de suscripciones en web y movil."
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "description": "Novu para bandeja de entrada y Expo Push para notificaciones moviles."
+    }
+  },
+  "pricing": {
+    "title": "Precios Simples",
+    "subtitle": "Elige el plan adecuado para ti",
+    "free": {
+      "title": "Gratis",
+      "price": "$0",
+      "period": "para siempre",
+      "description": "Perfecto para comenzar",
+      "features": ["Funciones basicas", "Hasta 3 miembros", "Soporte de comunidad"],
+      "cta": "Comenzar"
+    },
+    "pro": {
+      "title": "Pro",
+      "price": "$9",
+      "period": "por mes",
+      "description": "Para equipos en crecimiento",
+      "features": [
+        "Todas las funciones Gratis",
+        "Miembros ilimitados",
+        "Soporte prioritario",
+        "Analiticas avanzadas"
+      ],
+      "cta": "Iniciar Prueba Gratis"
+    },
+    "enterprise": {
+      "title": "Empresa",
+      "price": "Personalizado",
+      "period": "",
+      "description": "Para grandes organizaciones",
+      "features": [
+        "Todas las funciones Pro",
+        "Integraciones personalizadas",
+        "Soporte dedicado",
+        "Garantia SLA"
+      ],
+      "cta": "Contactar Ventas"
     }
   },
   "about": {
     "title": "Acerca de",
-    "subtitle": "Una aplicación simple de gestión de tareas",
+    "subtitle": "Construyendo grandes aplicaciones juntos",
     "intro": {
-      "paragraph1": "Esta es una aplicación de gestión de tareas que te ayuda a organizar tus tareas laborales y personales.",
-      "paragraph2": "Creamos esta aplicación para proporcionar una forma simple y efectiva de gestionar tareas en múltiples dispositivos."
+      "paragraph1": "Este es un boilerplate multiplataforma para construir aplicaciones web y moviles listas para produccion.",
+      "paragraph2": "Incluye autenticacion, base de datos, analiticas, suscripciones y mas para que puedas enfocarte en construir funciones."
     },
-    "whyWeMadeIt": {
-      "title": "Por qué la creamos",
-      "paragraph1": "Necesitábamos una forma simple de rastrear tareas y mantenernos organizados.",
-      "paragraph2": "Muchas aplicaciones de gestión de tareas son demasiado complejas. Queríamos algo sencillo:",
-      "checkInIssues": {
-        "item1": "fácil de agregar tareas",
-        "item2": "simple de rastrear el progreso",
-        "item3": "rápido de revisar lo que hay que hacer"
+    "benefits": {
+      "title": "Que esta Incluido",
+      "crossPlatform": {
+        "title": "Multiplataforma",
+        "description": "Web y movil desde una sola base de codigo con 80%+ de codigo compartido"
       },
-      "paragraph3": "También queríamos manejar varios tipos de información:",
-      "tinyDetails": {
-        "item1": "Tareas diarias",
-        "item2": "Plazos importantes",
-        "item3": "Notas y recordatorios",
-        "item4": "Tareas recurrentes"
+      "productionReady": {
+        "title": "Listo para Produccion",
+        "description": "Auth, base de datos, analiticas y mas ya configurados"
       },
-      "conclusion": "Así que creamos un gestor de tareas simple."
-    },
-    "whatItHelps": {
-      "title": "En qué ayuda esta app",
-      "stayInSync": {
-        "title": "Mantente organizado",
-        "description": "Listas de tareas y notas que se sincronizan entre dispositivos"
+      "typeSafe": {
+        "title": "Type-Safe",
+        "description": "TypeScript de punta a punta con validadores auto-generados"
       },
-      "keepNestClean": {
-        "title": "Rastrea tareas",
-        "description": "Seguimiento y finalización simple de tareas"
-      },
-      "monthlyCheckIns": {
-        "title": "Revisiones regulares",
-        "description": "Revisa tu progreso y actualiza tus tareas regularmente"
-      },
-      "littleMoments": {
-        "title": "Notas rápidas",
-        "description": "Agrega notas y recordatorios según sea necesario"
+      "documented": {
+        "title": "Bien Documentado",
+        "description": "Guias completas y documentacion de API"
       }
-    },
-    "ourVibe": {
-      "title": "Nuestro enfoque",
-      "paragraph1": "Esta aplicación se enfoca en la simplicidad.",
-      "paragraph2": "Proporciona características básicas de gestión de tareas sin complejidad innecesaria.",
-      "conclusion": "Gestión de tareas simple para todos."
     }
   },
   "cta": {
-    "title": "¿Listo para comenzar?",
-    "subtitle": "Únete a la lista de espera para obtener acceso anticipado cuando lancemos.",
+    "title": "Listo para comenzar?",
+    "subtitle": "Unete a la lista de espera y se de los primeros en obtener acceso.",
     "waitlist": {
-      "placeholder": "Ingresa tu correo electrónico",
-      "button": "Únete a la Lista",
-      "success": "Gracias. Nos pondremos en contacto pronto.",
-      "disclaimer": "No se requiere tarjeta de crédito"
+      "placeholder": "Ingresa tu correo",
+      "button": "Unirse a la Lista",
+      "success": "Gracias! Te contactaremos pronto.",
+      "disclaimer": "No se requiere tarjeta de credito"
     }
   },
   "footer": {
-    "tagline": "Gestión de tareas simple.",
+    "tagline": "Construyendo el futuro, una funcion a la vez.",
     "product": "Producto",
     "company": "Empresa",
-    "connect": "Conectar",
-    "copyright": "© 2025 App. Todos los derechos reservados."
+    "resources": "Recursos",
+    "legal": "Legal",
+    "privacy": "Politica de Privacidad",
+    "terms": "Terminos de Servicio",
+    "copyright": "{{year}} Tu Empresa. Todos los derechos reservados."
+  },
+  "actions": {
+    "login": "Iniciar sesion",
+    "signup": "Registrarse",
+    "getStarted": "Comenzar",
+    "getStartedFree": "Comenzar Gratis",
+    "learnMore": "Mas informacion",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "submit": "Enviar",
+    "loading": "Cargando...",
+    "retry": "Reintentar",
+    "back": "Atras",
+    "next": "Siguiente",
+    "done": "Listo",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "refresh": "Actualizar",
+    "logout": "Cerrar Sesión"
+  },
+  "profile": {
+    "title": "Perfil",
+    "name": "Nombre",
+    "email": "Correo",
+    "edit": "Editar Perfil",
+    "changePassword": "Cambiar Contraseña",
+    "logout": "Cerrar Sesión"
+  },
+  "status": {
+    "success": "Exito",
+    "error": "Error",
+    "warning": "Advertencia",
+    "info": "Info",
+    "loading": "Cargando",
+    "empty": "No se encontraron items",
+    "offline": "Estas desconectado",
+    "online": "De vuelta en linea"
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "loading": "Cargando...",
+    "empty": "Sin notificaciones aún",
+    "markAllRead": "Marcar todas como leídas",
+    "justNow": "Ahora mismo",
+    "minutesAgo": "hace {{count}}m",
+    "hoursAgo": "hace {{count}}h",
+    "daysAgo": "hace {{count}}d"
+  },
+  "admin": {
+    "portal": {
+      "title": "Portal de Administración",
+      "dashboard": "Panel",
+      "users": "Usuarios",
+      "tenants": "Espacios de trabajo",
+      "admins": "Administradores",
+      "settings": "Configuración",
+      "auditLog": "Registro de auditoría"
+    },
+    "createAdmin": {
+      "title": "Crear usuario administrador",
+      "subtitle": "Invitar a un nuevo miembro al portal de administración",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "admin@empresa.com",
+      "name": "Nombre",
+      "namePlaceholder": "Nombre completo",
+      "role": "Rol de administrador",
+      "roleDescription": "Selecciona el nivel de acceso para este administrador",
+      "roleReadOnly": "Solo lectura",
+      "roleReadOnlyDesc": "Puede ver datos pero no puede hacer cambios",
+      "roleSupportRW": "Soporte",
+      "roleSupportRWDesc": "Puede ver y modificar datos, manejar soporte",
+      "roleSuperAdmin": "Super administrador",
+      "roleSuperAdminDesc": "Acceso completo incluyendo gestión de otros administradores",
+      "submit": "Enviar invitación",
+      "submitting": "Enviando invitación...",
+      "success": "¡Invitación enviada exitosamente!",
+      "successMessage": "Se ha enviado un correo a {{email}} con instrucciones para completar la configuración.",
+      "failed": "Error al enviar la invitación",
+      "userExists": "Ya existe un usuario con este correo",
+      "cancel": "Cancelar"
+    },
+    "adminList": {
+      "title": "Usuarios administradores",
+      "empty": "No se encontraron administradores",
+      "status": "Estado",
+      "role": "Rol",
+      "lastLogin": "Último acceso",
+      "created": "Creado",
+      "actions": "Acciones",
+      "statusActive": "Activo",
+      "statusPending": "Pendiente",
+      "statusSuspended": "Suspendido",
+      "resendInvite": "Reenviar invitación",
+      "revokeAccess": "Revocar acceso"
+    },
+    "roles": {
+      "readOnly": "Solo lectura",
+      "supportRW": "Soporte",
+      "superAdmin": "Super administrador"
+    }
   }
 }

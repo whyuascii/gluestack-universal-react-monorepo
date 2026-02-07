@@ -1,0 +1,90 @@
+{
+  "title": "Group",
+  "unnamed": "Unnamed Group",
+  "member": "member",
+  "members": "members",
+  "noGroup": {
+    "title": "No Group Yet",
+    "description": "Create or join a group to get started.",
+    "createButton": "Create Group"
+  },
+  "actions": {
+    "invite": {
+      "title": "Invite Members",
+      "description": "Add new people to your group"
+    },
+    "settings": {
+      "title": "Group Settings",
+      "description": "Manage group preferences"
+    }
+  },
+  "create": {
+    "title": "Create a Group",
+    "subtitle": "Set up a shared space for your team.",
+    "stepIndicator": "Step 1 of 2",
+    "nameLabel": "Group Name",
+    "namePlaceholder": "e.g. My Team",
+    "suggestions": "Suggestions:",
+    "suggestion1": "My Project",
+    "suggestion2": "Our Team",
+    "submit": "Create Group",
+    "skip": "Skip for now",
+    "creating": "Creating your group...",
+    "error": "Failed to create group. Please try again.",
+    "validation": {
+      "tooShort": "Group name must be at least 2 characters",
+      "tooLong": "Group name must be less than 50 characters"
+    }
+  },
+  "invite": {
+    "title": "Invite Members",
+    "subtitle": "Add people to",
+    "stepIndicator": "Step 2 of 2",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "teammate@example.com",
+    "invitesCounter": "Invites ({{count}}/10)",
+    "clearAll": "Clear all",
+    "noInvites": "No invites yet. Add emails above.",
+    "counter": "{{count}}/10 invites",
+    "submit": "Send Invites",
+    "skip": "Skip for now",
+    "sending": "Sending invites...",
+    "success": "Sent {{count}} invitation(s)",
+    "partialSuccess": "Sent {{sent}} invites. {{failed}} failed.",
+    "failed": "Failed to send invitations. Please try again.",
+    "errors": {
+      "invalidEmail": "Please enter a valid email address",
+      "duplicate": "This email has already been added",
+      "selfInvite": "You can't invite yourself",
+      "maxReached": "You can invite up to 10 members",
+      "alreadyMember": "{{email}} is already a member"
+    }
+  },
+  "accept": {
+    "title": "You're Invited!",
+    "subtitle": "{{inviter}} invited you to join {{groupName}}",
+    "description": "Join this group to collaborate and share resources together.",
+    "loginPrompt": "Sign in to accept this invitation",
+    "signupPrompt": "Create an account to join",
+    "acceptButton": "Accept Invitation",
+    "accepting": "Accepting invitation...",
+    "success": "Welcome to {{groupName}}!",
+    "redirecting": "Taking you to your dashboard...",
+    "errors": {
+      "expired": "This invitation has expired",
+      "invalid": "Invalid invitation link",
+      "alreadyMember": "You're already a member of this group"
+    },
+    "actions": {
+      "signup": "Sign Up",
+      "login": "Already have an account? Sign in"
+    }
+  },
+  "switcher": {
+    "title": "Switch Group",
+    "current": "Current",
+    "createNew": "Create New Group",
+    "switching": "Switching...",
+    "groups": "Your Groups"
+  }
+}

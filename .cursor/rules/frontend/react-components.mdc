@@ -1,0 +1,272 @@
+---
+description: React component patterns for cross-platform development
+globs:
+  - 'packages/ui/**/*.tsx'
+  - 'packages/components/**/*.tsx'
+  - 'apps/web/src/**/*.tsx'
+  - 'apps/mobile/src/**/*.tsx'
+alwaysApply: false
+priority: high
+---
+
+# React Component Patterns
+
+## Objective
+Create consistent, reusable React components that work across web and mobile.
+
+## Context
+- React 19 with React Native 0.81
+- Gluestack UI v3 for primitives
+- NativeWind 4 for Tailwind styling
+- Cross-platform components in packages/components
+
+## Rules
+
+### Component Structure
+
+Use functional components with explicit typing:
+
+```tsx
+// ✅ Good - Clear props interface, functional component
+interface UserCardProps {
+  user: User;
+  onPress?: () => void;
+  isLoading?: boolean;
+}
+
+export function UserCard({ user, onPress, isLoading = false }: UserCardProps) {
+  if (isLoading) {
+    return <Skeleton className="h-20 w-full" />;
+  }
+
+  return (
+    <Pressable onPress={onPress} className="p-4 rounded-lg bg-white">
+      <Text className="text-lg font-semibold">{user.name}</Text>
+      <Text className="text-sm text-gray-500">{user.email}</Text>
+    </Pressable>
+  );
+}
+
+// ❌ Avoid - Inline types, React.FC
+const UserCard: React.FC<{ user: User }> = ({ user }) => { };
+```
+
+### Cross-Platform Components
+
+Use React Native primitives that work on both platforms:
+
+```tsx
+// ✅ Good - Cross-platform imports
+import { View, Text, Pressable, ScrollView } from "react-native";
+import { Image } from "expo-image";
+
+export function ProfileScreen() {
+  return (
+    <ScrollView className="flex-1 bg-gray-50">
+      <View className="p-4">
+        <Text className="text-2xl font-bold">Profile</Text>
+      </View>
+    </ScrollView>
+  );
+}
+
+// ❌ Avoid - Web-only elements in shared code
+import { div, span } from "react"; // Won't work on mobile
+```
+
+### Gluestack UI Components
+
+Use Gluestack primitives from `@app/components`:
+
+```tsx
+// ✅ Good - Gluestack components
+import {
+  Box,
+  VStack,
+  HStack,
+  Text,
+  Heading,
+  Button,
+  ButtonText,
+  Input,
+  InputField,
+} from "@app/components";
+
+export function LoginForm() {
+  return (
+    <VStack space="md" className="p-4">
+      <Heading size="xl">Sign In</Heading>
+      <Input>
+        <InputField placeholder="Email" />
+      </Input>
+      <Button action="primary">
+        <ButtonText>Continue</ButtonText>
+      </Button>
+    </VStack>
+  );
+}
+```
+
+### Responsive Design
+
+Use `useWindowDimensions` for responsive layouts:
+
+```tsx
+// ✅ Good - Responsive component
+import { useWindowDimensions } from "react-native";
+
+export function ResponsiveLayout({ children }: { children: React.ReactNode }) {
+  const { width } = useWindowDimensions();
+
+  const isSmallScreen = width < 380;
+  const isMediumScreen = width >= 380 && width < 768;
+  const isLargeScreen = width >= 768;
+
+  const padding = isSmallScreen ? 16 : isLargeScreen ? 32 : 20;
+
+  return (
+    <View style={{ paddingHorizontal: padding }}>
+      {isLargeScreen && <Sidebar />}
+      <View style={{ maxWidth: 1200, alignSelf: "center", width: "100%" }}>
+        {children}
+      </View>
+    </View>
+  );
+}
+```
+
+### Hook Organization
+
+Extract logic into custom hooks:
+
+```tsx
+// ✅ Good - Logic in hooks
+// packages/ui/src/hooks/mutations/useUpdateProfile.ts
+export function useUpdateProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    ...orpc.users.update.mutationOptions(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      toast.success(t("profile.updated"));
+    },
+  });
+}
+
+// packages/ui/src/screens/settings/ProfileScreen.tsx
+export function ProfileScreen() {
+  const { mutate: updateProfile, isPending } = useUpdateProfile();
+
+  return (
+    <ProfileForm onSubmit={updateProfile} isLoading={isPending} />
+  );
+}
+```
+
+### Event Handlers
+
+Use `on` prefix for props, `handle` for internal handlers:
+
+```tsx
+// ✅ Good - Clear naming convention
+interface FormProps {
+  onSubmit: (data: FormData) => void;
+  onCancel?: () => void;
+}
+
+export function Form({ onSubmit, onCancel }: FormProps) {
+  const handleInputChange = (text: string) => {
+    // Internal handling
+  };
+
+  const handleSubmitPress = () => {
+    // Validate then call onSubmit
+    onSubmit(formData);
+  };
+
+  return (
+    <VStack>
+      <Input onChangeText={handleInputChange} />
+      <Button onPress={handleSubmitPress}>
+        <ButtonText>Submit</ButtonText>
+      </Button>
+    </VStack>
+  );
+}
+```
+
+### Loading & Error States
+
+Always handle loading and error states:
+
+```tsx
+// ✅ Good - Complete state handling
+export function UserList() {
+  const { data, isLoading, isError, error, refetch } = useUsers();
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (isError) {
+    return (
+      <ErrorView
+        message={error.message}
+        onRetry={refetch}
+      />
+    );
+  }
+
+  if (!data?.length) {
+    return <EmptyState message={t("users.empty")} />;
+  }
+
+  return (
+    <FlatList
+      data={data}
+      renderItem={({ item }) => <UserCard user={item} />}
+      keyExtractor={(item) => item.id}
+    />
+  );
+}
+```
+
+### Memoization
+
+Use React.memo and useMemo judiciously:
+
+```tsx
+// ✅ Good - Memo for expensive renders
+const ExpensiveList = React.memo(function ExpensiveList({
+  items,
+  onItemPress,
+}: ExpensiveListProps) {
+  return (
+    <FlatList
+      data={items}
+      renderItem={({ item }) => <ExpensiveItem item={item} onPress={onItemPress} />}
+    />
+  );
+});
+
+// ✅ Good - useMemo for expensive computations
+function Dashboard() {
+  const { data: transactions } = useTransactions();
+
+  const summary = useMemo(() => {
+    return computeExpensiveSummary(transactions);
+  }, [transactions]);
+
+  return <SummaryCard data={summary} />;
+}
+
+// ❌ Avoid - Premature optimization
+const SimpleText = React.memo(({ text }) => <Text>{text}</Text>);
+```
+
+## Exceptions
+
+- Web-specific components (`.web.tsx`) may use HTML elements
+- Admin dashboard may have web-only patterns
+- Third-party library integrations

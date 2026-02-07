@@ -1,34 +1,38 @@
 import { HStack, Button, ButtonText } from "@app/components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-
-// Type for PostHog on window object
-interface WindowWithPostHog {
-  posthog?: {
-    capture: (event: string, properties?: Record<string, unknown>) => void;
-  };
-}
+import { useAnalytics } from "../analytics";
+import { useUpdateLanguagePreference } from "../hooks/mutations/useSettings";
+import { useMe } from "../hooks/queries/useMe";
+import type { SupportedLanguage } from "@app/core-contract";
 
 export const LanguageSwitcher: React.FC = () => {
   const { i18n } = useTranslation();
+  const { track } = useAnalytics();
+  const { data: userData } = useMe({ enabled: true });
+  const updateLanguageMutation = useUpdateLanguagePreference();
 
   const languages = [
-    { code: "en", label: "English" },
-    { code: "es", label: "Español" },
+    { code: "en" as SupportedLanguage, label: "English" },
+    { code: "es" as SupportedLanguage, label: "Español" },
   ];
 
-  const changeLanguage = (langCode: string) => {
+  const changeLanguage = (langCode: SupportedLanguage) => {
     const previousLanguage = i18n.language;
+
+    // Update i18n (which caches to localStorage/AsyncStorage)
     i18n.changeLanguage(langCode);
 
-    // Track language change if analytics is available
-    const w = (globalThis as any).window as WindowWithPostHog | undefined;
-    if (w?.posthog) {
-      w.posthog.capture("language_changed", {
-        from_language: previousLanguage,
-        to_language: langCode,
-      });
+    // If user is logged in, persist to database
+    if (userData?.user) {
+      updateLanguageMutation.mutate({ language: langCode });
     }
+
+    // Track language change via analytics abstraction
+    track("language_changed", {
+      from_language: previousLanguage,
+      to_language: langCode,
+    });
   };
 
   return (
@@ -45,7 +49,9 @@ export const LanguageSwitcher: React.FC = () => {
         >
           <ButtonText
             className={`text-sm ${
-              i18n.language === lang.code ? "text-white font-semibold" : "text-typography-700"
+              i18n.language === lang.code
+                ? "text-typography-0 font-semibold"
+                : "text-typography-700"
             }`}
           >
             {lang.label}

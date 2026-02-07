@@ -1,127 +1,64 @@
+/**
+ * Marketing Notification Service
+ *
+ * Handles marketing campaigns and announcements.
+ * Uses the provider system (Novu) for delivery.
+ */
+
 import type { MarketingNotification } from "../types";
 
 /**
- * Marketing notification service
- * Handles promotional notifications, announcements, and campaigns
- *
- * Note: Marketing notifications should be sent from your backend/admin panel
- * This service provides client-side helpers for managing marketing preferences
+ * Marketing Notification Service Interface
  */
-export class MarketingNotificationService {
-  /**
-   * Send a marketing campaign notification
-   * This should be called from your backend/admin panel, not directly from client
-   */
-  async sendCampaign(notification: MarketingNotification): Promise<void> {
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.EXPO_PUBLIC_API_URL;
+export interface MarketingNotificationService {
+  sendCampaign(
+    notification: Omit<MarketingNotification, "id" | "createdAt" | "read">
+  ): Promise<void>;
+  sendToSegment(
+    segment: string[],
+    notification: Omit<MarketingNotification, "id" | "createdAt" | "read" | "segment">
+  ): Promise<void>;
+}
 
-      if (!apiUrl) {
-        console.error(
-          "[MarketingNotificationService] API URL not configured. Cannot send campaign."
-        );
-        return;
-      }
-
-      const response = await fetch(`${apiUrl}/notifications/marketing/campaigns`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(notification),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to send marketing campaign: ${response.statusText}`);
-      }
-
-      console.log("[MarketingNotificationService] Campaign sent successfully");
-    } catch (error) {
-      console.error("[MarketingNotificationService] Failed to send campaign:", error);
-      throw error;
-    }
+/**
+ * Marketing Service Implementation
+ * Stub implementation - use getPushProvider() from @app/notifications/server
+ */
+class MarketingService implements MarketingNotificationService {
+  async sendCampaign(
+    _notification: Omit<MarketingNotification, "id" | "createdAt" | "read">
+  ): Promise<void> {
+    // Note: For server-side marketing, use getPushProvider() from @app/notifications/server
   }
 
-  /**
-   * Opt user into marketing notifications
-   */
-  async optIn(userId: string): Promise<void> {
-    try {
-      await this.updatePreference(userId, true);
-      console.log("[MarketingNotificationService] User opted in:", userId);
-    } catch (error) {
-      console.error("[MarketingNotificationService] Failed to opt in:", error);
-      throw error;
-    }
-  }
-
-  /**
-   * Opt user out of marketing notifications
-   */
-  async optOut(userId: string): Promise<void> {
-    try {
-      await this.updatePreference(userId, false);
-      console.log("[MarketingNotificationService] User opted out:", userId);
-    } catch (error) {
-      console.error("[MarketingNotificationService] Failed to opt out:", error);
-      throw error;
-    }
-  }
-
-  /**
-   * Get user's marketing preference
-   */
-  async getPreference(userId: string): Promise<boolean> {
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.EXPO_PUBLIC_API_URL;
-
-      if (!apiUrl) {
-        console.error(
-          "[MarketingNotificationService] API URL not configured. Cannot get preference."
-        );
-        return false;
-      }
-
-      const response = await fetch(`${apiUrl}/notifications/marketing/preferences/${userId}`);
-
-      if (!response.ok) {
-        throw new Error(`Failed to get marketing preference: ${response.statusText}`);
-      }
-
-      const data = (await response.json()) as { optedIn: boolean };
-      return data.optedIn;
-    } catch (error) {
-      console.error("[MarketingNotificationService] Failed to get preference:", error);
-      return false;
-    }
-  }
-
-  /**
-   * Update user's marketing notification preference
-   */
-  private async updatePreference(userId: string, optedIn: boolean): Promise<void> {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.EXPO_PUBLIC_API_URL;
-
-    if (!apiUrl) {
-      console.error(
-        "[MarketingNotificationService] API URL not configured. Cannot update preference."
-      );
-      return;
-    }
-
-    const response = await fetch(`${apiUrl}/notifications/marketing/preferences/${userId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ optedIn }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to update marketing preference: ${response.statusText}`);
-    }
+  async sendToSegment(
+    _segment: string[],
+    _notification: Omit<MarketingNotification, "id" | "createdAt" | "read" | "segment">
+  ): Promise<void> {
+    // Note: For server-side marketing, use getPushProvider() from @app/notifications/server
   }
 }
 
-// Export singleton instance
-export const marketingNotificationService = new MarketingNotificationService();
+/**
+ * Export singleton instance
+ */
+export const marketingNotificationService: MarketingNotificationService = new MarketingService();
+
+/**
+ * Helper to send announcement
+ */
+export async function sendAnnouncement(
+  title: string,
+  message: string,
+  campaign?: string
+): Promise<void> {
+  await marketingNotificationService.sendCampaign({
+    type: "marketing",
+    title,
+    message,
+    category: "marketing",
+    priority: "normal",
+    campaign,
+    data: { type: "announcement" },
+  });
+}

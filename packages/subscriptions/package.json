@@ -1,25 +1,30 @@
 {
   "name": "@app/subscriptions",
   "version": "0.0.0",
-  "type": "module",
-  "description": "RevenueCat subscription and monetization management for web and mobile",
+  "description": "Subscription management with support for multiple providers (Polar, RevenueCat, and more)",
   "keywords": [
     "subscriptions",
     "revenuecat",
+    "polar",
     "monetization",
     "paywall",
     "react",
     "react-native"
   ],
-  "author": "whyuascii <eddy@whyuascii.com>",
+  "author": "",
   "license": "ISC",
   "private": true,
+  "type": "module",
   "main": "./dist/index.js",
-  "types": "./src/index.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
+      "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./server": {
+      "types": "./dist/server/index.d.ts",
+      "default": "./dist/server/index.js"
     }
   },
   "files": [
@@ -29,16 +34,19 @@
   "sideEffects": false,
   "scripts": {
     "dev": "swc src -d dist --strip-leading-paths --copy-files --watch",
-    "build": "pnpm run build:swc",
+    "build": "pnpm run build:swc && pnpm run build:types",
     "build:swc": "swc src -d dist --strip-leading-paths --copy-files",
+    "build:types": "tsc --emitDeclarationOnly --outDir dist --skipLibCheck --noEmit false",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "@polar-sh/sdk": "^0.30.0",
     "@revenuecat/purchases-js": "^1.23.0",
     "react-native-purchases": "^8.2.3",
+    "standardwebhooks": "^1.0.0",
     "zustand": "^5.0.2"
   },
   "devDependencies": {
@@ -51,7 +59,11 @@
     "@app/typescript-config": "workspace:*"
   },
   "peerDependencies": {
+    "@app/analytics": "workspace:*",
     "@app/components": "workspace:*",
+    "@app/config": "workspace:*",
+    "@app/core-contract": "workspace:*",
+    "@app/database": "workspace:*",
     "@app/i18n": "workspace:*",
     "react-i18next": "^15",
     "react-native": "*",

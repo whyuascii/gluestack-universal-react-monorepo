@@ -10,33 +10,15 @@ All configuration is managed through Pulumi config. Configuration values are sto
 
 These settings **must** be configured before deploying:
 
-### 1. Supabase Configuration
-
-First, create a Supabase project at https://supabase.com/dashboard, then configure:
+### 1. Database Password
 
 ```bash
-# Supabase Project URL (from project settings)
-pulumi config set supabaseUrl https://xxxxx.supabase.co
-
-# Database connection string (from project settings → Database → Connection String)
-pulumi config set --secret databaseUrl "postgresql://postgres.[ref]:[PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres"
-
-# Supabase anon key (from project settings → API → anon public)
-pulumi config set --secret supabaseAnonKey "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-
-# Supabase service role key (from project settings → API → service_role secret)
-pulumi config set --secret supabaseServiceRoleKey "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+pulumi config set --secret dbPassword "$(openssl rand -base64 32)"
 ```
 
-**Purpose**: Managed PostgreSQL database with built-in Auth, Storage, and Real-time
-**Security**: All secrets stored encrypted in Pulumi state
-**Finding your keys**:
-
-1. Go to https://supabase.com/dashboard/project/YOUR_PROJECT/settings/api
-2. Copy the Project URL, anon key, and service_role key
-3. For database URL, go to Settings → Database → Connection String (use "Connection Pooling" mode)
-
-**Note**: Use the connection pooling URL (port 6543) for better performance with serverless deployments.
+**Purpose**: PostgreSQL database password
+**Security**: Stored encrypted in Pulumi state
+**Recommendation**: Use auto-generated strong password (32+ characters)
 
 ### 2. Better Auth Secret
 
@@ -48,18 +30,7 @@ pulumi config set --secret betterAuthSecret "$(openssl rand -base64 32)"
 **Security**: Stored encrypted in Pulumi state
 **Recommendation**: Use auto-generated strong secret (32+ characters)
 
-### 3. AWS Region
-
-```bash
-pulumi config set aws:region us-east-1
-```
-
-**Purpose**: AWS region for all resources (App Runner, Amplify, Secrets Manager)
-**Options**: Any AWS region (e.g., us-east-1, us-west-2, eu-west-1)
-**Recommendation**: Choose region closest to your users
-**Note**: Supabase region is configured separately in Supabase dashboard
-
-### 4. GitHub Repository Settings
+### 3. GitHub Repository Settings
 
 ```bash
 pulumi config set githubOwner YOUR_GITHUB_USERNAME
@@ -69,6 +40,16 @@ pulumi config set githubBranch main
 
 **Purpose**: Amplify connects to GitHub for automatic deployments
 **Note**: Repository must exist and be accessible
+
+### 4. AWS Region
+
+```bash
+pulumi config set aws:region us-east-1
+```
+
+**Purpose**: AWS region for all resources
+**Options**: Any AWS region (e.g., us-east-1, us-west-2, eu-west-1)
+**Recommendation**: Choose region closest to your users
 
 ## Optional Configuration
 
@@ -81,7 +62,7 @@ pulumi config set projectName myapp
 **Default**: `app`
 **Purpose**: Prefix for all AWS resource names
 **Format**: Lowercase alphanumeric, hyphens allowed
-**Example**: If `projectName=myapp` and stack is `dev`, RDS instance will be `myapp-db-dev`
+**Example**: If `projectName=myapp` and stack is `dev`, Supabase instance will be `myapp-db-dev`
 
 ### GitHub Token
 
@@ -146,19 +127,10 @@ pulumi config set posthogHost https://us.i.posthog.com
 # Stack
 pulumi stack init dev
 
-# Required - AWS
+# Required
 pulumi config set aws:region us-east-1
-
-# Required - Supabase (create project first at https://supabase.com)
-pulumi config set supabaseUrl https://xxxxx.supabase.co
-pulumi config set --secret databaseUrl "postgresql://postgres.[ref]:[PASSWORD]@db.xxxxx.supabase.com:5432/postgres"
-pulumi config set --secret supabaseAnonKey "eyJxxx..."
-pulumi config set --secret supabaseServiceRoleKey "eyJxxx..."
-
-# Required - Auth
+pulumi config set --secret dbPassword "$(openssl rand -base64 32)"
 pulumi config set --secret betterAuthSecret "$(openssl rand -base64 32)"
-
-# Required - GitHub
 pulumi config set githubOwner myusername
 pulumi config set githubRepo my-monorepo
 pulumi config set githubBranch main
@@ -173,20 +145,11 @@ pulumi up
 # Stack
 pulumi stack init prod
 
-# Required - AWS
+# Required
 pulumi config set aws:region us-east-1
 pulumi config set projectName mycompany
-
-# Required - Supabase
-pulumi config set supabaseUrl https://xxxxx.supabase.co
-pulumi config set --secret databaseUrl "postgresql://postgres.[ref]:[PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres"
-pulumi config set --secret supabaseAnonKey "eyJxxx..."
-pulumi config set --secret supabaseServiceRoleKey "eyJxxx..."
-
-# Required - Auth
+pulumi config set --secret dbPassword "$(openssl rand -base64 32)"
 pulumi config set --secret betterAuthSecret "$(openssl rand -base64 32)"
-
-# Required - GitHub
 pulumi config set githubOwner mycompany
 pulumi config set githubRepo production-app
 pulumi config set githubBranch main
@@ -211,45 +174,34 @@ pulumi up
 ### Multi-Environment Setup
 
 ```bash
-# Development (use dev Supabase project)
+# Development
 pulumi stack init dev
 pulumi config set aws:region us-east-1
 pulumi config set projectName myapp
-pulumi config set supabaseUrl https://dev-xxxxx.supabase.co
-pulumi config set --secret databaseUrl "postgresql://..."
-pulumi config set --secret supabaseAnonKey "eyJxxx..."
-pulumi config set --secret supabaseServiceRoleKey "eyJxxx..."
+pulumi config set --secret dbPassword "$(openssl rand -base64 32)"
 pulumi config set --secret betterAuthSecret "$(openssl rand -base64 32)"
 # ... other dev settings
 pulumi up
 
-# Staging (use staging Supabase project)
+# Staging
 pulumi stack init staging
 pulumi config set aws:region us-east-1
 pulumi config set projectName myapp
-pulumi config set supabaseUrl https://staging-xxxxx.supabase.co
-pulumi config set --secret databaseUrl "postgresql://..."
-pulumi config set --secret supabaseAnonKey "eyJxxx..."
-pulumi config set --secret supabaseServiceRoleKey "eyJxxx..."
+pulumi config set --secret dbPassword "$(openssl rand -base64 32)"
 pulumi config set --secret betterAuthSecret "$(openssl rand -base64 32)"
 # ... other staging settings
 pulumi up
 
-# Production (use production Supabase project)
+# Production
 pulumi stack init prod
 pulumi config set aws:region us-east-1
 pulumi config set projectName myapp
 pulumi config set domain myapp.com
-pulumi config set supabaseUrl https://prod-xxxxx.supabase.co
-pulumi config set --secret databaseUrl "postgresql://..."
-pulumi config set --secret supabaseAnonKey "eyJxxx..."
-pulumi config set --secret supabaseServiceRoleKey "eyJxxx..."
+pulumi config set --secret dbPassword "$(openssl rand -base64 32)"
 pulumi config set --secret betterAuthSecret "$(openssl rand -base64 32)"
 # ... other prod settings
 pulumi up
 ```
-
-**Note**: Create separate Supabase projects for each environment (dev, staging, prod) for proper isolation.
 
 ## Viewing Configuration
 
@@ -369,86 +321,23 @@ pulumi config rm githubToken
 
 ## Quick Reference
 
-| Configuration            | Required | Secret | Default                    | Purpose                    |
-| ------------------------ | -------- | ------ | -------------------------- | -------------------------- |
-| `aws:region`             | ✅       | ❌     | -                          | AWS region                 |
-| `supabaseUrl`            | ✅       | ❌     | -                          | Supabase project URL       |
-| `databaseUrl`            | ✅       | ✅     | -                          | Supabase connection string |
-| `supabaseAnonKey`        | ✅       | ✅     | -                          | Supabase anon public key   |
-| `supabaseServiceRoleKey` | ✅       | ✅     | -                          | Supabase service role key  |
-| `betterAuthSecret`       | ✅       | ✅     | -                          | Auth signing secret        |
-| `githubOwner`            | ✅       | ❌     | -                          | GitHub username/org        |
-| `githubRepo`             | ✅       | ❌     | -                          | Repository name            |
-| `githubBranch`           | ✅       | ❌     | `main`                     | Git branch                 |
-| `projectName`            | ❌       | ❌     | `app`                      | Resource name prefix       |
-| `githubToken`            | ❌       | ✅     | -                          | For private repos          |
-| `domain`                 | ❌       | ❌     | -                          | Custom domain              |
-| `googleClientId`         | ❌       | ✅     | -                          | Google OAuth               |
-| `googleClientSecret`     | ❌       | ✅     | -                          | Google OAuth               |
-| `githubClientId`         | ❌       | ✅     | -                          | GitHub OAuth               |
-| `githubClientSecret`     | ❌       | ✅     | -                          | GitHub OAuth               |
-| `posthogKey`             | ❌       | ✅     | -                          | PostHog analytics          |
-| `posthogHost`            | ❌       | ❌     | `https://us.i.posthog.com` | PostHog host               |
-
-## Amplify Platform Configuration
-
-AWS Amplify requires specific platform settings to support Next.js 15 with Server-Side Rendering (App Router).
-
-### Platform Settings
-
-These settings are **automatically configured** in the Pulumi infrastructure code:
-
-| Setting            | Value           | Purpose                                  |
-| ------------------ | --------------- | ---------------------------------------- |
-| `platform`         | `WEB_COMPUTE`   | Enables SSR capabilities for Next.js     |
-| `branch.framework` | `Next.js - SSR` | Configures build process for Next.js SSR |
-
-### Why These Settings Matter
-
-**WEB_COMPUTE Platform**:
-
-- Required for Next.js App Router with Server-Side Rendering
-- Enables dynamic rendering and API routes
-- Provides compute resources for server-side operations
-- Without this, only static site generation (SSG) is supported
-
-**Next.js - SSR Framework**:
-
-- Optimizes build process for Next.js SSR
-- Configures runtime environment correctly
-- Ensures proper handling of server components
-
-### Manual Configuration
-
-If you're working with an existing Amplify app or need to update these settings:
-
-```bash
-cd deployment/pulumi
-
-# Automatic (uses Pulumi outputs)
-./configure-amplify.sh
-
-# Manual with environment variables
-AMPLIFY_APP_ID=your-app-id AWS_REGION=us-east-1 ./configure-amplify.sh
-```
-
-### Verification
-
-Verify your Amplify configuration:
-
-```bash
-# From Pulumi outputs
-APP_ID=$(pulumi stack output amplifyAppId)
-REGION=$(pulumi config get aws:region)
-
-# Check platform
-aws amplify get-app --app-id $APP_ID --region $REGION | jq -r '.app.platform'
-# Expected: WEB_COMPUTE
-
-# Check framework
-aws amplify get-branch --app-id $APP_ID --branch-name main --region $REGION | jq -r '.branch.framework'
-# Expected: Next.js - SSR
-```
+| Configuration        | Required | Secret | Default                    | Purpose              |
+| -------------------- | -------- | ------ | -------------------------- | -------------------- |
+| `aws:region`         | ✅       | ❌     | -                          | AWS region           |
+| `dbPassword`         | ✅       | ✅     | -                          | Database password    |
+| `betterAuthSecret`   | ✅       | ✅     | -                          | Auth signing secret  |
+| `githubOwner`        | ✅       | ❌     | -                          | GitHub username/org  |
+| `githubRepo`         | ✅       | ❌     | -                          | Repository name      |
+| `githubBranch`       | ✅       | ❌     | `main`                     | Git branch           |
+| `projectName`        | ❌       | ❌     | `app`                      | Resource name prefix |
+| `githubToken`        | ❌       | ✅     | -                          | For private repos    |
+| `domain`             | ❌       | ❌     | -                          | Custom domain        |
+| `googleClientId`     | ❌       | ✅     | -                          | Google OAuth         |
+| `googleClientSecret` | ❌       | ✅     | -                          | Google OAuth         |
+| `githubClientId`     | ❌       | ✅     | -                          | GitHub OAuth         |
+| `githubClientSecret` | ❌       | ✅     | -                          | GitHub OAuth         |
+| `posthogKey`         | ❌       | ✅     | -                          | PostHog analytics    |
+| `posthogHost`        | ❌       | ❌     | `https://us.i.posthog.com` | PostHog host         |
 
 ## Next Steps
 
@@ -458,6 +347,5 @@ After configuring, proceed with deployment:
 2. **Preview changes**: `pulumi preview`
 3. **Deploy infrastructure**: `pulumi up`
 4. **View outputs**: `pulumi stack output`
-5. **Verify Amplify settings**: See "Amplify Platform Configuration" above
 
 See [README.md](./README.md) for complete deployment guide.

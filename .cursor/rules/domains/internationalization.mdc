@@ -1,0 +1,260 @@
+---
+description: i18n patterns for multi-language support
+globs:
+  - 'packages/i18n/**/*.ts'
+  - 'packages/i18n/**/*.json'
+  - 'packages/ui/src/screens/**/*.tsx'
+  - 'packages/mailer/emails/**/*.tsx'
+alwaysApply: false
+priority: high
+---
+
+# Internationalization (i18n)
+
+## Objective
+Ensure all user-facing content uses i18n for multi-language support.
+
+## Context
+- i18next for translation management
+- English (en) and Spanish (es) supported
+- Platform-specific configs for web and mobile
+- User preference stored in account settings
+
+## Rules
+
+### What MUST Use i18n
+
+**User-facing content:**
+- UI text (labels, buttons, headings)
+- Error messages shown to users
+- Email content (subject, body)
+- Push notification content
+- Toast/alert messages
+- Form validation messages
+- API error responses sent to clients
+
+```typescript
+// ✅ Good - All user-facing text uses i18n
+import { useTranslation } from "@app/i18n/mobile";
+
+export function DashboardScreen() {
+  const { t } = useTranslation("dashboard");
+
+  return (
+    <VStack>
+      <Heading>{t("title")}</Heading>
+      <Text>{t("welcome", { name: user.name })}</Text>
+      <Button onPress={handleRefresh}>
+        <ButtonText>{t("actions.refresh")}</ButtonText>
+      </Button>
+    </VStack>
+  );
+}
+
+// ❌ Avoid - Hardcoded strings
+<Heading>Dashboard</Heading>
+<Text>Welcome, {user.name}!</Text>
+```
+
+### What Stays in English
+
+**Internal/technical content:**
+- Console logs
+- Analytics event names/properties
+- Sentry/error tracking messages
+- OpenTelemetry spans and traces
+- Database field names
+- Code comments
+- Log messages (Pino, etc.)
+
+```typescript
+// ✅ Good - Internal logs in English
+console.log(`[Auth] User ${userId} logged in`);
+logger.info({ userId, action: "login" }, "User authenticated");
+
+posthog.capture("user_signup", {
+  method: "email",
+  source: "mobile_app",
+});
+```
+
+### Translation File Structure
+
+Organize translations by domain:
+
+```
+packages/i18n/src/locales/
+├── en/
+│   ├── common.json       # Shared UI strings
+│   ├── auth.json         # Authentication
+│   ├── dashboard.json    # Dashboard
+│   ├── group.json        # Group/tenant features
+│   ├── settings.json     # Settings screens
+│   ├── subscriptions.json # Subscription features
+│   ├── errors.json       # User-facing errors
+│   └── emails.json       # Email templates
+└── es/
+    └── (same structure)
+```
+
+### Translation Key Patterns
+
+Use dot notation for nested keys:
+
+```json
+// ✅ Good - packages/i18n/src/locales/en/settings.json
+{
+  "title": "Settings",
+  "sections": {
+    "profile": {
+      "title": "Profile",
+      "description": "Manage your profile information"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Configure notification preferences"
+    }
+  },
+  "actions": {
+    "save": "Save Changes",
+    "cancel": "Cancel"
+  },
+  "messages": {
+    "saved": "Settings saved successfully",
+    "error": "Failed to save settings"
+  }
+}
+```
+
+```typescript
+// Usage
+const { t } = useTranslation("settings");
+
+t("title");                           // "Settings"
+t("sections.profile.title");          // "Profile"
+t("actions.save");                    // "Save Changes"
+```
+
+### Interpolation
+
+Use named parameters for dynamic content:
+
+```json
+// ✅ Good - Named parameters
+{
+  "welcome": "Welcome, {{name}}!",
+  "itemCount": "You have {{count}} items",
+  "lastLogin": "Last login: {{date}}"
+}
+```
+
+```typescript
+// Usage
+t("welcome", { name: user.name });
+t("itemCount", { count: items.length });
+t("lastLogin", { date: formatDate(lastLogin) });
+```
+
+### Pluralization
+
+Use i18next plural forms:
+
+```json
+// ✅ Good - Plural forms
+{
+  "notification_one": "You have {{count}} notification",
+  "notification_other": "You have {{count}} notifications",
+  "notification_zero": "No new notifications"
+}
+```
+
+```typescript
+// Usage - i18next handles automatically
+t("notification", { count: notifications.length });
+```
+
+### Platform-Specific Config
+
+**Web** (`@app/i18n/web`):
+
+```typescript
+import { useTranslation as useI18nTranslation } from "react-i18next";
+
+// Uses browser language detection
+// Persists to localStorage
+```
+
+**Mobile** (`@app/i18n/mobile`):
+
+```typescript
+import { useTranslation as useI18nTranslation } from "react-i18next";
+
+// Uses device language via Expo
+// Persists to AsyncStorage
+```
+
+### Email Templates
+
+Emails must support user's language preference:
+
+```typescript
+// ✅ Good - Localized emails
+// packages/mailer/src/send.ts
+export async function sendTemplateEmail<T extends EmailTemplate>(
+  template: T,
+  options: EmailOptions<T>
+) {
+  const { to, locale = "en", data } = options;
+
+  // Get localized subject
+  const subject = getSubjectForTemplate(template, locale);
+
+  // Get localized template data
+  const translations = getTranslationsForTemplate(template, locale);
+
+  await resend.emails.send({
+    from: `${EMAIL_FROM_NAME} <${EMAIL_FROM_ADDRESS}>`,
+    to,
+    subject,
+    react: EmailComponents[template]({ ...data, t: translations }),
+  });
+}
+
+// Usage
+await sendTemplateEmail("authVerifyEmail", {
+  to: user.email,
+  locale: user.preferredLanguage || "en",
+  data: { name: user.name, verificationLink },
+});
+```
+
+### API Error Messages
+
+Return i18n keys, not hardcoded messages:
+
+```typescript
+// ✅ Good - Return i18n key
+throwError("FORBIDDEN", "errors.forbidden.noPermission");
+
+// Client handles translation
+onError: (error) => {
+  toast.error(t(error.message));
+};
+
+// ❌ Avoid - Hardcoded message
+throwError("FORBIDDEN", "You don't have permission to do this");
+```
+
+### Adding New Languages
+
+1. Create new folder: `packages/i18n/src/locales/{code}/`
+2. Copy all JSON files from `en/`
+3. Translate content
+4. Update `packages/i18n/src/languages.json`
+5. Update language selector UI
+
+## Exceptions
+
+- Third-party error messages (log but don't display)
+- Technical configuration values
+- Code-level constants and enums

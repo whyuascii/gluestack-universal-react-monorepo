@@ -1,0 +1,74 @@
+{
+  "title": "Dashboard",
+  "loading": "Loading dashboard...",
+  "greeting": "Welcome, {{name}}!",
+  "subtitle": "Here's what's happening in your workspace",
+  "welcome": {
+    "title": "Welcome to your dashboard",
+    "subtitle": "Here's an overview of your workspace and integrations"
+  },
+  "integrations": {
+    "title": "Integrations",
+    "subtitle": "Connected services and their status",
+    "posthog": {
+      "title": "Analytics",
+      "description": "PostHog product analytics",
+      "action": "Track Event",
+      "tracking": "Tracking...",
+      "tracked": "Event tracked!",
+      "status": {
+        "connected": "Connected",
+        "notConfigured": "Not configured"
+      }
+    },
+    "resend": {
+      "title": "Email",
+      "description": "Resend email service",
+      "action": "Send Test Email",
+      "sending": "Sending...",
+      "sent": "Email sent!",
+      "status": {
+        "connected": "Connected",
+        "notConfigured": "Not configured"
+      }
+    },
+    "notifications": {
+      "title": "In-App Notifications",
+      "description": "Novu real-time notifications",
+      "action": "Send Test",
+      "sending": "Sending...",
+      "sent": "Sent!",
+      "status": {
+        "connected": "Connected",
+        "notConfigured": "Not configured"
+      }
+    },
+    "revenuecat": {
+      "title": "Subscriptions",
+      "description": "RevenueCat subscription management",
+      "action": "Test Integration",
+      "testing": "Testing...",
+      "configured": "Configured!",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "notConfigured": "Not configured"
+      }
+    }
+  },
+  "components": {
+    "title": "Component Showcase",
+    "subtitle": "Examples of shared UI components",
+    "buttons": "Buttons",
+    "inputs": "Inputs",
+    "cards": "Cards",
+    "alerts": "Alerts"
+  },
+  "stats": {
+    "title": "Quick Stats",
+    "members": "Members",
+    "groups": "Groups",
+    "activeUsers": "Active Users",
+    "events": "Events Tracked"
+  }
+}

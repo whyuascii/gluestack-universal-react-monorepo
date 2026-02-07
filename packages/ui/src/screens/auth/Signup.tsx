@@ -1,25 +1,43 @@
 "use client";
 
 import { authClient } from "@app/auth";
-import { VStack, HStack, Heading, Text, Link, LinkText, Box } from "@app/components";
-import { AuthCard, FormField, PrimaryButton, SocialAuthButton } from "@app/components";
-import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  ButtonText,
+  ButtonSpinner,
+  FormField,
+  Heading,
+  HStack,
+  Icon,
+  Link,
+  LinkText,
+  Pressable,
+  SocialAuthButton,
+  Text,
+  VStack,
+} from "@app/components";
+import { User, Mail, Lock, Eye, EyeOff, ArrowRight, UserPlus } from "lucide-react-native";
+import React, { useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { ScrollView, KeyboardAvoidingView, Platform, View, type TextInput } from "react-native";
+import { useAccessibilityAnnounce } from "../../hooks/useAccessibilityAnnounce";
 
 interface SignupScreenProps {
   onNavigateToLogin: () => void;
-  onSignupSuccess?: () => void;
+  onSignupSuccess?: (email: string) => void;
 }
 
 export const SignupScreen: React.FC<SignupScreenProps> = ({
   onNavigateToLogin,
   onSignupSuccess,
 }) => {
-  const { t } = useTranslation(["auth", "validation"]);
+  const { t } = useTranslation(["auth", "validation", "common"]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{
     name?: string;
     email?: string;
@@ -29,11 +47,26 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({
   }>({});
   const [isLoading, setIsLoading] = useState(false);
 
+  const emailInputRef = useRef<TextInput>(null);
+  const passwordInputRef = useRef<TextInput>(null);
+  const confirmPasswordInputRef = useRef<TextInput>(null);
+  const announce = useAccessibilityAnnounce();
+
+  const handleNameSubmit = useCallback(() => {
+    emailInputRef.current?.focus();
+  }, []);
+
+  const handleEmailSubmit = useCallback(() => {
+    passwordInputRef.current?.focus();
+  }, []);
+
+  const handlePasswordSubmit = useCallback(() => {
+    confirmPasswordInputRef.current?.focus();
+  }, []);
+
   const handleSignup = async () => {
-    // Reset errors
     setErrors({});
 
-    // Validation
     const newErrors: typeof errors = {};
     if (!name || name.length < 1) {
       newErrors.name = t("validation:name.required");
@@ -61,21 +94,19 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({
         name,
       });
 
-      // Better Auth returns { data, error } - check for error
       if (response.error) {
-        setErrors({
-          general: response.error.message || "Signup failed",
-        });
+        const errorMessage = response.error.message || t("auth:signup.failed");
+        setErrors({ general: errorMessage });
+        announce(errorMessage);
         return;
       }
 
-      // Success - Better Auth automatically sets the session cookie
-      // Call success callback if provided
-      onSignupSuccess?.();
+      announce(t("auth:signup.success"));
+      onSignupSuccess?.(email);
     } catch (error) {
-      setErrors({
-        general: error instanceof Error ? error.message : "Signup failed",
-      });
+      const errorMessage = error instanceof Error ? error.message : t("auth:signup.failed");
+      setErrors({ general: errorMessage });
+      announce(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -90,135 +121,200 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({
       });
     } catch (error) {
       setErrors({
-        general: error instanceof Error ? error.message : "Social auth failed",
+        general: error instanceof Error ? error.message : t("auth:social.failed"),
       });
       setIsLoading(false);
     }
   };
 
   return (
-    <Box className="flex-1 justify-center bg-background-0 p-4 relative overflow-hidden">
-      {/* Decorative floating leaves in background */}
-      <Box className="absolute top-16 right-12 opacity-20 animate-float">
-        <svg width="45" height="45" viewBox="0 0 100 100" fill="none">
-          <path d="M50 10C30 10 20 30 20 50C20 70 30 90 50 90C50 70 50 30 50 10Z" fill="#8EB8E5" />
-        </svg>
-      </Box>
-      <Box className="absolute bottom-24 left-8 opacity-15 animate-float-slow">
-        <svg width="38" height="38" viewBox="0 0 100 100" fill="none">
-          <path d="M50 10C30 10 20 30 20 50C20 70 30 90 50 90C50 70 50 30 50 10Z" fill="#A8CBB7" />
-        </svg>
-      </Box>
+    <View className="flex-1">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
+      >
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+          className="px-6 md:px-12"
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <Box className="w-full max-w-md self-center py-8">
+            {/* Header */}
+            <VStack space="sm" className="items-center mb-8">
+              <Box className="w-16 h-16 rounded-2xl bg-primary-500 items-center justify-center mb-2 shadow-lg">
+                <UserPlus size={32} color="#ffffff" />
+              </Box>
+              <Heading size="2xl" className="text-typography-900 text-center">
+                {t("auth:signup.title")}
+              </Heading>
+              <Text className="text-typography-500 text-center text-base">
+                {t("auth:signup.subtitle")}
+              </Text>
+            </VStack>
 
-      <AuthCard>
-        <VStack space="lg">
-          {/* Small decorative illustration at top - birds for signup */}
-          <Box className="items-center mb-2">
-            <svg width="48" height="48" viewBox="0 0 100 100" fill="none">
-              <path d="M30 40C30 35 35 30 40 30C45 30 50 35 50 40L30 40Z" fill="#FAD97A" />
-              <path d="M60 35C60 30 65 25 70 25C75 25 80 30 80 35L60 35Z" fill="#8EB8E5" />
-              <circle cx="40" cy="32" r="2" fill="#4E3F30" />
-              <circle cx="70" cy="27" r="2" fill="#4E3F30" />
-            </svg>
-          </Box>
+            {/* Card */}
+            <Box className="bg-background-0 rounded-3xl p-6 md:p-8 shadow-hard-2 border border-outline-100">
+              {/* Error Message */}
+              {errors.general && (
+                <Box className="bg-error-50 border border-error-200 p-4 rounded-2xl mb-6">
+                  <Text className="text-error-700 text-center text-sm font-medium">
+                    {errors.general}
+                  </Text>
+                </Box>
+              )}
 
-          {/* Title & Subtitle */}
-          <VStack space="xs">
-            <Heading size="2xl" className="text-typography-900 text-center">
-              {t("auth:signup.title")}
-            </Heading>
-            <Text size="sm" className="text-typography-600 text-center">
-              {t("auth:signup.subtitle")}
-            </Text>
-          </VStack>
-
-          {/* Social Auth Buttons */}
-          <VStack space="md">
-            <HStack space="md" className="w-full">
-              <Box className="flex-1">
+              {/* Social Auth Buttons */}
+              <VStack space="md" className="mb-6">
                 <SocialAuthButton
                   provider="google"
                   onPress={() => handleSocialAuth("google")}
-                  isLoading={isLoading}
                   isDisabled={isLoading}
                 />
-              </Box>
-              <Box className="flex-1">
                 <SocialAuthButton
                   provider="github"
                   onPress={() => handleSocialAuth("github")}
-                  isLoading={isLoading}
                   isDisabled={isLoading}
                 />
-              </Box>
-            </HStack>
+              </VStack>
 
-            {/* Divider */}
-            <HStack space="md" className="items-center">
-              <Box className="flex-1 h-px bg-outline-200" />
-              <Text size="sm" className="text-typography-500">
-                {t("auth:social.divider")}
-              </Text>
-              <Box className="flex-1 h-px bg-outline-200" />
-            </HStack>
-          </VStack>
+              {/* Divider */}
+              <HStack className="items-center mb-6">
+                <Box className="flex-1 h-px bg-outline-200" />
+                <Text className="text-typography-400 text-xs uppercase px-4 font-medium">
+                  {t("auth:social.divider")}
+                </Text>
+                <Box className="flex-1 h-px bg-outline-200" />
+              </HStack>
 
-          {/* Email Form */}
-          <VStack space="md">
-            <FormField
-              label={t("auth:signup.name")}
-              value={name}
-              onChangeText={setName}
-              error={errors.name}
-              placeholder={t("auth:signup.namePlaceholder")}
-              autoCapitalize="words"
-            />
+              {/* Form Fields */}
+              <VStack space="lg">
+                <FormField
+                  label={t("auth:signup.name")}
+                  error={errors.name}
+                  leftIcon={<User size={20} className="text-typography-400" />}
+                  input={{
+                    placeholder: t("auth:signup.namePlaceholder"),
+                    value: name,
+                    onChangeText: setName,
+                    autoCapitalize: "words",
+                    returnKeyType: "next",
+                    onSubmitEditing: handleNameSubmit,
+                    blurOnSubmit: false,
+                  }}
+                  testID="signup-name-input"
+                />
 
-            <FormField
-              label={t("auth:signup.email")}
-              value={email}
-              onChangeText={setEmail}
-              error={errors.email || errors.general}
-              placeholder={t("auth:signup.emailPlaceholder")}
-              keyboardType="email-address"
-            />
+                <FormField
+                  ref={emailInputRef}
+                  label={t("auth:signup.email")}
+                  error={errors.email}
+                  leftIcon={<Mail size={20} className="text-typography-400" />}
+                  input={{
+                    placeholder: t("auth:signup.emailPlaceholder"),
+                    value: email,
+                    onChangeText: setEmail,
+                    keyboardType: "email-address",
+                    autoCapitalize: "none",
+                    returnKeyType: "next",
+                    onSubmitEditing: handleEmailSubmit,
+                    blurOnSubmit: false,
+                  }}
+                  testID="signup-email-input"
+                />
 
-            <FormField
-              label={t("auth:signup.password")}
-              value={password}
-              onChangeText={setPassword}
-              error={errors.password}
-              placeholder={t("auth:signup.passwordPlaceholder")}
-              secureTextEntry
-            />
+                <FormField
+                  ref={passwordInputRef}
+                  label={t("auth:signup.password")}
+                  error={errors.password}
+                  leftIcon={<Lock size={20} className="text-typography-400" />}
+                  rightIcon={
+                    <Pressable
+                      onPress={() => setShowPassword(!showPassword)}
+                      hitSlop={8}
+                      accessibilityLabel={
+                        showPassword ? t("auth:signup.hidePassword") : t("auth:signup.showPassword")
+                      }
+                      accessibilityRole="button"
+                      className="p-1"
+                    >
+                      {showPassword ? (
+                        <EyeOff size={20} className="text-typography-400" />
+                      ) : (
+                        <Eye size={20} className="text-typography-400" />
+                      )}
+                    </Pressable>
+                  }
+                  input={{
+                    placeholder: t("auth:signup.passwordPlaceholder"),
+                    value: password,
+                    onChangeText: setPassword,
+                    secureTextEntry: !showPassword,
+                    returnKeyType: "next",
+                    onSubmitEditing: handlePasswordSubmit,
+                    blurOnSubmit: false,
+                  }}
+                  testID="signup-password-input"
+                />
 
-            <FormField
-              label={t("auth:signup.confirmPassword")}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              error={errors.confirmPassword}
-              placeholder={t("auth:signup.confirmPasswordPlaceholder")}
-              secureTextEntry
-            />
+                <FormField
+                  ref={confirmPasswordInputRef}
+                  label={t("auth:signup.confirmPassword")}
+                  error={errors.confirmPassword}
+                  leftIcon={<Lock size={20} className="text-typography-400" />}
+                  input={{
+                    placeholder: t("auth:signup.confirmPasswordPlaceholder"),
+                    value: confirmPassword,
+                    onChangeText: setConfirmPassword,
+                    secureTextEntry: !showPassword,
+                    returnKeyType: "done",
+                    onSubmitEditing: handleSignup,
+                  }}
+                  testID="signup-confirm-password-input"
+                />
 
-            <PrimaryButton onPress={handleSignup} isLoading={isLoading} isDisabled={isLoading}>
-              {t("auth:signup.submit")}
-            </PrimaryButton>
-          </VStack>
+                {/* Submit Button */}
+                <Button
+                  size="xl"
+                  action="primary"
+                  onPress={handleSignup}
+                  isDisabled={isLoading}
+                  className="rounded-2xl h-14 mt-2"
+                  testID="signup-submit-button"
+                >
+                  {isLoading ? (
+                    <ButtonSpinner color="white" />
+                  ) : (
+                    <>
+                      <ButtonText className="font-semibold text-base">
+                        {t("auth:signup.submit")}
+                      </ButtonText>
+                      <Icon as={ArrowRight} size="md" className="text-white ml-2" />
+                    </>
+                  )}
+                </Button>
+              </VStack>
 
-          {/* Login link */}
-          <Box className="items-center">
-            <Text size="sm" className="text-typography-600">
-              {t("auth:signup.hasAccount")}{" "}
-              <Link onPress={onNavigateToLogin}>
-                <LinkText className="text-primary-600 font-semibold">
-                  {t("auth:signup.loginLink")}
-                </LinkText>
-              </Link>
+              {/* Login Link */}
+              <HStack className="justify-center items-center mt-8 pt-6 border-t border-outline-100">
+                <Text className="text-typography-500 text-base">
+                  {t("auth:signup.hasAccount")}{" "}
+                </Text>
+                <Link onPress={onNavigateToLogin}>
+                  <LinkText className="text-primary-500 font-semibold text-base">
+                    {t("auth:signup.loginLink")}
+                  </LinkText>
+                </Link>
+              </HStack>
+            </Box>
+
+            {/* Terms */}
+            <Text className="text-typography-400 text-xs text-center mt-6 px-4">
+              {t("auth:signup.termsNotice")}
             </Text>
           </Box>
-        </VStack>
-      </AuthCard>
-    </Box>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };

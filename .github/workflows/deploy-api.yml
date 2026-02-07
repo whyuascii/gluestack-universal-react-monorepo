@@ -78,8 +78,8 @@ jobs:
             .
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      # Note: Database migrations should run inside the container or manually
-      # RDS is in a private VPC and not accessible from GitHub Actions
+      # Note: Database migrations run automatically in the container startup script
+      # See apps/api/scripts/start.sh for migration execution
 
       - name: Deploy to App Runner
         id: deploy-apprunner

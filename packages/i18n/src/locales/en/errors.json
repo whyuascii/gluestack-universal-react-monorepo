@@ -1,0 +1,48 @@
+{
+  "generic": {
+    "unknown": "An unexpected error occurred. Please try again.",
+    "networkError": "Unable to connect to the server. Please check your internet connection.",
+    "timeout": "The request timed out. Please try again."
+  },
+  "unauthorized": {
+    "notAuthenticated": "Please sign in to continue.",
+    "sessionExpired": "Your session has expired. Please sign in again.",
+    "invalidCredentials": "Invalid email or password."
+  },
+  "forbidden": {
+    "noPermission": "You don't have permission to perform this action.",
+    "notMember": "You are not a member of this group.",
+    "insufficientRole": "This action requires {{requiredRole}} role or higher."
+  },
+  "notFound": {
+    "resource": "The requested resource was not found.",
+    "user": "User not found.",
+    "group": "Group not found.",
+    "invite": "Invitation not found or has expired."
+  },
+  "badRequest": {
+    "invalidInput": "The provided input is invalid.",
+    "missingFields": "Please fill in all required fields.",
+    "invalidEmail": "Please enter a valid email address.",
+    "invalidToken": "Invalid or expired token."
+  },
+  "conflict": {
+    "alreadyExists": "This resource already exists.",
+    "emailTaken": "This email is already registered.",
+    "alreadyMember": "You are already a member of this group."
+  },
+  "validation": {
+    "required": "{{field}} is required.",
+    "minLength": "{{field}} must be at least {{min}} characters.",
+    "maxLength": "{{field}} must be at most {{max}} characters.",
+    "invalidFormat": "{{field}} has an invalid format."
+  },
+  "rateLimit": {
+    "tooManyRequests": "Too many requests. Please try again in {{retryAfter}}."
+  },
+  "subscription": {
+    "featureNotAvailable": "This feature requires a {{requiredTier}} subscription.",
+    "tierRequired": "Please upgrade to {{requiredTier}} to access this feature."
+  },
+  "waitlistFailed": "Failed to join waitlist. Please try again."
+}

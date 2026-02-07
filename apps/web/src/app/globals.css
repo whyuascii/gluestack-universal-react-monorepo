@@ -4,6 +4,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Ensure full viewport height for React Native Web */
+html,
+body,
+#__next {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  flex: 1;
+}
+
+/* Fix for React Native Web flex containers */
+body > div {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 100%;
+}
+
 @layer utilities {
   .text-shadow-sm {
     text-shadow: 1px 1px 0px rgba(78, 63, 48, 0.1);
@@ -11,3 +35,98 @@
 }
 
 /* Custom floating animation for leaves - defined in tailwind theme but can be customized here */
+
+/* Notification animations */
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+@keyframes bellShake {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: rotate(-10deg);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: rotate(10deg);
+  }
+}
+
+@keyframes badgePop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Novu inbox custom animations */
+[data-novu-el="bellDot"] {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+[data-novu-el="bellContainer"]:has([data-novu-el="bellDot"]) [data-novu-el="bellIcon"] {
+  animation: bellShake 0.5s ease-in-out;
+}
+
+/* Counter badge animation */
+[data-novu-el="counter"] {
+  animation: badgePop 0.3s ease-out;
+}
+
+/* Novu popover slide in animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Novu inbox styling overrides */
+[data-novu-el="popoverContent"] {
+  animation: slideIn 0.2s ease-out !important;
+}
+
+[data-novu-el="notification"] {
+  transition: all 0.15s ease !important;
+}
+
+[data-novu-el="notification"]:hover {
+  transform: translateX(2px);
+}
+
+[data-novu-el="bellContainer"]:hover {
+  transform: scale(1.05);
+}
+
+/* Hide Novu branding if present */
+[data-novu-el="inboxFooter"] a[href*="novu"] {
+  display: none;
+}

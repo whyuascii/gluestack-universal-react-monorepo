@@ -1,20 +1,24 @@
-import { PostHogProvider } from "@app/analytics/mobile";
 import { GluestackUIProvider } from "@app/components";
 import i18n from "@app/i18n/mobile";
 import { RevenueCatProvider } from "@app/subscriptions";
-import { useSession } from "@app/ui";
+import { DEFAULT_CACHE_TIMES } from "@app/ui";
+import { AnalyticsProvider } from "@app/ui/analytics-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Slot, useRouter, useSegments } from "expo-router";
-import { useEffect, useState } from "react";
+import { Slot } from "expo-router";
+import { useState } from "react";
 import { I18nextProvider } from "react-i18next";
+import { LogBox } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import "../../global.css";
 
-export default function RootLayout() {
-  const router = useRouter();
-  const segments = useSegments();
-  const { data: session, isPending } = useSession();
+// Suppress codegen warnings for new architecture
+LogBox.ignoreLogs([
+  /Codegen didn't run for RNSVG/,
+  /Codegen didn't run for RNCSafeArea/,
+  /SafeAreaView has been deprecated/,
+]);
 
+export default function RootLayout() {
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -22,37 +26,24 @@ export default function RootLayout() {
           queries: {
             retry: 1,
             refetchOnWindowFocus: false,
+            staleTime: DEFAULT_CACHE_TIMES.staleTime,
+            gcTime: DEFAULT_CACHE_TIMES.gcTime,
           },
         },
       })
   );
 
-  useEffect(() => {
-    if (isPending) return; // Wait for session to load
-
-    const inAuthGroup = segments[0] === "(auth)";
-    const isAuthenticated = !!session;
-
-    if (!isAuthenticated && !inAuthGroup) {
-      router.replace("/(auth)/login");
-    } else if (isAuthenticated && inAuthGroup) {
-      router.replace("/(app)/dashboard");
-    }
-  }, [session, isPending, segments]);
-
   return (
-    <PostHogProvider>
+    <AnalyticsProvider>
       <I18nextProvider i18n={i18n}>
         <QueryClientProvider client={queryClient}>
           <GluestackUIProvider mode="light">
             <SafeAreaProvider>
-              <RevenueCatProvider userId={session?.user?.id}>
-                <Slot />
-              </RevenueCatProvider>
+              <Slot />
             </SafeAreaProvider>
           </GluestackUIProvider>
         </QueryClientProvider>
       </I18nextProvider>
-    </PostHogProvider>
+    </AnalyticsProvider>
   );
 }

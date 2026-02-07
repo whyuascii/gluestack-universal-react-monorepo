@@ -4,8 +4,12 @@
     "types": ["node"],
     "outDir": "./dist",
     "rootDir": "./src",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "paths": {
-      "@app/auth/server": ["../../packages/auth/dist/server.d.ts"]
+      "@app/auth/server": ["../../packages/auth/dist/server.d.ts"],
+      "@app/analytics/server": ["../../packages/analytics/dist/server.d.ts"],
+      "@app/subscriptions/server": ["../../packages/subscriptions/dist/server/index.d.ts"]
     }
   },
   "include": ["src/**/*"],

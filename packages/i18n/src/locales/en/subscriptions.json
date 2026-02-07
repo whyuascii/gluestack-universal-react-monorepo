@@ -1,0 +1,77 @@
+{
+  "paywall": {
+    "title": "Unlock Premium",
+    "subtitle": "Get access to all premium features",
+    "featuresTitle": "Premium Features",
+    "features": {
+      "unlimited": "Unlimited access to all features",
+      "support": "Priority customer support",
+      "analytics": "Advanced analytics and insights",
+      "adFree": "Ad-free experience"
+    },
+    "loading": "Loading plans...",
+    "noPlans": "No subscription plans available",
+    "choosePlan": "Choose Your Plan",
+    "subscribe": "Subscribe Now",
+    "maybeLater": "Maybe Later",
+    "popular": "POPULAR",
+    "loadError": "Failed to load subscription plans",
+    "purchaseError": "Purchase failed. Please try again."
+  },
+  "status": {
+    "active": "Active",
+    "expired": "Expired",
+    "cancelled": "Cancelled",
+    "trial": "Trial",
+    "premium": "Premium",
+    "free": "Free",
+    "trialing": "Trial",
+    "past_due": "Past Due",
+    "paused": "Paused"
+  },
+  "manage": {
+    "title": "Manage Subscription",
+    "currentPlan": "Current Plan",
+    "renewsOn": "Renews on {{date}}",
+    "expiresOn": "Expires on {{date}}",
+    "cancel": "Cancel Subscription",
+    "restore": "Restore Purchases",
+    "restoring": "Restoring...",
+    "restoreSuccess": "Purchases restored successfully",
+    "restoreError": "Failed to restore purchases"
+  },
+  "billing": {
+    "title": "Billing",
+    "currentPlan": "Current Plan",
+    "freePlan": "Free Plan",
+    "proPlan": "Pro Plan",
+    "upgradeTitle": "Upgrade to Pro",
+    "upgradeDescription": "Unlock all premium features for your group",
+    "upgradeCta": "Upgrade Now",
+    "manageSubscription": "Manage Subscription",
+    "cancelSubscription": "Cancel Subscription",
+    "cancelConfirmTitle": "Cancel Subscription?",
+    "cancelConfirmMessage": "Your subscription will remain active until the end of the billing period.",
+    "cancelConfirm": "Yes, Cancel",
+    "cancelDismiss": "Keep Subscription",
+    "billingPortal": "Billing Portal",
+    "paymentMethod": "Payment Method",
+    "updatePayment": "Update Payment Method",
+    "nextBillingDate": "Next billing date",
+    "loading": "Loading billing information...",
+    "error": "Failed to load billing information"
+  },
+  "entitlements": {
+    "maxMembers": "Up to {{count}} members",
+    "unlimitedMembers": "Unlimited members",
+    "features": "Premium features included",
+    "gracePeriod": "Payment issue - update payment method",
+    "trialEnds": "Trial ends {{date}}"
+  },
+  "upgrade": {
+    "title": "Upgrade Required",
+    "memberLimit": "You've reached the member limit for your plan",
+    "featureLimit": "This feature requires a Pro subscription",
+    "cta": "Upgrade to Pro"
+  }
+}

@@ -20,7 +20,7 @@ class PostHogMobile implements Analytics {
       host: apiHost,
       // Enable automatic error tracking
       enableSessionReplay: false, // Can enable if using session replay
-      captureNativeAppLifecycleEvents: true,
+      captureAppLifecycleEvents: true,
     });
 
     // Set up global error handlers

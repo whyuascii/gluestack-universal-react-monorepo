@@ -1,0 +1,48 @@
+{
+  "generic": {
+    "unknown": "Ocurrió un error inesperado. Por favor intenta de nuevo.",
+    "networkError": "No se puede conectar al servidor. Por favor verifica tu conexión a internet.",
+    "timeout": "La solicitud ha expirado. Por favor intenta de nuevo."
+  },
+  "unauthorized": {
+    "notAuthenticated": "Por favor inicia sesión para continuar.",
+    "sessionExpired": "Tu sesión ha expirado. Por favor inicia sesión de nuevo.",
+    "invalidCredentials": "Correo electrónico o contraseña inválidos."
+  },
+  "forbidden": {
+    "noPermission": "No tienes permiso para realizar esta acción.",
+    "notMember": "No eres miembro de este grupo.",
+    "insufficientRole": "Esta acción requiere el rol de {{requiredRole}} o superior."
+  },
+  "notFound": {
+    "resource": "El recurso solicitado no fue encontrado.",
+    "user": "Usuario no encontrado.",
+    "group": "Grupo no encontrado.",
+    "invite": "Invitación no encontrada o ha expirado."
+  },
+  "badRequest": {
+    "invalidInput": "La información proporcionada es inválida.",
+    "missingFields": "Por favor completa todos los campos requeridos.",
+    "invalidEmail": "Por favor ingresa una dirección de correo válida.",
+    "invalidToken": "Token inválido o expirado."
+  },
+  "conflict": {
+    "alreadyExists": "Este recurso ya existe.",
+    "emailTaken": "Este correo electrónico ya está registrado.",
+    "alreadyMember": "Ya eres miembro de este grupo."
+  },
+  "validation": {
+    "required": "{{field}} es requerido.",
+    "minLength": "{{field}} debe tener al menos {{min}} caracteres.",
+    "maxLength": "{{field}} debe tener máximo {{max}} caracteres.",
+    "invalidFormat": "{{field}} tiene un formato inválido."
+  },
+  "rateLimit": {
+    "tooManyRequests": "Demasiadas solicitudes. Por favor intenta de nuevo en {{retryAfter}}."
+  },
+  "subscription": {
+    "featureNotAvailable": "Esta función requiere una suscripción {{requiredTier}}.",
+    "tierRequired": "Por favor actualiza a {{requiredTier}} para acceder a esta función."
+  },
+  "waitlistFailed": "Error al unirse a la lista de espera. Por favor intenta de nuevo."
+}

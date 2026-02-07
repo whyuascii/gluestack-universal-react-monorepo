@@ -1,0 +1,286 @@
+---
+description: Next.js 15 App Router patterns and best practices
+globs:
+  - 'apps/web/**/*.ts'
+  - 'apps/web/**/*.tsx'
+  - 'apps/admin/**/*.ts'
+  - 'apps/admin/**/*.tsx'
+alwaysApply: false
+priority: high
+---
+
+# Next.js 15 App Router
+
+## Objective
+Follow Next.js 15 best practices with App Router for optimal performance and SEO.
+
+## Context
+- Next.js 15 with React 19
+- App Router (not Pages Router)
+- Server Components by default
+- React Native Web for component compatibility
+
+## Rules
+
+### File Conventions
+
+Follow App Router file naming:
+
+```
+apps/web/src/app/
+├── layout.tsx           # Root layout (wraps all pages)
+├── page.tsx             # Home page (/)
+├── globals.css          # Global styles
+├── providers.tsx        # Client providers wrapper
+├── (auth)/              # Route group (no URL segment)
+│   ├── layout.tsx       # Auth layout
+│   ├── login/page.tsx   # /login
+│   └── signup/page.tsx  # /signup
+├── (app)/               # Protected route group
+│   ├── layout.tsx       # App layout with auth guard
+│   └── dashboard/
+│       └── page.tsx     # /dashboard
+├── api/                 # API routes (if needed)
+│   └── auth/[...all]/route.ts
+└── not-found.tsx        # 404 page
+```
+
+### Server vs Client Components
+
+**Server Components (default)** - For data fetching and static content:
+
+```tsx
+// ✅ Good - Server Component (default)
+// apps/web/src/app/users/page.tsx
+import { getUsers } from "@/lib/data";
+
+export default async function UsersPage() {
+  const users = await getUsers(); // Direct data access
+
+  return (
+    <div>
+      <h1>Users</h1>
+      <UserList users={users} />
+    </div>
+  );
+}
+```
+
+**Client Components** - For interactivity:
+
+```tsx
+// ✅ Good - Client Component for interactivity
+// apps/web/src/app/users/UserFilter.tsx
+"use client";
+
+import { useState } from "react";
+
+export function UserFilter({ onFilter }: { onFilter: (q: string) => void }) {
+  const [query, setQuery] = useState("");
+
+  return (
+    <input
+      value={query}
+      onChange={(e) => {
+        setQuery(e.target.value);
+        onFilter(e.target.value);
+      }}
+    />
+  );
+}
+```
+
+### Thin Page Wrappers
+
+Pages should be thin wrappers around `@app/ui` screens:
+
+```tsx
+// ✅ Good - Thin wrapper
+// apps/web/src/app/dashboard/page.tsx
+import { DashboardScreen } from "@app/ui/screens";
+import { getSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
+
+export default async function DashboardPage() {
+  const session = await getSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  return <DashboardScreen session={session} />;
+}
+
+// ❌ Avoid - Business logic in pages
+export default function DashboardPage() {
+  // Don't put business logic, forms, or complex UI here
+}
+```
+
+### Layouts
+
+Use layouts for shared UI and auth guards:
+
+```tsx
+// ✅ Good - Auth-protected layout
+// apps/web/src/app/(app)/layout.tsx
+import { getSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
+
+export default async function AppLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const session = await getSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  return (
+    <div className="min-h-screen">
+      <AppNavBar user={session.user} />
+      <main className="container mx-auto px-4 py-8">
+        {children}
+      </main>
+    </div>
+  );
+}
+```
+
+### Metadata
+
+Define metadata for SEO:
+
+```tsx
+// ✅ Good - Page metadata
+// apps/web/src/app/about/page.tsx
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About Us | MyApp",
+  description: "Learn more about MyApp and our mission.",
+  openGraph: {
+    title: "About Us | MyApp",
+    description: "Learn more about MyApp and our mission.",
+  },
+};
+
+export default function AboutPage() {
+  return <AboutScreen />;
+}
+```
+
+### Loading & Error States
+
+Use App Router conventions:
+
+```tsx
+// apps/web/src/app/dashboard/loading.tsx
+export default function DashboardLoading() {
+  return <DashboardSkeleton />;
+}
+
+// apps/web/src/app/dashboard/error.tsx
+"use client";
+
+export default function DashboardError({
+  error,
+  reset,
+}: {
+  error: Error;
+  reset: () => void;
+}) {
+  return (
+    <ErrorView
+      message={error.message}
+      onRetry={reset}
+    />
+  );
+}
+```
+
+### Route Handlers
+
+For API routes and webhooks:
+
+```tsx
+// ✅ Good - Route handler
+// apps/web/src/app/api/webhooks/stripe/route.ts
+import { NextRequest, NextResponse } from "next/server";
+
+export async function POST(request: NextRequest) {
+  const body = await request.text();
+  const signature = request.headers.get("stripe-signature");
+
+  // Verify and process webhook
+  return NextResponse.json({ received: true });
+}
+```
+
+### Client Providers
+
+Wrap client providers properly:
+
+```tsx
+// ✅ Good - Providers wrapper
+// apps/web/src/app/providers.tsx
+"use client";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PostHogProvider } from "@app/analytics/web";
+import { NovuProvider } from "@novu/nextjs";
+
+const queryClient = new QueryClient();
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <PostHogProvider>
+        {children}
+      </PostHogProvider>
+    </QueryClientProvider>
+  );
+}
+
+// apps/web/src/app/layout.tsx
+import { Providers } from "./providers";
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
+}
+```
+
+### Image Optimization
+
+Use Next.js Image component:
+
+```tsx
+// ✅ Good - Optimized images
+import Image from "next/image";
+
+export function Avatar({ src, alt }: { src: string; alt: string }) {
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      width={48}
+      height={48}
+      className="rounded-full"
+    />
+  );
+}
+```
+
+## Exceptions
+
+- API routes may have different patterns
+- Static pages without interactivity
+- Migration from Pages Router

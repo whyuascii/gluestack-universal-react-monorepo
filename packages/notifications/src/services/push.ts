@@ -1,69 +1,54 @@
-import type { PushNotification, PushNotificationService } from "../types";
+/**
+ * Push Notification Service
+ *
+ * Handles sending push notifications via the provider system (Novu + Expo Push).
+ */
+
+import type { PushNotification } from "../types";
 
 /**
- * Abstract push notification service interface
- * Platform-specific implementations will extend this
+ * Push Notification Service Interface
  */
-export abstract class BasePushNotificationService implements PushNotificationService {
-  protected initialized = false;
-
-  abstract initialize(): Promise<void>;
-  abstract send(userId: string, notification: PushNotification): Promise<void>;
-  abstract sendBatch(
-    userIds: string[],
-    notification: Omit<PushNotification, "userId">
+export interface PushNotificationService {
+  send(
+    userId: string,
+    notification: Omit<PushNotification, "id" | "createdAt" | "read">
   ): Promise<void>;
-  abstract subscribe(userId: string): Promise<void>;
-  abstract unsubscribe(userId: string): Promise<void>;
-  abstract requestPermissions(): Promise<boolean>;
-  abstract isEnabled(): Promise<boolean>;
-  abstract getPushToken(): Promise<string | null>;
+  sendToMany(
+    userIds: string[],
+    notification: Omit<PushNotification, "id" | "createdAt" | "read">
+  ): Promise<void>;
+  sendToAll(notification: Omit<PushNotification, "id" | "createdAt" | "read">): Promise<void>;
+}
 
-  protected ensureInitialized(): void {
-    if (!this.initialized) {
-      throw new Error("Push notification service not initialized. Call initialize() first.");
-    }
+/**
+ * Push Notification Service Implementation
+ * Uses the provider system (Novu) for delivery
+ */
+class PushService implements PushNotificationService {
+  async send(
+    _userId: string,
+    _notification: Omit<PushNotification, "id" | "createdAt" | "read">
+  ): Promise<void> {
+    // Note: For server-side push, use getPushProvider() from @app/notifications/server
+    // This client-side service is a stub - actual delivery happens via the provider
+  }
+
+  async sendToMany(
+    _userIds: string[],
+    _notification: Omit<PushNotification, "id" | "createdAt" | "read">
+  ): Promise<void> {
+    // Note: For server-side push, use getPushProvider() from @app/notifications/server
+  }
+
+  async sendToAll(
+    _notification: Omit<PushNotification, "id" | "createdAt" | "read">
+  ): Promise<void> {
+    // Note: For server-side push, use getPushProvider() from @app/notifications/server
   }
 }
 
 /**
- * Mock implementation for development/testing
+ * Export singleton instance
  */
-export class MockPushNotificationService extends BasePushNotificationService {
-  async initialize(): Promise<void> {
-    console.log("[MockPushService] Initialized");
-    this.initialized = true;
-  }
-
-  async send(userId: string, notification: PushNotification): Promise<void> {
-    console.log("[MockPushService] Sending notification to user:", userId, notification);
-  }
-
-  async sendBatch(
-    userIds: string[],
-    notification: Omit<PushNotification, "userId">
-  ): Promise<void> {
-    console.log("[MockPushService] Sending batch notification to users:", userIds, notification);
-  }
-
-  async subscribe(userId: string): Promise<void> {
-    console.log("[MockPushService] Subscribing user:", userId);
-  }
-
-  async unsubscribe(userId: string): Promise<void> {
-    console.log("[MockPushService] Unsubscribing user:", userId);
-  }
-
-  async requestPermissions(): Promise<boolean> {
-    console.log("[MockPushService] Requesting permissions");
-    return true;
-  }
-
-  async isEnabled(): Promise<boolean> {
-    return true;
-  }
-
-  async getPushToken(): Promise<string | null> {
-    return "mock-push-token";
-  }
-}
+export const pushNotificationService: PushNotificationService = new PushService();

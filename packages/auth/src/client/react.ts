@@ -19,7 +19,10 @@ import { createAuthClient } from "better-auth/react";
  * ```
  */
 export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3030",
+  fetchOptions: {
+    credentials: "include",
+  },
 });
 
 // Re-export all hooks from the client

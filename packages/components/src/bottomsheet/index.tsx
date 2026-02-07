@@ -1,4 +1,3 @@
-// @ts-nocheck - Known type issues with @gorhom/bottom-sheet library
 import { FocusScope } from "@gluestack-ui/utils/aria";
 import { tva } from "@gluestack-ui/utils/nativewind-utils";
 import GorhomBottomSheet, {
@@ -36,7 +35,7 @@ const bottomSheetItemStyle = tva({
 
 const BottomSheetContext = createContext<{
   visible: boolean;
-  bottomSheetRef: React.RefObject<GorhomBottomSheet>;
+  bottomSheetRef: React.RefObject<GorhomBottomSheet | null>;
   handleClose: () => void;
   handleOpen: () => void;
 }>({
@@ -155,7 +154,7 @@ export const BottomSheetBackdrop = ({
 }: Partial<IBottomSheetBackdrop> & { className?: string }) => {
   return (
     <GorhomBottomSheetBackdrop
-      // @ts-ignore
+      // @ts-expect-error - @gorhom/bottom-sheet className prop not typed correctly
       className={bottomSheetBackdropStyle({
         className: className,
       })}
@@ -178,7 +177,7 @@ export const BottomSheetDragIndicator = ({
   return (
     <BottomSheetHandle
       {...props}
-      // @ts-ignore
+      // @ts-expect-error - @gorhom/bottom-sheet className prop not typed correctly
       className={bottomSheetIndicatorStyle({
         className: className,
       })}
@@ -212,7 +211,6 @@ export const BottomSheetContent = ({ ...props }: IBottomSheetContent) => {
     return (
       <GorhomBottomSheetView
         {...props}
-        // @ts-ignore
         {...keyDownHandlers}
         className={bottomSheetContentStyle({
           className: props.className,
@@ -229,7 +227,6 @@ export const BottomSheetContent = ({ ...props }: IBottomSheetContent) => {
   return (
     <GorhomBottomSheetView
       {...props}
-      // @ts-ignore
       {...keyDownHandlers}
       className={bottomSheetContentStyle({
         className: props.className,

@@ -1,32 +1,39 @@
 {
   "name": "@app/notifications",
   "version": "0.0.0",
-  "type": "module",
-  "description": "Cross-platform notification system with OneSignal integration for push, in-app, and transactional notifications",
+  "description": "Cross-platform notification management with Novu for in-app and Expo Push for mobile notifications",
   "keywords": [
     "notifications",
-    "push",
-    "onesignal",
+    "novu",
+    "expo-push",
+    "firebase",
+    "push-notifications",
+    "in-app-notifications",
     "react",
     "react-native"
   ],
-  "author": "whyuascii <eddy@whyuascii.com>",
+  "author": "",
   "license": "ISC",
   "private": true,
+  "type": "module",
   "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "./src/index.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./src/index.ts",
       "default": "./dist/index.js"
     },
-    "./web": {
-      "types": "./dist/web.d.ts",
-      "default": "./dist/web.js"
+    "./server": {
+      "types": "./src/server.ts",
+      "default": "./dist/server.js"
     },
-    "./mobile": {
-      "types": "./dist/mobile.d.ts",
-      "default": "./dist/mobile.js"
+    "./workflows": {
+      "types": "./src/workflows/index.ts",
+      "default": "./dist/workflows/index.js"
+    },
+    "./workflows/serve": {
+      "types": "./src/workflows/serve.ts",
+      "default": "./dist/workflows/serve.js"
     }
   },
   "files": [
@@ -35,36 +42,48 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "dev": "pnpm run dev:swc & pnpm run dev:types",
-    "dev:swc": "swc src -d dist --strip-leading-paths --copy-files --watch",
-    "dev:types": "tsc --emitDeclarationOnly --outDir dist --skipLibCheck --watch --preserveWatchOutput",
-    "build": "pnpm run build:swc && pnpm run build:types",
+    "dev": "swc src -d dist --strip-leading-paths --copy-files --watch",
+    "build": "pnpm run build:swc",
     "build:swc": "swc src -d dist --strip-leading-paths --copy-files",
-    "build:types": "tsc --emitDeclarationOnly --outDir dist --skipLibCheck",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "react-onesignal": "^3.0.1",
-    "react-native-onesignal": "^5.2.6",
+    "@app/core-contract": "workspace:*",
+    "@app/database": "workspace:*",
+    "@novu/api": "^2.0.0",
+    "@novu/framework": "^2.9.0",
+    "@orpc/client": "^1.5.0",
+    "@orpc/contract": "^1.5.0",
+    "@orpc/openapi-client": "^1.5.0",
+    "@orpc/tanstack-query": "^1.5.0",
+    "@tanstack/react-query": "^5.64.2",
+    "drizzle-orm": "^0.37.0",
+    "lucide-react-native": "^0.475.0",
+    "zod": "^4.1.3",
     "zustand": "^5.0.2"
   },
   "devDependencies": {
+    "@app/eslint-config": "workspace:*",
+    "@app/tailwind-config": "workspace:*",
+    "@app/typescript-config": "workspace:*",
     "@swc/cli": "^0.6.0",
     "@swc/core": "^1.10.6",
-    "@types/react": "^19.0.1",
     "eslint": "^9.18.0",
-    "@app/eslint-config": "workspace:*",
-    "typescript": "^5.7.2",
-    "@app/typescript-config": "workspace:*"
+    "expo-constants": "~18.0.9",
+    "expo-device": "~8.0.10",
+    "expo-notifications": "^0.32.16",
+    "typescript": "^5.9.3"
   },
   "peerDependencies": {
     "@app/components": "workspace:*",
     "@app/i18n": "workspace:*",
-    "react": "^19.0.0",
-    "react-native": "*"
+    "react": "^18 || ^19",
+    "react-i18next": "^15",
+    "react-native": "*",
+    "typescript": "^5"
   },
   "engines": {
     "node": ">=18.0.0",

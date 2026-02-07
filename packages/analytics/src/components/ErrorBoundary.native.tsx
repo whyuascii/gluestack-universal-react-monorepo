@@ -4,7 +4,27 @@ import { analytics } from "../config/posthog.mobile";
 
 interface Props {
   children: ReactNode;
-  fallback?: (error: Error, errorInfo: ErrorInfo) => ReactNode;
+  /**
+   * Custom fallback component to render when an error occurs.
+   * For a polished UI, pass GeneralError from @app/components:
+   * @example
+   * ```tsx
+   * import { GeneralError } from "@app/components";
+   *
+   * <ErrorBoundary
+   *   fallback={(error, info, retry) => (
+   *     <GeneralError
+   *       onRetry={retry}
+   *       errorDetails={error.toString()}
+   *       componentStack={info.componentStack}
+   *     />
+   *   )}
+   * >
+   *   {children}
+   * </ErrorBoundary>
+   * ```
+   */
+  fallback?: (error: Error, errorInfo: ErrorInfo, retry: () => void) => ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
 
@@ -63,7 +83,7 @@ export class ErrorBoundary extends Component<Props, State> {
     }
   }
 
-  handleReload = () => {
+  handleRetry = () => {
     this.setState({
       hasError: false,
       error: null,
@@ -75,7 +95,7 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError && this.state.error && this.state.errorInfo) {
       // Render custom fallback if provided
       if (this.props.fallback) {
-        return this.props.fallback(this.state.error, this.state.errorInfo);
+        return this.props.fallback(this.state.error, this.state.errorInfo, this.handleRetry);
       }
 
       // Default error UI
@@ -106,7 +126,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </ScrollView>
             )}
 
-            <TouchableOpacity style={styles.button} onPress={this.handleReload}>
+            <TouchableOpacity style={styles.button} onPress={this.handleRetry}>
               <Text style={styles.buttonText}>Try Again</Text>
             </TouchableOpacity>
           </View>

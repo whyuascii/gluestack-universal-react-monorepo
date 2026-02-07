@@ -1,294 +1,258 @@
 # @app/notifications
 
-Cross-platform notification system with OneSignal integration for push, in-app, and transactional notifications.
-
-## Features
-
-- 🔔 **Push Notifications** - OneSignal integration for web and mobile
-- 📱 **In-App Notifications** - Toast notifications and notification center
-- 📧 **Transactional Notifications** - Password resets, email verification, etc.
-- 📣 **Marketing Notifications** - Campaigns and announcements
-- 🔌 **Provider Abstraction** - Easily swap notification providers
-- 🎨 **Customizable UI** - Notification bell and toast components
-
-## Installation
-
-This package is already part of the monorepo. No additional installation needed.
-
-Add environment variables to your `.env` file:
-
-```bash
-# Web (Next.js)
-NEXT_PUBLIC_ONESIGNAL_APP_ID=your-web-app-id
-
-# Mobile (Expo)
-EXPO_PUBLIC_ONESIGNAL_APP_ID=your-mobile-app-id
-```
-
-## Usage
-
-### 1. Wrap your app with NotificationProvider
-
-**Web (Next.js):**
-
-```tsx
-// apps/web/src/app/layout.tsx
-import { NotificationProvider } from "@app/notifications/web";
-
-export default function RootLayout({ children }) {
-  return (
-    <html>
-      <body>
-        <NotificationProvider>{children}</NotificationProvider>
-      </body>
-    </html>
-  );
-}
-```
-
-**Mobile (Expo):**
-
-```tsx
-// apps/mobile/src/app/_layout.tsx
-import { NotificationProvider } from "@app/notifications/mobile";
-
-export default function RootLayout() {
-  return (
-    <NotificationProvider>
-      <Stack />
-    </NotificationProvider>
-  );
-}
-```
-
-### 2. Request Push Notification Permissions
-
-```tsx
-import { usePushNotifications } from "@app/notifications/web"; // or /mobile
-
-function SettingsScreen() {
-  const { requestPermissions, subscribe, isPermissionGranted } = usePushNotifications();
-
-  const handleEnableNotifications = async () => {
-    const granted = await requestPermissions();
-    if (granted) {
-      await subscribe(userId); // Subscribe user to push notifications
-    }
-  };
-
-  return (
-    <button onClick={handleEnableNotifications} disabled={isPermissionGranted}>
-      {isPermissionGranted ? "Notifications Enabled" : "Enable Notifications"}
-    </button>
-  );
-}
-```
-
-### 3. Show In-App Notifications
-
-```tsx
-import { useInAppNotifications } from "@app/notifications";
-
-function SomeComponent() {
-  const { success, error, warning, info } = useInAppNotifications();
-
-  const handleAction = async () => {
-    try {
-      await doSomething();
-      success("Success!", "Your changes have been saved.");
-    } catch (err) {
-      error("Error", "Failed to save changes. Please try again.");
-    }
-  };
-
-  return <button onClick={handleAction}>Save</button>;
-}
-```
-
-### 4. Display Notification Bell & Toasts
-
-```tsx
-import { NotificationBell, NotificationToast } from "@app/notifications";
-
-function Header() {
-  const [showNotifications, setShowNotifications] = useState(false);
-
-  return (
-    <header>
-      <NotificationBell onPress={() => setShowNotifications(true)} />
-      <NotificationToast position="top-right" />
-    </header>
-  );
-}
-```
-
-### 5. Send Transactional Notifications (from backend)
-
-```tsx
-// In your auth flow
-import { transactionalNotificationService } from "@app/notifications";
-
-// When user forgets password
-await transactionalNotificationService.sendPasswordReset(email, resetToken);
-
-// When user signs up
-await transactionalNotificationService.sendEmailVerification(email, verificationToken);
-```
-
-## API Reference
-
-### Hooks
-
-#### `useNotifications()`
-
-Get notification state.
-
-```tsx
-const { inAppNotifications, unreadCount, isPermissionGranted, isPushEnabled } = useNotifications();
-```
-
-#### `usePushNotifications()`
-
-Manage push notifications.
-
-```tsx
-const {
-  isPermissionGranted,
-  isPushEnabled,
-  requestPermissions,
-  subscribe,
-  unsubscribe,
-  getPushToken,
-} = usePushNotifications();
-```
-
-#### `useInAppNotifications()`
-
-Manage in-app notifications.
-
-```tsx
-const {
-  notifications,
-  unreadCount,
-  show,
-  success,
-  error,
-  warning,
-  info,
-  dismiss,
-  read,
-  readAll,
-  clear,
-} = useInAppNotifications();
-```
-
-### Services
-
-#### `inAppNotificationService`
-
-Show in-app notifications programmatically.
-
-```tsx
-import { inAppNotificationService } from "@app/notifications";
-
-inAppNotificationService.success("Success!", "Your changes have been saved.");
-inAppNotificationService.error("Error", "Something went wrong.");
-inAppNotificationService.warning("Warning", "Please review your changes.");
-inAppNotificationService.info("Info", "New features available!");
-```
-
-#### `transactionalNotificationService`
-
-Send transactional notifications (password reset, email verification, etc.).
-
-```tsx
-import { transactionalNotificationService } from "@app/notifications";
-
-await transactionalNotificationService.sendPasswordReset(email, resetToken);
-await transactionalNotificationService.sendEmailVerification(email, verificationToken);
-await transactionalNotificationService.sendAccountCreated(email, userName);
-await transactionalNotificationService.sendLoginAlert(email, device, location, timestamp);
-```
-
-#### `marketingNotificationService`
-
-Manage marketing notification preferences.
-
-```tsx
-import { marketingNotificationService } from "@app/notifications";
-
-await marketingNotificationService.optIn(userId);
-await marketingNotificationService.optOut(userId);
-const isOptedIn = await marketingNotificationService.getPreference(userId);
-```
-
-### Components
-
-#### `<NotificationBell />`
-
-Displays a notification bell with unread badge.
-
-```tsx
-<NotificationBell
-  onPress={() => setShowNotifications(true)}
-  size={24}
-  color="#374151"
-  badgeColor="#EF4444"
-  showBadge={true}
-/>
-```
-
-#### `<NotificationToast />`
-
-Displays in-app notifications as toasts.
-
-```tsx
-<NotificationToast
-  position="top-right" // top-right, top-left, bottom-right, bottom-left, top-center, bottom-center
-  maxVisible={3}
-/>
-```
+Cross-platform notification management with unified components, hooks, and server-side utilities.
+
+- **UI Components:** NotificationBell, NotificationInbox, NotificationList, NotificationItem
+- **Client Hooks:** useNotificationList, useUnreadCount, useNotificationStream
+- **Server:** Novu workflows, push providers, database operations
 
 ## Architecture
 
-This package follows a clean architecture with provider abstraction:
-
 ```
-packages/notifications/
-├── src/
-│   ├── config/           # OneSignal configuration
-│   ├── providers/        # React context providers (web & native)
-│   ├── services/         # Notification services (push, inApp, transactional, marketing)
-│   ├── hooks/            # React hooks
-│   ├── components/       # UI components
-│   ├── stores/           # Zustand store
-│   └── types/            # TypeScript types
+┌─────────────────────────────────────────────────────────────┐
+│                        Clients                               │
+├─────────────────────────────┬───────────────────────────────┤
+│           Web               │           Mobile              │
+│   @novu/react (WebSocket)   │     Polling + Expo Push       │
+└─────────────┬───────────────┴───────────────┬───────────────┘
+              │                               │
+              ▼                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   API Server                                 │
+│  notify() → Novu workflow → in-app + push + email           │
+└─────────────────────────────────────────────────────────────┘
+              │
+              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   Database                                   │
+│  notifications, notification_targets, notification_prefs    │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-The package is designed to be **provider-agnostic**, meaning you can easily swap OneSignal for another provider (Firebase, Pusher, etc.) by implementing the `PushNotificationService` interface.
+## Quick Start
+
+### Client-Side (React)
+
+```tsx
+import {
+  // Components
+  NotificationBell,
+  NotificationInbox,
+  // Hooks
+  useNotificationList,
+  useUnreadCount,
+  useMarkAsRead,
+  useNotificationStream,
+  // Provider
+  NotificationProvider,
+} from "@app/notifications";
+
+// Wrap your app
+function App() {
+  return (
+    <NotificationProvider userId={user.id}>
+      <YourApp />
+    </NotificationProvider>
+  );
+}
+
+// Display notification bell
+function NavBar() {
+  const { data } = useUnreadCount();
+  const [isOpen, setIsOpen] = useState(false);
+
+  return <NotificationBell unreadCount={data?.count ?? 0} onPress={() => setIsOpen(true)} />;
+}
+
+// Show notification inbox
+function NotificationsModal() {
+  const { data, isLoading, refetch } = useNotificationList();
+  const { mutate: markAsRead } = useMarkAsRead();
+
+  return (
+    <NotificationInbox
+      notifications={data?.notifications ?? []}
+      isLoading={isLoading}
+      onMarkAsRead={markAsRead}
+      onRefresh={refetch}
+    />
+  );
+}
+
+// Real-time updates via SSE
+function NotificationListener() {
+  useNotificationStream({
+    enabled: true,
+    onNotification: (notification) => {
+      toast(notification.title);
+    },
+  });
+  return null;
+}
+```
+
+### Server-Side (API)
+
+```typescript
+import {
+  notify,
+  getPushProvider,
+  allWorkflows,
+  getInbox,
+  markAsRead,
+} from "@app/notifications/server";
+
+// Send a notification
+await notify({
+  workflow: "welcome",
+  to: { subscriberId: userId },
+  payload: { userName: "Alice" },
+});
+
+// Get user's inbox
+const inbox = await getInbox(userId, { limit: 20 });
+
+// Send push notification
+const provider = getPushProvider();
+await provider.sendPush({
+  userId,
+  title: "New message",
+  body: "You have a new message",
+});
+```
 
 ## Environment Variables
 
-| Variable                       | Platform | Description                                               |
-| ------------------------------ | -------- | --------------------------------------------------------- |
-| `NEXT_PUBLIC_ONESIGNAL_APP_ID` | Web      | OneSignal web app ID                                      |
-| `EXPO_PUBLIC_ONESIGNAL_APP_ID` | Mobile   | OneSignal mobile app ID                                   |
-| `NEXT_PUBLIC_API_URL`          | Web      | Backend API URL for transactional/marketing notifications |
-| `EXPO_PUBLIC_API_URL`          | Mobile   | Backend API URL for transactional/marketing notifications |
-
-## Backend Integration
-
-For transactional and marketing notifications to work, you need to implement backend API endpoints:
-
-```
-POST /api/notifications/transactional
-POST /api/notifications/marketing/campaigns
-PUT  /api/notifications/marketing/preferences/:userId
-GET  /api/notifications/marketing/preferences/:userId
+```bash
+# Novu
+NOVU_SECRET_KEY=xxx
+NOVU_APP_ID=xxx
+NEXT_PUBLIC_NOVU_APP_ID=xxx
+EXPO_PUBLIC_NOVU_APP_ID=xxx
 ```
 
-These endpoints should use the OneSignal REST API to send push notifications to users.
+## Exports
 
-## License
+### Client Exports (`@app/notifications`)
 
-ISC
+```typescript
+// UI Components
+import {
+  NotificationBell,
+  NotificationItem,
+  NotificationList,
+  NotificationInbox,
+} from "@app/notifications";
+
+// Hooks
+import {
+  useNotificationList,
+  useUnreadCount,
+  useSubscriberHash,
+  useMarkAsRead,
+  useMarkAllAsRead,
+  useArchiveNotification,
+  useNotificationStream,
+} from "@app/notifications";
+
+// Provider
+import { NotificationProvider } from "@app/notifications";
+
+// Types
+import type {
+  AppNotification,
+  NotificationBellProps,
+  NotificationListProps,
+} from "@app/notifications";
+```
+
+### Server Exports (`@app/notifications/server`)
+
+```typescript
+// Core API
+import { notify, notifyMany } from "@app/notifications/server";
+
+// Database operations
+import {
+  getInbox,
+  getUnreadCount,
+  markAsRead,
+  markAllAsRead,
+  archiveNotification,
+  getPreferences,
+  upsertPreferences,
+} from "@app/notifications/server";
+
+// Push providers
+import {
+  getPushProvider,
+  initializePushProvider,
+  createTenantTopic,
+  notifyTenant,
+} from "@app/notifications/server";
+
+// Novu workflows
+import {
+  allWorkflows,
+  welcomeWorkflow,
+  inviteReceivedWorkflow,
+  // ... 20+ workflows
+} from "@app/notifications/server";
+
+// Fastify integration
+import { createNovuBridgePlugin } from "@app/notifications/server";
+```
+
+## Novu Workflows
+
+20 pre-built workflows for common notification scenarios:
+
+| Category      | Workflows                                          |
+| ------------- | -------------------------------------------------- |
+| Generic       | `push-notification`, `in-app-notification`         |
+| Onboarding    | `welcome`                                          |
+| Social        | `invite-received`, `member-joined`                 |
+| Tasks         | `todo-assigned`, `todo-nudge`, `todo-completed`    |
+| Events        | `event-created`, `event-reminder`, `event-changed` |
+| Alerts        | `limit-alert`, `achievement`, `survey-created`     |
+| Engagement    | `weekly-summary`, `reminder`                       |
+| Communication | `direct-message`, `milestone`, `kudos-sent`        |
+| System        | `settings-changed`                                 |
+
+### Testing Workflows
+
+```bash
+# Start API server
+pnpm --filter api dev
+
+# Run Novu Dev Studio
+npx novu@latest dev --port 3030 --route /api/novu
+
+# Open http://localhost:2022
+```
+
+### Adding a Workflow
+
+1. Define in `src/workflows/definitions.ts`:
+
+```typescript
+export const myWorkflow = workflow(
+  "my-workflow",
+  async ({ step, payload }) => {
+    await step.inApp("in-app", async () => ({
+      subject: payload.title,
+      body: payload.message,
+    }));
+  },
+  { payloadSchema: mySchema }
+);
+```
+
+2. Export in `src/workflows/index.ts`
+3. Add ID to `src/workflows/types.ts`
+4. Restart API server
+
+## Related
+
+- [`packages/ui/src/screens/private/notifications/`](../ui/src/screens/private/notifications/) - NotificationsScreen
+- [`docs/guides/NOTIFICATIONS.md`](../../docs/guides/NOTIFICATIONS.md) - Full setup guide

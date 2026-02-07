@@ -4,11 +4,11 @@ services:
   # PostgreSQL Database
   db:
     image: postgres:16-alpine
-    container_name: sample-app-db
+    container_name: app-db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: sample-app
+      POSTGRES_DB: app
     ports:
       - "5432:5432"
     volumes:
@@ -24,10 +24,10 @@ services:
     build:
       context: .
       dockerfile: apps/api/Dockerfile
-    container_name: sample-app-api
+    container_name: app-api
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/sample-app
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/app
       BETTER_AUTH_SECRET: development-secret-change-in-production
       BETTER_AUTH_URL: http://localhost:3030
       PORT: 3030
@@ -46,7 +46,7 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
-    container_name: sample-app-web
+    container_name: app-web
     environment:
       NODE_ENV: development
       NEXT_PUBLIC_API_URL: http://localhost:3030

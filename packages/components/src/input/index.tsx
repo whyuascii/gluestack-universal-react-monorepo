@@ -99,15 +99,35 @@ const inputFieldStyle = tva({
 });
 
 type IInputProps = React.ComponentProps<typeof UIInput> &
-  VariantProps<typeof inputStyle> & { className?: string };
+  VariantProps<typeof inputStyle> & {
+    className?: string;
+    isInvalid?: boolean;
+    "aria-invalid"?: boolean;
+    "aria-describedby"?: string;
+    nativeID?: string;
+  };
+
 const Input = React.forwardRef<React.ComponentRef<typeof UIInput>, IInputProps>(function Input(
-  { className, variant = "outline", size = "md", ...props },
+  {
+    className,
+    variant = "outline",
+    size = "md",
+    isInvalid,
+    "aria-invalid": ariaInvalid,
+    "aria-describedby": ariaDescribedBy,
+    nativeID,
+    ...props
+  },
   ref
 ) {
   return (
     <UIInput
       ref={ref}
       {...props}
+      isInvalid={isInvalid ?? ariaInvalid}
+      nativeID={nativeID}
+      aria-invalid={isInvalid ?? ariaInvalid}
+      aria-describedby={ariaDescribedBy}
       className={inputStyle({ variant, size, class: className })}
       context={{ variant, size }}
     />
@@ -170,16 +190,39 @@ const InputSlot = React.forwardRef<React.ComponentRef<typeof UIInput.Slot>, IInp
 );
 
 type IInputFieldProps = React.ComponentProps<typeof UIInput.Input> &
-  VariantProps<typeof inputFieldStyle> & { className?: string };
+  VariantProps<typeof inputFieldStyle> & {
+    className?: string;
+    accessibilityLabel?: string;
+    accessibilityHint?: string;
+    "aria-invalid"?: boolean;
+    "aria-describedby"?: string;
+    nativeID?: string;
+  };
 
 const InputField = React.forwardRef<React.ComponentRef<typeof UIInput.Input>, IInputFieldProps>(
-  function InputField({ className, ...props }, ref) {
+  function InputField(
+    {
+      className,
+      accessibilityLabel,
+      accessibilityHint,
+      "aria-invalid": ariaInvalid,
+      "aria-describedby": ariaDescribedBy,
+      nativeID,
+      ...props
+    },
+    ref
+  ) {
     const { variant: parentVariant, size: parentSize } = useStyleContext(SCOPE);
 
     return (
       <UIInput.Input
         ref={ref}
         {...props}
+        nativeID={nativeID}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
+        aria-invalid={ariaInvalid}
+        aria-describedby={ariaDescribedBy}
         className={inputFieldStyle({
           parentVariants: {
             variant: parentVariant,

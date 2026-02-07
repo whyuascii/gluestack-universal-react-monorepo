@@ -1,0 +1,79 @@
+{
+  "verifyEmail": {
+    "subject": "Verifica tu dirección de correo electrónico",
+    "greeting": "Hola {{name}},",
+    "body": "Por favor verifica tu dirección de correo electrónico haciendo clic en el botón de abajo.",
+    "cta": "Verificar correo",
+    "expiry": "Este enlace expirará en 24 horas.",
+    "ignore": "Si no creaste una cuenta, puedes ignorar este correo."
+  },
+  "adminInvite": {
+    "subject": "Has sido invitado a unirte al equipo de administración",
+    "greeting": "Hola{{name}},",
+    "body": "Has sido invitado a unirte al equipo de administración de {{appName}} como {{role}}.",
+    "bodyDetails": "Como administrador, tendrás acceso al panel interno para ayudar a gestionar usuarios y apoyar a nuestra comunidad.",
+    "cta": "Aceptar invitación",
+    "expiry": "Esta invitación expirará en 7 días.",
+    "ignore": "Si no esperabas esta invitación, puedes ignorar este correo.",
+    "roleReadOnly": "Administrador de solo lectura",
+    "roleSupportRW": "Administrador de soporte",
+    "roleSuperAdmin": "Super administrador"
+  },
+  "resetPassword": {
+    "subject": "Restablecer tu contraseña",
+    "greeting": "Hola {{name}},",
+    "body": "Recibimos una solicitud para restablecer tu contraseña. Haz clic en el botón de abajo para crear una nueva contraseña.",
+    "cta": "Restablecer contraseña",
+    "expiry": "Este enlace expirará en {{expiresIn}}.",
+    "ignore": "Si no solicitaste restablecer tu contraseña, puedes ignorar este correo."
+  },
+  "welcome": {
+    "subject": "¡Bienvenido a {{appName}}!",
+    "greeting": "¡Bienvenido, {{name}}!",
+    "body": "Gracias por unirte a {{appName}}. Estamos emocionados de tenerte con nosotros.",
+    "cta": "Comenzar",
+    "support": "Si tienes alguna pregunta, no dudes en contactar a nuestro equipo de soporte."
+  },
+  "inviteToGroup": {
+    "subject": "Has sido invitado a unirte a {{groupName}}",
+    "greeting": "Hola,",
+    "body": "{{inviterName}} te ha invitado a unirte a {{groupName}} en {{appName}}.",
+    "cta": "Aceptar invitación",
+    "expiry": "Esta invitación expirará en {{expiresIn}}.",
+    "ignore": "Si no deseas unirte, puedes ignorar este correo."
+  },
+  "waitlist": {
+    "subject": "¡Estás en la lista de espera de {{appName}}!",
+    "title": "¡Estás en la lista!",
+    "greeting": "Hola {{name}},",
+    "body1": "¡Gracias por unirte a nuestra lista de espera! Estamos construyendo algo especial y no podemos esperar para compartirlo contigo.",
+    "body2": "Te mantendremos informado sobre nuestro progreso y te avisaremos tan pronto como estemos listos para que lo pruebes.",
+    "body3": "Mientras tanto, ¡no dudes en responder a este correo con cualquier pregunta o comentario!",
+    "unsubscribe": "Cancelar suscripción a actualizaciones de lista de espera"
+  },
+  "subscription": {
+    "activated": {
+      "subject": "¡Bienvenido a {{planName}}!",
+      "greeting": "Hola {{name}},",
+      "body": "¡Gracias por suscribirte a {{planName}}! Tu suscripción está activa y tienes acceso completo a todas las funciones premium.",
+      "cta": "Ir al Panel"
+    },
+    "paymentFailed": {
+      "subject": "Acción requerida: Pago fallido",
+      "greeting": "Hola {{name}},",
+      "body": "No pudimos procesar el pago de tu suscripción. Reintentaremos automáticamente el {{retryDate}}.",
+      "cta": "Actualizar método de pago"
+    },
+    "trialEnding": {
+      "subject": "Tu prueba está por terminar",
+      "greeting": "Hola {{name}},",
+      "body": "Tu prueba gratuita de {{planName}} terminará el {{trialEndDate}}. Para seguir disfrutando de todas las funciones premium, actualiza tu suscripción.",
+      "cta": "Actualizar ahora"
+    }
+  },
+  "common": {
+    "footer": "{{year}} {{appName}}. Todos los derechos reservados.",
+    "unsubscribe": "Cancelar suscripción a estos correos",
+    "sentBy": "Este correo fue enviado por {{appName}}"
+  }
+}

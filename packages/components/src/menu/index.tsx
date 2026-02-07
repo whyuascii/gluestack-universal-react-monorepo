@@ -5,7 +5,7 @@ import type { VariantProps } from "@gluestack-ui/utils/nativewind-utils";
 import { Motion, AnimatePresence, type MotionComponentProps } from "@legendapp/motion";
 import { cssInterop } from "nativewind";
 import React from "react";
-import { Pressable, Text, View, type ViewStyle } from "react-native";
+import { Pressable, Text, View, Platform, type ViewStyle } from "react-native";
 
 type IMotionViewProps = React.ComponentProps<typeof View> &
   MotionComponentProps<typeof View, ViewStyle, unknown, unknown, unknown>;
@@ -88,15 +88,22 @@ const BackdropPressable = React.forwardRef<
 
 type IMenuItemProps = VariantProps<typeof menuItemStyle> & {
   className?: string;
+  accessibilityLabel?: string;
 } & React.ComponentPropsWithoutRef<typeof Pressable>;
 
 const Item = React.forwardRef<React.ComponentRef<typeof Pressable>, IMenuItemProps>(function Item(
-  { className, ...props },
+  { className, accessibilityLabel, disabled, ...props },
   ref
 ) {
   return (
     <Pressable
       ref={ref}
+      accessibilityRole="menuitem"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityState={{
+        disabled: disabled ?? false,
+      }}
+      disabled={disabled}
       className={menuItemStyle({
         class: className,
       })}
@@ -123,14 +130,52 @@ export const UIMenu = createMenu({
 cssInterop(MotionView, { className: "style" });
 
 type IMenuProps = React.ComponentProps<typeof UIMenu> &
-  VariantProps<typeof menuStyle> & { className?: string };
+  VariantProps<typeof menuStyle> & {
+    className?: string;
+    accessibilityLabel?: string;
+    onClose?: () => void;
+  };
 type IMenuItemLabelProps = React.ComponentProps<typeof UIMenu.ItemLabel> &
   VariantProps<typeof menuItemLabelStyle> & { className?: string };
 
 const Menu = React.forwardRef<React.ComponentRef<typeof UIMenu>, IMenuProps>(function Menu(
-  { className, ...props },
+  { className, accessibilityLabel, onClose, ...props },
   ref
 ) {
+  // Handle keyboard navigation (web only)
+  const handleKeyDown = React.useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (e: any) => {
+      if (Platform.OS !== "web") return;
+
+      switch (e.key) {
+        case "Escape":
+          e.preventDefault();
+          onClose?.();
+          break;
+        case "ArrowDown": {
+          e.preventDefault();
+          // Focus next menu item
+          const nextItem = e.target?.nextElementSibling;
+          if (nextItem && typeof nextItem.focus === "function") {
+            nextItem.focus();
+          }
+          break;
+        }
+        case "ArrowUp": {
+          e.preventDefault();
+          // Focus previous menu item
+          const prevItem = e.target?.previousElementSibling;
+          if (prevItem && typeof prevItem.focus === "function") {
+            prevItem.focus();
+          }
+          break;
+        }
+      }
+    },
+    [onClose]
+  );
+
   return (
     <UIMenu
       ref={ref}
@@ -150,6 +195,9 @@ const Menu = React.forwardRef<React.ComponentRef<typeof UIMenu>, IMenuProps>(fun
         type: "timing",
         duration: 100,
       }}
+      accessibilityRole="menu"
+      accessibilityLabel={accessibilityLabel}
+      {...(Platform.OS === "web" && { onKeyDown: handleKeyDown })}
       className={menuStyle({
         class: className,
       })}

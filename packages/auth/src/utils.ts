@@ -3,7 +3,7 @@
  * All auth-related logic centralized in the auth package
  */
 
-import type { ExtendedAuthClient, BetterAuthUser, BetterAuthSession } from "@app/service-contracts";
+import type { ExtendedAuthClient, BetterAuthUser, BetterAuthSession } from "./types";
 import { authClient as betterAuthClient } from "./client";
 
 /**
@@ -42,13 +42,6 @@ export const auth = {
    */
   signUpWithEmail: async (email: string, password: string, name: string) => {
     return authClient.signUp.email({ email, password, name });
-  },
-
-  /**
-   * Sign in with social provider
-   */
-  signInWithSocial: async (provider: "google" | "github", callbackURL?: string) => {
-    return authClient.signIn.social({ provider, callbackURL });
   },
 
   /**

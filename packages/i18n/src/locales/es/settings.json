@@ -1,0 +1,135 @@
+{
+  "title": "Configuración",
+  "back": "Volver",
+  "sections": {
+    "notifications": "Notificaciones",
+    "members": "Miembros",
+    "group": "Configuración del Grupo",
+    "billing": "Facturación",
+    "privacy": "Privacidad",
+    "account": "Cuenta"
+  },
+  "notifications": {
+    "title": "Preferencias de Notificación",
+    "subtitle": "Elige cómo quieres ser notificado",
+    "description": "Administra tus preferencias de notificación",
+    "inApp": {
+      "label": "Notificaciones en la App",
+      "description": "Mostrar notificaciones dentro de la aplicación"
+    },
+    "push": {
+      "label": "Notificaciones Push",
+      "description": "Recibir notificaciones push en tu dispositivo"
+    },
+    "email": {
+      "label": "Notificaciones por Email",
+      "description": "Recibir actualizaciones importantes por correo"
+    },
+    "marketing": {
+      "label": "Emails de Marketing",
+      "description": "Recibir noticias, consejos y ofertas especiales"
+    },
+    "saving": "Guardando...",
+    "saved": "Preferencias guardadas",
+    "error": "Error al guardar preferencias"
+  },
+  "members": {
+    "title": "Miembros del Grupo",
+    "subtitle": "Administra quién tiene acceso a tu grupo",
+    "description": "Administra los miembros del grupo y su acceso",
+    "invite": "Invitar Miembros",
+    "count": "{{count}} miembro",
+    "count_plural": "{{count}} miembros",
+    "you": "(tú)",
+    "roles": {
+      "owner": "Propietario",
+      "admin": "Administrador",
+      "member": "Miembro"
+    },
+    "actions": {
+      "changeRole": "Cambiar Rol",
+      "remove": "Eliminar",
+      "makeAdmin": "Hacer Administrador",
+      "makeMember": "Hacer Miembro"
+    },
+    "confirmRemove": {
+      "title": "Eliminar Miembro",
+      "message": "¿Estás seguro de que quieres eliminar a {{name}} de este grupo?",
+      "confirm": "Eliminar",
+      "cancel": "Cancelar"
+    },
+    "confirmRoleChange": {
+      "title": "Cambiar Rol",
+      "message": "¿Cambiar el rol de {{name}} a {{role}}?",
+      "confirm": "Cambiar",
+      "cancel": "Cancelar"
+    },
+    "errors": {
+      "cannotRemoveSelf": "No puedes eliminarte a ti mismo. Usa 'Salir del Grupo' en su lugar.",
+      "cannotRemoveOwner": "No se puede eliminar al propietario del grupo",
+      "cannotChangeOwnRole": "No puedes cambiar tu propio rol",
+      "lastOwner": "No se puede eliminar al último propietario del grupo",
+      "removeFailed": "Error al eliminar miembro",
+      "roleChangeFailed": "Error al cambiar rol"
+    },
+    "success": {
+      "removed": "{{name}} ha sido eliminado",
+      "roleChanged": "{{name}} ahora es {{role}}"
+    },
+    "empty": "Aún no hay miembros",
+    "inviteMore": "Invitar Miembros",
+    "loading": "Cargando miembros..."
+  },
+  "group": {
+    "title": "Configuración del Grupo",
+    "currentGroup": "Grupo Actual",
+    "leave": "Salir del Grupo",
+    "nameLabel": "Nombre del Grupo",
+    "namePlaceholder": "Ingresa el nombre del grupo",
+    "save": "Guardar Cambios",
+    "saving": "Guardando...",
+    "saved": "Grupo actualizado",
+    "error": "Error al actualizar grupo",
+    "dangerZone": "Zona de Peligro",
+    "leaveGroup": {
+      "button": "Salir del Grupo",
+      "title": "Salir del Grupo",
+      "message": "¿Estás seguro de que quieres salir de {{groupName}}? Perderás acceso a todo el contenido compartido.",
+      "confirm": "Salir",
+      "cancel": "Cancelar",
+      "ownerWarning": "Como propietario, no puedes salir hasta transferir la propiedad o eliminar el grupo.",
+      "leaving": "Saliendo...",
+      "success": "Has salido del grupo",
+      "error": "Error al salir del grupo"
+    }
+  },
+  "account": {
+    "title": "Configuración de Cuenta",
+    "description": "Administra tu cuenta y cierra sesión",
+    "logout": "Cerrar Sesión",
+    "comingSoon": "Próximamente"
+  },
+  "privacy": {
+    "title": "Privacidad y Analíticas",
+    "description": "Controla cómo se recopilan y utilizan tus datos",
+    "consentLevel": "Nivel de Recopilación de Datos",
+    "consentDescription": "Elige cuántos datos quieres compartir para ayudarnos a mejorar la app",
+    "levels": {
+      "disabled": {
+        "title": "Desactivado",
+        "description": "No se recopilan datos analíticos"
+      },
+      "anonymous": {
+        "title": "Anónimo",
+        "description": "Datos de uso anónimos sin identificadores personales"
+      },
+      "enabled": {
+        "title": "Completo",
+        "description": "Analíticas personalizadas para la mejor experiencia"
+      }
+    },
+    "saving": "Guardando...",
+    "saved": "Configuración de privacidad guardada",
+    "error": "Error al guardar configuración de privacidad"
+  }
+}

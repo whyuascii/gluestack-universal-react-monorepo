@@ -104,38 +104,15 @@ aws_region=${aws_region:-us-east-1}
 pulumi config set aws:region "$aws_region"
 echo -e "${GREEN}✓ Set AWS region: $aws_region${NC}"
 
-# Supabase configuration
+# Database password
 echo ""
-echo -e "${YELLOW}========================================${NC}"
-echo -e "${YELLOW}Supabase Configuration${NC}"
-echo -e "${YELLOW}========================================${NC}"
-echo ""
-echo "Create a Supabase project at https://supabase.com/dashboard if you haven't already."
-echo "You'll need: Project URL, Database Connection String, Anon Key, and Service Role Key"
-echo ""
-read -p "Press Enter when ready to continue..."
-echo ""
-
-read -p "Enter Supabase Project URL (e.g., https://xxxxx.supabase.co): " supabase_url
-pulumi config set supabaseUrl "$supabase_url"
-echo -e "${GREEN}✓ Set Supabase URL${NC}"
-
-echo ""
-echo "Go to Project Settings → Database → Connection String"
-echo "Use 'Connection Pooling' mode for production (port 6543)"
-read -p "Enter Database Connection String: " database_url
-pulumi config set --secret databaseUrl "$database_url"
-echo -e "${GREEN}✓ Set Database URL${NC}"
-
-echo ""
-echo "Go to Project Settings → API"
-read -p "Enter Supabase Anon Key (anon public): " supabase_anon_key
-pulumi config set --secret supabaseAnonKey "$supabase_anon_key"
-echo -e "${GREEN}✓ Set Supabase Anon Key${NC}"
-
-read -p "Enter Supabase Service Role Key (service_role secret): " supabase_service_key
-pulumi config set --secret supabaseServiceRoleKey "$supabase_service_key"
-echo -e "${GREEN}✓ Set Supabase Service Role Key${NC}"
+echo -e "${YELLOW}Generate database password? (recommended)${NC}"
+read -p "Press Enter to generate or type your own password: " db_password
+if [ -z "$db_password" ]; then
+  db_password=$(openssl rand -base64 32)
+  echo -e "${GREEN}✓ Generated strong password${NC}"
+fi
+pulumi config set --secret dbPassword "$db_password"
 
 # Better Auth secret
 echo ""
@@ -198,15 +175,11 @@ echo -e "   ${GREEN}docker build -f apps/api/Dockerfile -t \$ECR_REPO:latest .${
 echo -e "   ${GREEN}docker push \$ECR_REPO:latest${NC}"
 echo ""
 echo "4. Run database migrations:"
-echo -e "   ${GREEN}export DATABASE_URL=\$(pulumi config get --show-secrets databaseUrl)${NC}"
-echo -e "   ${GREEN}cd ../..${NC}"
+echo -e "   ${GREEN}export DATABASE_URL=\$(aws secretsmanager get-secret-value --secret-id <project-name>/$stack_name/database/credentials --query SecretString --output text)${NC}"
 echo -e "   ${GREEN}pnpm --filter database db:migrate${NC}"
 echo ""
 echo "5. Push to GitHub to trigger web deployment:"
 echo -e "   ${GREEN}git push origin $github_branch${NC}"
-echo ""
-echo -e "${YELLOW}Supabase Dashboard:${NC}"
-echo -e "   ${GREEN}$supabase_url/dashboard${NC}"
 echo ""
 echo -e "${YELLOW}For detailed instructions, see:${NC}"
 echo -e "   ${GREEN}deployment/pulumi/README.md${NC}"

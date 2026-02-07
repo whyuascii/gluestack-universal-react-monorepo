@@ -1,7 +1,6 @@
 {
   "name": "@app/analytics",
   "version": "0.0.0",
-  "type": "module",
   "private": true,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -17,6 +16,10 @@
     "./mobile": {
       "types": "./dist/mobile.d.ts",
       "default": "./dist/mobile.js"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "default": "./dist/server.js"
     }
   },
   "files": [
@@ -34,8 +37,16 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "posthog-js": "^1.179.5",
-    "posthog-react-native": "^3.3.11"
+    "@opentelemetry/api-logs": "^0.57.0",
+    "@opentelemetry/exporter-logs-otlp-http": "^0.57.0",
+    "@opentelemetry/resources": "^1.30.0",
+    "@opentelemetry/sdk-logs": "^0.57.0",
+    "@opentelemetry/semantic-conventions": "^1.28.0",
+    "posthog-js": "1.329.0",
+    "posthog-node": "^4.0.0"
+  },
+  "optionalDependencies": {
+    "posthog-react-native": "^4.24.1"
   },
   "devDependencies": {
     "@swc/cli": "^0.6.0",
@@ -43,11 +54,23 @@
     "@types/react": "^19.0.1",
     "eslint": "^9.18.0",
     "@app/eslint-config": "workspace:*",
-    "typescript": "^5.7.2",
+    "typescript": "^5.9.3",
     "@app/typescript-config": "workspace:*"
   },
   "peerDependencies": {
-    "react": "^19.0.0",
-    "react-native": "*"
+    "react": "^19.1.0",
+    "react-native": "*",
+    "fastify": "^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "fastify": {
+      "optional": true
+    }
   }
 }

@@ -1,0 +1,33 @@
+{
+  "title": "Mis Tareas",
+  "loading": "Cargando tareas...",
+  "placeholder": "¿Qué necesitas hacer?",
+  "newTodoLabel": "Título de nueva tarea",
+  "addButton": "Agregar tarea",
+  "created": "Tarea creada",
+  "deleted": "Tarea eliminada",
+  "markedComplete": "Marcada como completada",
+  "markedActive": "Marcada como activa",
+  "summary": "{{active}} activas, {{completed}} completadas",
+  "filter": {
+    "all": "Todas",
+    "active": "Activas",
+    "completed": "Completadas"
+  },
+  "empty": {
+    "all": "Sin tareas aún. ¡Agrega una arriba!",
+    "active": "Sin tareas activas",
+    "completed": "Sin tareas completadas"
+  },
+  "stats": {
+    "itemsLeft": "{{count}} tarea pendiente",
+    "itemsLeft_plural": "{{count}} tareas pendientes",
+    "completed": "{{count}} completadas"
+  },
+  "error": {
+    "load": "Error al cargar tareas",
+    "create": "Error al crear tarea",
+    "toggle": "Error al actualizar tarea",
+    "delete": "Error al eliminar tarea"
+  }
+}
