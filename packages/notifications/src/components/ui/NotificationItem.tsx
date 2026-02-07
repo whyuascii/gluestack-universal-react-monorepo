@@ -64,7 +64,6 @@ export function NotificationItem({
       <View
         className={`${containerClass} ${webHoverClass}`}
         onClick={handlePress}
-        // @ts-expect-error - role is valid on web for accessibility
         role="button"
         tabIndex={0}
         aria-label={`${isRead ? "" : "Unread: "}${title}`}
@@ -123,7 +122,6 @@ export function NotificationItem({
                     e.stopPropagation();
                     handleMarkAsRead();
                   }}
-                  // @ts-expect-error - role is valid on web for accessibility
                   role="button"
                   tabIndex={0}
                   aria-label="Mark as read"
