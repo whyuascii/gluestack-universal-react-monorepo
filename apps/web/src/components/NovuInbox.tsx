@@ -7,6 +7,7 @@
  * and handles server/client rendering properly.
  */
 
+import type { CSSProperties } from "react";
 import { Inbox } from "@novu/nextjs";
 import { useQuery } from "@tanstack/react-query";
 import { orpc } from "@app/ui";
@@ -14,8 +15,17 @@ import { useSession } from "@app/auth";
 
 const NOVU_APP_ID = process.env.NEXT_PUBLIC_NOVU_APP_ID || "";
 
+/**
+ * Novu element styles support CSS-in-JS selectors (e.g., "&:hover", "&[data-unread=true]")
+ * that are not part of standard CSSProperties. This type extends CSSProperties to allow them.
+ */
+type NovuElementStyle = CSSProperties & Record<string, CSSProperties | string | number>;
+
 // Modern, polished theme
-const customAppearance = {
+const customAppearance: {
+  variables: Record<string, string>;
+  elements: Record<string, NovuElementStyle>;
+} = {
   variables: {
     colorPrimary: "#dc2626",
     colorPrimaryForeground: "#ffffff",

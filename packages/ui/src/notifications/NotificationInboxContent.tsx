@@ -345,13 +345,7 @@ function NotificationItem({
 
   if (isWeb) {
     return (
-      <View
-        style={containerStyle}
-        // @ts-expect-error - onClick is valid on web
-        onClick={onPress}
-        role="button"
-        tabIndex={0}
-      >
+      <View style={containerStyle} onClick={onPress} role="button" tabIndex={0}>
         {content}
       </View>
     );
@@ -461,7 +455,6 @@ export function NotificationInboxContent({
           >
             {isWeb ? (
               <View
-                // @ts-expect-error - className is valid on web
                 className={isRefreshing ? "animate-spin" : ""}
                 style={{ width: 18, height: 18 }}
               >
