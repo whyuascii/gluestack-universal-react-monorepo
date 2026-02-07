@@ -2,9 +2,9 @@ import { useSession } from "@app/auth/client/native";
 import { useUnreadCount } from "@app/notifications";
 import { ROUTES } from "@app/ui";
 import { Tabs, useRouter, usePathname, type Href } from "expo-router";
-import { View, Text, TouchableOpacity, StyleSheet, Animated } from "react-native";
 import { Home, CheckSquare, Users, Settings, Bell } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Animated } from "react-native";
 
 type TabName = "dashboard" | "todos" | "group" | "settings";
 

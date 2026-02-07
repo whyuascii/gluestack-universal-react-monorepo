@@ -1,5 +1,5 @@
 import { signUp } from "@app/auth/client/native";
-import { SignupScreen, ROUTES } from "@app/ui";
+import { ROUTES } from "@app/ui";
 import { useRouter, type Href } from "expo-router";
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from "react-native";

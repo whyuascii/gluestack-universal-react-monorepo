@@ -1,12 +1,12 @@
 import type { Session } from "@app/auth";
 import { useSession, signOut } from "@app/auth/client/native";
+import { Text } from "@app/components";
 import { ProfileScreen, ROUTES } from "@app/ui";
 import { useRouter, type Href } from "expo-router";
-import { View, StyleSheet, Pressable } from "react-native";
-import { Text } from "@app/components";
 import { ArrowLeft } from "lucide-react-native";
-import { useTranslation } from "react-i18next";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { View, StyleSheet, Pressable } from "react-native";
 
 export default function Profile() {
   const { data: session } = useSession();

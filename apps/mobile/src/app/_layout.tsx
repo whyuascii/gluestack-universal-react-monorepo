@@ -1,6 +1,5 @@
 import { GluestackUIProvider } from "@app/components";
 import i18n from "@app/i18n/mobile";
-import { RevenueCatProvider } from "@app/subscriptions";
 import { DEFAULT_CACHE_TIMES } from "@app/ui";
 import { AnalyticsProvider } from "@app/ui/analytics-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

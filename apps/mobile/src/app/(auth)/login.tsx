@@ -1,5 +1,5 @@
 import { signIn, useSession } from "@app/auth/client/native";
-import { LoginScreen, ROUTES } from "@app/ui";
+import { ROUTES } from "@app/ui";
 import { useRouter, type Href } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
@@ -12,7 +12,10 @@ function SimpleLogin({
 }: {
   onNavigateToSignup: () => void;
   onLoginSuccess?: () => void;
-  signIn: (params: { email: string; password: string }) => Promise<any>;
+  signIn: (params: {
+    email: string;
+    password: string;
+  }) => Promise<{ error?: { message?: string } }>;
 }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -72,7 +75,7 @@ function SimpleLogin({
         </TouchableOpacity>
 
         <TouchableOpacity onPress={onNavigateToSignup} style={styles.link}>
-          <Text style={styles.linkText}>Don't have an account? Sign up</Text>
+          <Text style={styles.linkText}>Don&apos;t have an account? Sign up</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

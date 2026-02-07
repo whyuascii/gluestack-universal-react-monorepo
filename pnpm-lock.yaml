@@ -1124,21 +1124,9 @@ importers:
 
   packages/subscriptions:
     dependencies:
-      '@app/analytics':
-        specifier: workspace:*
-        version: link:../analytics
       '@app/components':
         specifier: workspace:*
         version: link:../components
-      '@app/config':
-        specifier: workspace:*
-        version: link:../config
-      '@app/core-contract':
-        specifier: workspace:*
-        version: link:../core-contract
-      '@app/database':
-        specifier: workspace:*
-        version: link:../database
       '@app/i18n':
         specifier: workspace:*
         version: link:../i18n
@@ -1167,6 +1155,18 @@ importers:
         specifier: ^5.0.2
         version: 5.0.9(@types/react@19.1.0)(react@19.1.0)(use-sync-external-store@1.6.0(react@19.1.0))
     devDependencies:
+      '@app/analytics':
+        specifier: workspace:*
+        version: link:../analytics
+      '@app/config':
+        specifier: workspace:*
+        version: link:../config
+      '@app/core-contract':
+        specifier: workspace:*
+        version: link:../core-contract
+      '@app/database':
+        specifier: workspace:*
+        version: link:../database
       '@app/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config

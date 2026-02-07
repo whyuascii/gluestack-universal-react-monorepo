@@ -1,17 +1,15 @@
 import type { Session } from "@app/auth";
 import { useSession } from "@app/auth/client/native";
-import { NotificationsScreen, ROUTES } from "@app/ui";
-import { useRouter, type Href } from "expo-router";
-import { View, StyleSheet, Pressable } from "react-native";
 import { Text } from "@app/components";
+import { NotificationsScreen } from "@app/ui";
+import { useRouter, type Href } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
+import { View, StyleSheet, Pressable } from "react-native";
 
 export default function Notifications() {
   const { data: session } = useSession();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { t } = useTranslation("common");
 
   return (

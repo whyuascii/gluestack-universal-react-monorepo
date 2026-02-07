@@ -1,14 +1,11 @@
-import { useState } from "react";
 import { CreateGroupScreen, ROUTES, client } from "@app/ui";
 import { useRouter, type Href } from "expo-router";
 
 export default function CreateGroup() {
   const router = useRouter();
-  const [tenantId, setTenantId] = useState<string | null>(null);
 
   const handleSubmit = async (name: string): Promise<void> => {
-    const data = await client.private.workspace.tenants.create({ name });
-    setTenantId(data.tenantId);
+    await client.private.workspace.tenants.create({ name });
   };
 
   const handleSuccess = (id: string) => {

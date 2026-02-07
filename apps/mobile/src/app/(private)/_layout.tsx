@@ -1,6 +1,6 @@
 import { useSession } from "@app/auth/client/native";
 import { ROUTES } from "@app/ui";
-import { Stack, useRouter, Redirect, type Href } from "expo-router";
+import { Stack, Redirect, type Href } from "expo-router";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -12,7 +12,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
  * - Contains tabs and stack screens
  */
 export default function PrivateLayout() {
-  const router = useRouter();
   const insets = useSafeAreaInsets();
   const { data: session, isPending } = useSession();
 

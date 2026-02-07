@@ -50,13 +50,17 @@
     "zustand": "^5.0.2"
   },
   "devDependencies": {
+    "@app/analytics": "workspace:*",
+    "@app/config": "workspace:*",
+    "@app/core-contract": "workspace:*",
+    "@app/database": "workspace:*",
+    "@app/eslint-config": "workspace:*",
+    "@app/tailwind-config": "workspace:*",
+    "@app/typescript-config": "workspace:*",
     "@swc/cli": "^0.6.0",
     "@swc/core": "^1.10.6",
     "eslint": "^9.18.0",
-    "@app/eslint-config": "workspace:*",
-    "@app/tailwind-config": "workspace:*",
-    "typescript": "^5.9.3",
-    "@app/typescript-config": "workspace:*"
+    "typescript": "^5.9.3"
   },
   "peerDependencies": {
     "@app/analytics": "workspace:*",

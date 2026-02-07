@@ -1,3 +1,4 @@
+import type { Session } from "@app/auth";
 import { useSession } from "@app/auth/client/native";
 import { GroupScreen, useActiveTenant, ROUTES } from "@app/ui";
 import { useRouter, type Href } from "expo-router";
@@ -9,7 +10,7 @@ export default function Group() {
 
   return (
     <GroupScreen
-      session={session as any}
+      session={session as Session | null}
       tenantName={activeTenant?.tenantName}
       tenantId={activeTenant?.tenantId}
       userRole={activeTenant?.role}
