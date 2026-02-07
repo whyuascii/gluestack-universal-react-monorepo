@@ -1,3 +1,15 @@
+<!--
+PR Title Format (Conventional Commits):
+  type(scope): description
+
+Examples:
+  feat(auth): add password reset flow
+  fix(api): resolve database timeout
+  docs: update getting started guide
+
+Types: feat, fix, docs, style, refactor, test, chore, perf, ci, build
+-->
+
 ## Description
 
 <!-- Provide a clear and concise description of your changes -->

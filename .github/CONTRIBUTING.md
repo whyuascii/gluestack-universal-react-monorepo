@@ -86,25 +86,56 @@ pnpm lint
 
 ### 6. Commit Your Changes
 
-We follow [Conventional Commits](https://www.conventionalcommits.org/):
+We follow [Conventional Commits](https://www.conventionalcommits.org/) and **enforce this via git hooks**.
+
+#### Format
+
+```
+type(scope): description
+```
+
+- **type** - Category of change (required)
+- **scope** - Package or area affected (optional)
+- **description** - Short summary in lowercase (required)
+
+#### Examples
 
 ```bash
 git commit -m "feat(api): add user authentication endpoint"
 git commit -m "fix(components): resolve button click handler"
-git commit -m "docs(database): update migration guide"
+git commit -m "docs: update migration guide"
+git commit -m "chore(deps): bump dependencies"
 ```
 
-Commit types:
+#### Commit Types
 
-- `feat:` - New feature
-- `fix:` - Bug fix
-- `docs:` - Documentation changes
-- `style:` - Code style changes (formatting, etc.)
-- `refactor:` - Code refactoring
-- `test:` - Test changes
-- `chore:` - Maintenance tasks
-- `perf:` - Performance improvements
-- `ci:` - CI/CD changes
+| Type       | Description                            |
+| ---------- | -------------------------------------- |
+| `feat`     | New feature                            |
+| `fix`      | Bug fix                                |
+| `docs`     | Documentation only                     |
+| `style`    | Formatting, no code change             |
+| `refactor` | Code change, no new feature or bug fix |
+| `test`     | Adding or updating tests               |
+| `chore`    | Maintenance tasks                      |
+| `perf`     | Performance improvement                |
+| `ci`       | CI/CD changes                          |
+| `build`    | Build system changes                   |
+| `revert`   | Revert previous commit                 |
+
+#### Enforcement
+
+Commits are validated automatically by [commitlint](https://commitlint.js.org/). Invalid commit messages will be rejected:
+
+```bash
+# ❌ Will be rejected
+git commit -m "updated stuff"
+git commit -m "Fix bug"  # uppercase
+
+# ✅ Will pass
+git commit -m "fix: resolve login timeout"
+git commit -m "feat(auth): add password reset flow"
+```
 
 ### 7. Push and Create a Pull Request
 

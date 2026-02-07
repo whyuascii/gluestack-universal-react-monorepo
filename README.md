@@ -318,6 +318,10 @@ pnpm typecheck                    # Type check all
 pnpm lint                         # Lint all
 pnpm test                         # Run tests
 pnpm build                        # Production build
+
+# Commits (conventional commits enforced)
+git commit -m "feat: add new feature"
+git commit -m "fix(api): resolve bug"
 ```
 
 ---
