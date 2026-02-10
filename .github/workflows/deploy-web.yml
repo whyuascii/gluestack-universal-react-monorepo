@@ -23,7 +23,7 @@ jobs:
       web_changed: ${{ steps.filter.outputs.web }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Check for Web changes
         uses: dorny/paths-filter@v3
@@ -43,7 +43,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Amplify Auto-Deploy
         run: |
