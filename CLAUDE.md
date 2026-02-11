@@ -102,6 +102,9 @@ See package-level CLAUDE.md files for detailed patterns (loaded lazily when work
 - Perform `/compact` at ~50% context usage
 - Break work into subtasks completable within 50% of context budget
 - Use feature-specific skills for domain knowledge (progressive disclosure)
+- **After every change**, provide a recommended commit message and PR title:
+  - Commit: lowercase conventional commit (`fix: resolve auth token expiry`)
+  - PR title: uppercase conventional type (`FIX(auth): Resolve Auth Token Expiry`)
 
 ## Skills
 
