@@ -4,7 +4,7 @@ set -euo pipefail
 # =============================================================================
 # GitHub Repository Setup Script
 #
-# Sets up branch protection, labels, and security features for a new repo.
+# Sets up branch protection, merge settings, labels, and security features.
 # Requires: GitHub CLI (gh) authenticated with admin access.
 #
 # Usage:
@@ -43,7 +43,7 @@ echo "============================================"
 # 1. Branch Protection
 # ---------------------------------------------------------------------------
 echo ""
-echo "[1/3] Configuring branch protection on main..."
+echo "[1/4] Configuring branch protection on main..."
 
 gh api "repos/$REPO/branches/main/protection" \
   --method PUT \
@@ -72,10 +72,32 @@ echo "  - Admin bypass enabled (owner can merge without approval)"
 echo "  - Force pushes and branch deletion blocked"
 
 # ---------------------------------------------------------------------------
-# 2. Security Features
+# 2. Merge Settings
 # ---------------------------------------------------------------------------
 echo ""
-echo "[2/3] Enabling security features..."
+echo "[2/4] Configuring merge settings..."
+
+gh api "repos/$REPO" --method PATCH --silent --input - <<'EOF'
+{
+  "allow_squash_merge": true,
+  "allow_merge_commit": false,
+  "allow_rebase_merge": false,
+  "squash_merge_commit_title": "PR_TITLE",
+  "squash_merge_commit_message": "PR_BODY",
+  "delete_branch_on_merge": true
+}
+EOF
+
+echo "  - Squash merge only (merge commit and rebase disabled)"
+echo "  - Squash commit title uses PR title (uppercase conventional type)"
+echo "  - Squash commit message uses PR body"
+echo "  - Auto-delete branches after merge"
+
+# ---------------------------------------------------------------------------
+# 3. Security Features
+# ---------------------------------------------------------------------------
+echo ""
+echo "[3/4] Enabling security features..."
 
 gh api "repos/$REPO" --method PATCH --silent --input - <<'EOF'
 {
@@ -97,7 +119,7 @@ echo "  - Vulnerability alerts enabled"
 # 3. Labels
 # ---------------------------------------------------------------------------
 echo ""
-echo "[3/3] Creating labels..."
+echo "[4/4] Creating labels..."
 
 create_label() {
   local name="$1" color="$2" description="$3"

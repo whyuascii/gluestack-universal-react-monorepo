@@ -26,6 +26,34 @@ Branch protection ensures every change to `main` goes through a PR with passing 
 | **Block force pushes**              | Prevents rewriting main history                     |
 | **Block branch deletion**           | Prevents accidental deletion of main                |
 
+## Merge Settings
+
+| Setting                   | Value                                       |
+| ------------------------- | ------------------------------------------- |
+| **Squash merge**          | Enabled (only merge strategy allowed)       |
+| **Merge commit**          | Disabled                                    |
+| **Rebase merge**          | Disabled                                    |
+| **Squash commit title**   | Uses PR title (uppercase conventional type) |
+| **Squash commit message** | Uses PR body                                |
+| **Auto-delete branches**  | Enabled (cleans up after merge)             |
+
+This means every PR becomes a single commit on `main` with the PR title as the commit message. Since PR titles use uppercase conventional types (`FEAT: ...`), release-please is configured to recognize both uppercase and lowercase types.
+
+### Enable via CLI
+
+```bash
+gh api repos/<owner>/<repo> --method PATCH --input - <<'EOF'
+{
+  "allow_squash_merge": true,
+  "allow_merge_commit": false,
+  "allow_rebase_merge": false,
+  "squash_merge_commit_title": "PR_TITLE",
+  "squash_merge_commit_message": "PR_BODY",
+  "delete_branch_on_merge": true
+}
+EOF
+```
+
 ## Owner Bypass
 
 By default, `enforce_admins` is set to `false`. This means the repository owner can:
@@ -39,7 +67,7 @@ Contributors still need 1 approval and passing CI to merge. This is a practical 
 
 ## Quick Setup (All-in-One)
 
-Run a single script to set up branch protection, security features, and labels:
+Run a single script to set up branch protection, merge settings, security features, and labels:
 
 ```bash
 ./scripts/setup-github.sh <owner>/<repo>

@@ -98,7 +98,7 @@ feat!: drop support for Node 18
 
 ## Important Notes
 
-- release-please reads **commit messages**, not PR titles. Your PR titles are uppercase (`FEAT:`) but squash-merged commits should use lowercase (`feat:`) for release-please to parse them correctly.
+- Squash merge uses the PR title as the commit message. release-please is configured to recognize both uppercase (`FEAT:`) and lowercase (`feat:`) types, so either format works.
 - The Release PR is long-lived — it stays open and updates as new commits land on `main`.
 - You control when to release by choosing when to merge the Release PR.
 - Merging the Release PR does not trigger a deploy — it only creates the tag and GitHub Release.
