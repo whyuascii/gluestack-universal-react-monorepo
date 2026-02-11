@@ -37,7 +37,17 @@ Contributors still need 1 approval and passing CI to merge. This is a practical 
 
 > To require the owner to follow the same rules as everyone else, set `enforce_admins` to `true` in the setup command below.
 
-## Setup Steps
+## Quick Setup (All-in-One)
+
+Run a single script to set up branch protection, security features, and labels:
+
+```bash
+./scripts/setup-github.sh <owner>/<repo>
+```
+
+This configures everything documented below. To set up manually, follow the individual steps.
+
+## Manual Setup Steps
 
 ### Prerequisites
 
@@ -136,6 +146,59 @@ gh api repos/<owner>/<repo>/vulnerability-alerts --method PUT
 ### Verify
 
 Re-run the failed CI check. The `Dependency Review` job should now pass.
+
+## GitHub Labels
+
+Labels are used by CI workflows (e.g., `stale.yml` exempts `pinned`, `security`, `work-in-progress`, `dependencies`) and help organize issues and PRs.
+
+### Create All Labels
+
+Replace `<owner>/<repo>` and run:
+
+```bash
+REPO="<owner>/<repo>"
+
+# Status
+gh label create "work-in-progress" --color "FBCA04" --description "PR not ready for review" --repo "$REPO"
+gh label create "ready-for-review" --color "0E8A16" --description "PR is ready to be reviewed" --repo "$REPO"
+gh label create "blocked" --color "B60205" --description "Waiting on external dependency or decision" --repo "$REPO"
+gh label create "stale" --color "CFD3D7" --description "No recent activity" --repo "$REPO"
+
+# Type
+gh label create "feat" --color "1D76DB" --description "New feature" --repo "$REPO"
+gh label create "fix" --color "D73A4A" --description "Bug fix" --repo "$REPO"
+gh label create "chore" --color "EDEDED" --description "Maintenance, deps, tooling" --repo "$REPO"
+gh label create "refactor" --color "D4C5F9" --description "Code restructuring" --repo "$REPO"
+gh label create "ci" --color "BFD4F2" --description "CI/CD changes" --repo "$REPO"
+gh label create "perf" --color "F9D0C4" --description "Performance improvement" --repo "$REPO"
+
+# Priority
+gh label create "priority: critical" --color "B60205" --description "Drop everything" --repo "$REPO"
+gh label create "priority: high" --color "D93F0B" --description "Next up" --repo "$REPO"
+gh label create "priority: low" --color "0E8A16" --description "Nice to have" --repo "$REPO"
+
+# Scope
+gh label create "api" --color "006B75" --description "API/backend changes" --repo "$REPO"
+gh label create "web" --color "1D76DB" --description "Web app changes" --repo "$REPO"
+gh label create "mobile" --color "5319E7" --description "Mobile app changes" --repo "$REPO"
+gh label create "database" --color "0075CA" --description "Schema/migration changes" --repo "$REPO"
+gh label create "dependencies" --color "0366D6" --description "Dependency updates" --repo "$REPO"
+
+# Special
+gh label create "breaking-change" --color "B60205" --description "Introduces breaking changes" --repo "$REPO"
+gh label create "security" --color "EE0701" --description "Security issue" --repo "$REPO"
+gh label create "pinned" --color "006B75" --description "Never mark as stale" --repo "$REPO"
+```
+
+### Label Reference
+
+| Group    | Labels                                                     | Purpose                                 |
+| -------- | ---------------------------------------------------------- | --------------------------------------- |
+| Status   | `work-in-progress`, `ready-for-review`, `blocked`, `stale` | PR/issue lifecycle                      |
+| Type     | `feat`, `fix`, `chore`, `refactor`, `ci`, `perf`           | Mirrors conventional commit types       |
+| Priority | `critical`, `high`, `low`                                  | Triage                                  |
+| Scope    | `api`, `web`, `mobile`, `database`, `dependencies`         | Affected area                           |
+| Special  | `breaking-change`, `security`, `pinned`                    | CI integration and stale bot exemptions |
 
 ## Adjusting Status Checks
 
