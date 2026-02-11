@@ -73,7 +73,6 @@ Every PR uses the repository's pull request template. Key sections:
 ### Required
 
 - **Summary** — What does this change do and why?
-- **Changes** — Bullet list of what was added, changed, or removed
 - **Type of Change** — Check the relevant box
 - **Checklist** — Self-review confirmation
 

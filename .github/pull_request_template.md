@@ -16,14 +16,6 @@ Scope is optional. See docs/PULL-REQUEST-STANDARDS.md for details.
 
 <!-- What does this change do and why? -->
 
-## Changes
-
-<!-- Bullet list of what was added, changed, or removed -->
-
-- Added:
-- Changed:
-- Removed:
-
 ## Type of Change
 
 - [ ] New feature
