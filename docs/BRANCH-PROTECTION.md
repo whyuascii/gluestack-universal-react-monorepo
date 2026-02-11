@@ -100,6 +100,43 @@ gh api repos/<owner>/<repo>/branches/main/protection/enforce_admins \
   --method DELETE
 ```
 
+## Enable Dependency Graph and Security Features
+
+The `dependency-review` CI workflow requires the Dependency Graph to be enabled on the repository. Without it, the workflow will fail with:
+
+```
+Error: Dependency review is not supported on this repository.
+```
+
+### Enable via CLI
+
+```bash
+# Enable Dependabot security updates (also enables Dependency Graph)
+gh api repos/<owner>/<repo> --method PATCH --input - <<'EOF'
+{
+  "security_and_analysis": {
+    "dependabot_security_updates": {
+      "status": "enabled"
+    }
+  }
+}
+EOF
+
+# Enable vulnerability alerts
+gh api repos/<owner>/<repo>/vulnerability-alerts --method PUT
+```
+
+### Enable via GitHub UI
+
+1. Go to **Settings** → **Code security and analysis**
+2. Enable **Dependency graph**
+3. Enable **Dependabot alerts**
+4. Enable **Dependabot security updates**
+
+### Verify
+
+Re-run the failed CI check. The `Dependency Review` job should now pass.
+
 ## Adjusting Status Checks
 
 The required status checks (`Format Check`, `Lint`, `Build`, `Type Check`) correspond to job names in `.github/workflows/ci.yml`. If you rename or add CI jobs, update the `contexts` array in the protection rule to match.
