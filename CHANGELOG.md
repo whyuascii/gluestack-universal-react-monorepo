@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/whyuascii/gluestack-universal-react-monorepo/compare/v1.1.0...v1.1.1) (2026-02-12)
+
+
+### Bug Fixes
+
+* Resolve 16 Dependabot Security Vulnerabilities ([#14](https://github.com/whyuascii/gluestack-universal-react-monorepo/issues/14)) ([a73408b](https://github.com/whyuascii/gluestack-universal-react-monorepo/commit/a73408b46193e2f0fe9bf77018e654fdacd67c19))
+
 ## [1.1.0](https://github.com/whyuascii/gluestack-universal-react-monorepo/compare/v1.0.0...v1.1.0) (2026-02-11)
 
 
