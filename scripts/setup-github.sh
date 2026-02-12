@@ -43,7 +43,7 @@ echo "============================================"
 # 1. Branch Protection
 # ---------------------------------------------------------------------------
 echo ""
-echo "[1/4] Configuring branch protection on main..."
+echo "[1/5] Configuring branch protection on main..."
 
 gh api "repos/$REPO/branches/main/protection" \
   --method PUT \
@@ -75,7 +75,7 @@ echo "  - Force pushes and branch deletion blocked"
 # 2. Merge Settings
 # ---------------------------------------------------------------------------
 echo ""
-echo "[2/4] Configuring merge settings..."
+echo "[2/5] Configuring merge settings..."
 
 gh api "repos/$REPO" --method PATCH --silent --input - <<'EOF'
 {
@@ -97,7 +97,7 @@ echo "  - Auto-delete branches after merge"
 # 3. Security Features
 # ---------------------------------------------------------------------------
 echo ""
-echo "[3/4] Enabling security features..."
+echo "[3/5] Enabling security features..."
 
 gh api "repos/$REPO" --method PATCH --silent --input - <<'EOF'
 {
@@ -119,7 +119,24 @@ echo "  - Vulnerability alerts enabled"
 # 3. Labels
 # ---------------------------------------------------------------------------
 echo ""
-echo "[4/4] Creating labels..."
+echo "[4/5] Configuring GitHub Actions permissions..."
+
+gh api "repos/$REPO/actions/permissions/workflow" --method PUT --silent --input - <<'EOF'
+{
+  "default_workflow_permissions": "write",
+  "can_approve_pull_request_reviews": true
+}
+EOF
+
+echo "  - Default workflow permissions: write"
+echo "  - GitHub Actions can create and approve pull requests"
+echo "  - Required for release-please to open Release PRs"
+
+# ---------------------------------------------------------------------------
+# 5. Labels
+# ---------------------------------------------------------------------------
+echo ""
+echo "[5/5] Creating labels..."
 
 create_label() {
   local name="$1" color="$2" description="$3"

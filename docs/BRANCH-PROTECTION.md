@@ -175,6 +175,33 @@ gh api repos/<owner>/<repo>/vulnerability-alerts --method PUT
 
 Re-run the failed CI check. The `Dependency Review` job should now pass.
 
+## GitHub Actions Permissions
+
+release-please needs permission to create pull requests. Without this, the release workflow will fail with:
+
+```
+Error: GitHub Actions is not permitted to create or approve pull requests.
+```
+
+### Enable via CLI
+
+```bash
+gh api repos/<owner>/<repo>/actions/permissions/workflow --method PUT --input - <<'EOF'
+{
+  "default_workflow_permissions": "write",
+  "can_approve_pull_request_reviews": true
+}
+EOF
+```
+
+### Enable via GitHub UI
+
+1. Go to **Settings** → **Actions** → **General**
+2. Scroll to **Workflow permissions**
+3. Select **Read and write permissions**
+4. Check **Allow GitHub Actions to create and approve pull requests**
+5. Save
+
 ## GitHub Labels
 
 Labels are used by CI workflows (e.g., `stale.yml` exempts `pinned`, `security`, `work-in-progress`, `dependencies`) and help organize issues and PRs.
